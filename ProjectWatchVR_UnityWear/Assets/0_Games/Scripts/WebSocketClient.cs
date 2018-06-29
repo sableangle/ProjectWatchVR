@@ -4,7 +4,7 @@ using UnityEngine;
 using WebSocketSharp;
 public class WebSocketClient : MonoBehaviour {
 	string msg = null;
-	string ip = "127.0.0.1";
+	string ip = "192.168.0.131";
 	WebSocket ws;
 	public static WebSocketClient Instance;
 	void Awake(){

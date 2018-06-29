@@ -49,7 +49,7 @@ public class ExampleScript : MonoBehaviour {
     }
 
     protected void Update () {
-        //GyroModifyCamera ();
+        GyroModifyCamera ();
         WebSocketClient.Instance.SendMessageToServer (
             _transform.rotation.x + "_" + 
             _transform.rotation.y + "_" + 
