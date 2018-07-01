@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_grey"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity"
+    tools:context=".SensorActivity"
     tools:deviceIds="wear">
 
     <FrameLayout
@@ -19,7 +19,7 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Main" />
+            android:text="Sensor" />
 
     </FrameLayout>
 </android.support.wear.widget.BoxInsetLayout>
