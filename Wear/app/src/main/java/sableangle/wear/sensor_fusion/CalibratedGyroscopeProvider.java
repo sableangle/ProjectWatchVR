@@ -1,7 +1,4 @@
-package org.hitlabnz.sensor_fusion_demo.orientationProvider;
-
-import org.hitlabnz.sensor_fusion_demo.representation.Quaternion;
-
+package sableangle.wear.sensor_fusion;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;

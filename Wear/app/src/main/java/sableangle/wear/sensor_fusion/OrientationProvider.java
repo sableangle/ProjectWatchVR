@@ -1,17 +1,13 @@
 /**
  * 
  */
-package org.hitlabnz.sensor_fusion_demo.orientationProvider;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hitlabnz.sensor_fusion_demo.representation.MatrixF4x4;
-import org.hitlabnz.sensor_fusion_demo.representation.Quaternion;
-
+package sableangle.wear.sensor_fusion;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classes implementing this interface provide an orientation of the device
