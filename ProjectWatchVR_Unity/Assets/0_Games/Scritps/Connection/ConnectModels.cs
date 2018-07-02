@@ -15,9 +15,9 @@ public class ConnectModels : MonoBehaviour {
 			float.TryParse(msg[0],out x);
 			float.TryParse(msg[1],out y);
 			float.TryParse(msg[2],out z);
-			//float.TryParse(msg[3],out w);
-			//rotation = new Quaternion(x,y,z,w);
-			rotationEular = new Vector3(x,y,z);
+			float.TryParse(msg[3],out w);
+			rotation = new Quaternion(x,y,z,w);
+			//rotationEular = new Vector3(x,y,z);
 		}
 	}
 }

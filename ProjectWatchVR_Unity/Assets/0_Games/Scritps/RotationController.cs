@@ -6,6 +6,6 @@ public class RotationController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		transform.eulerAngles = ConnectModels.rotationEular;
+		transform.rotation = ConnectModels.rotation;
 	}
 }

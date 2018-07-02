@@ -6,6 +6,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import sableangle.wear.sensor_fusion.CalibratedGyroscopeProvider;
+import sableangle.wear.sensor_fusion.Quaternion;
 
 public class SensorActivity extends WearableActivity {
 
@@ -26,31 +29,80 @@ public class SensorActivity extends WearableActivity {
         setContentView(R.layout.activity_sensor);
 
         mTextView = (TextView) findViewById(R.id.text);
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
+        HardWareCheck(mSensorManager);
 
         ConnectWebSocket();
-        MakeSensor();
+
+        MakeSensorFusion();
+
+        //Old
+        //MakeSensor();
         // Enables Always-on
         setAmbientEnabled();
     }
+
+    public void HardWareCheck (SensorManager sensorManager) {
+        if(sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
+            Log.e("Support","Support");
+        }
+        else{
+            Log.e("No Support","No Support");
+        }
+    }
+
+    private Quaternion quaternion = new Quaternion();
+    CalibratedGyroscopeProvider orientationProvider;
+    void MakeSensorFusion(){
+        orientationProvider = new CalibratedGyroscopeProvider(mSensorManager);
+
+        orientationProvider.start();
+        //quaternion.getX(), quaternion.getY(), quaternion.getZ()
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                while(true){
+                    try{
+                        Log.d("asdfasf","asdfasf");
+                        if(System.currentTimeMillis() - mLastOrientationSent < MAX_MILLIS_BETWEEN_UPDATES){
+                            continue;
+                        }
+                        orientationProvider.getQuaternion(quaternion);
+                        if(mWebSocket != null){
+                            mWebSocket.send(quaternion.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()+ "_" + quaternion.getW());
+                        }
+                        mLastOrientationSent=System.currentTimeMillis();
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+
+
+
     private static final int MAX_MILLIS_BETWEEN_UPDATES = 50;
     private SensorManager mSensorManager;
     private SensorEventListener mOrientationListener;
     float azimuth;
     float pitch;
     float roll;
+    long mLastOrientationSent=0;
 
     final int worldAxisForDeviceAxisX = SensorManager.AXIS_MINUS_Z;
     final int worldAxisForDeviceAxisY = SensorManager.AXIS_X;
     void MakeSensor(){
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         mOrientationListener=new SensorEventListener()
         {
             float [] mGravityValues;
             float [] mGeoMagneticValues;
-            long mLastOrientationSent=0;
 
             float [] R=new float[9];
             float [] orientation=new float[3];
