@@ -23,6 +23,10 @@ public class SensorActivity extends WearableActivity {
 
     private TextView mTextView;
 
+
+    private static final int MAX_MILLIS_BETWEEN_UPDATES = 50;
+    private SensorManager mSensorManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,8 +90,6 @@ public class SensorActivity extends WearableActivity {
 
 
 
-    private static final int MAX_MILLIS_BETWEEN_UPDATES = 50;
-    private SensorManager mSensorManager;
     private SensorEventListener mOrientationListener;
     float azimuth;
     float pitch;
