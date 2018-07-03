@@ -20,6 +20,8 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import sableangle.wear.sensor_fusion.CalibratedGyroscopeProvider;
 import sableangle.wear.sensor_fusion.Quaternion;
+import sableangle.wear.sensor_fusion.RotationVectorProvider;
+import sableangle.wear.sensor_fusion.Vector3f;
 
 public class SensorActivity extends WearableActivity {
 
@@ -72,27 +74,31 @@ public class SensorActivity extends WearableActivity {
             Log.e("No Support","No Support");
         }
     }
-
+    Thread DataThread = null;
     private Quaternion quaternion = new Quaternion();
+    private Vector3f accelerometer = new Vector3f();
     CalibratedGyroscopeProvider orientationProvider;
     void MakeSensorFusion(){
         orientationProvider = new CalibratedGyroscopeProvider(mSensorManager);
 
         orientationProvider.start();
         //quaternion.getX(), quaternion.getY(), quaternion.getZ()
-        new Thread(new Runnable(){
+        DataThread = new Thread(new Runnable(){
             @Override
             public void run() {
                 // TODO Auto-generated method stub
                 while(true){
                     try{
-                        Log.d("asdfasf","asdfasf");
                         if(System.currentTimeMillis() - mLastOrientationSent < MAX_MILLIS_BETWEEN_UPDATES){
                             continue;
                         }
                         orientationProvider.getQuaternion(quaternion);
+                        orientationProvider.getRowDataAccelerometer(accelerometer);
                         if(mWebSocket != null){
-                            mWebSocket.send(quaternion.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()+ "_" + quaternion.getW());
+                            mWebSocket.send(
+                            quaternion.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()+ "_" + quaternion.getW() + "@" +
+                                accelerometer.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()
+                            );
                         }
                         mLastOrientationSent=System.currentTimeMillis();
                     }
@@ -101,7 +107,8 @@ public class SensorActivity extends WearableActivity {
                     }
                 }
             }
-        }).start();
+        });
+        DataThread.start();
     }
 
 
@@ -189,6 +196,9 @@ public class SensorActivity extends WearableActivity {
     private String WebSocketTAG = "";
     private String wsUrl = "ws://192.168.0.131:24681/Rotation";
     private WebSocket mWebSocket;
+    private int RECONNECT_TIME = 500;
+    long mLastReconnectTime=0;
+    Thread ReconnectThread = null;
     void ConnectWebSocket() {
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
@@ -201,6 +211,10 @@ public class SensorActivity extends WearableActivity {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 mWebSocket = webSocket;
+                if(ReconnectThread != null){
+                    ReconnectThread.stop();
+                    ReconnectThread = null;
+                }
                 System.out.println("client onOpen");
                 System.out.println("client request header:" + response.request().headers());
                 System.out.println("client response header:" + response.headers());
@@ -229,6 +243,31 @@ public class SensorActivity extends WearableActivity {
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, Response response) {
                 //出现异常会进入此回调
+
+                //斷線也會呼叫這個
+                mWebSocket = null;
+                if(DataThread != null){
+                    DataThread.stop();
+                }
+                ReconnectThread = new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        while(true){
+                            try{
+                                if(System.currentTimeMillis() - mLastReconnectTime < RECONNECT_TIME){
+                                    continue;
+                                }
+                                ConnectWebSocket();
+                                mLastReconnectTime=System.currentTimeMillis();
+                            }
+                            catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+                ReconnectThread.start();
                 System.out.println("client onFailure");
                 System.out.println("throwable:" + t);
                 System.out.println("response:" + response);

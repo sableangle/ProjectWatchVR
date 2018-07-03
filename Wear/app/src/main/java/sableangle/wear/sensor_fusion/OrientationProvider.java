@@ -40,7 +40,10 @@ public abstract class OrientationProvider implements SensorEventListener {
      * The quaternion that holds the current rotation
      */
     protected final Quaternion currentOrientationQuaternion;
-
+    /**
+     * The quaternion that holds the current rotation
+     */
+    protected final Vector3f currentAccelerometer;
     /**
      * The sensor manager for accessing android sensors
      */
@@ -60,6 +63,8 @@ public abstract class OrientationProvider implements SensorEventListener {
 
         // Initialise with identity
         currentOrientationQuaternion = new Quaternion();
+
+        currentAccelerometer = new Vector3f();
     }
 
     /**
@@ -115,6 +120,12 @@ public abstract class OrientationProvider implements SensorEventListener {
     public void getEulerAngles(float angles[]) {
         synchronized (synchronizationToken) {
             SensorManager.getOrientation(currentOrientationRotationMatrix.matrix, angles);
+        }
+    }
+
+    public void getRowDataAccelerometer(Vector3f data){
+        synchronized (synchronizationToken) {
+            data.set(currentAccelerometer);
         }
     }
 }

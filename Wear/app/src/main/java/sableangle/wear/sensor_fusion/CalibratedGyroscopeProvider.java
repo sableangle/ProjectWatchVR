@@ -41,7 +41,7 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
      * slow user-action (threshold > 0.5). 0.1 seems to work fine for most applications.
      * 
      */
-    private static final double EPSILON = 0.1f;
+    private static final double EPSILON = 0.2f;
 
     /**
      * Value giving the total velocity of the gyroscope (will be high, when the device is moving fast and low when
@@ -55,6 +55,7 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
      * Temporary variable to save allocations.
      */
     private Quaternion correctedQuaternion = new Quaternion();
+    private Vector3f acceData = new Vector3f();
 
     /**
      * Initialises a new CalibratedGyroscopeProvider
@@ -66,11 +67,18 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
 
         //Add the gyroscope
         sensorList.add(sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
+        sensorList.add(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
     }
+
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            acceData.setX(event.values [0]);
+            acceData.setX(event.values [1]);
+            acceData.setX(event.values [2]);
+        }
         // we received a sensor event. it is a good practice to check
         // that we received the proper event
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
@@ -103,7 +111,7 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
                 double cosThetaOverTwo = Math.cos(thetaOverTwo);
                 deltaQuaternion.setX((float) (sinThetaOverTwo * axisX));
                 deltaQuaternion.setY((float) (sinThetaOverTwo * axisY));
-                deltaQuaternion.setZ(-(float) (sinThetaOverTwo * axisZ));
+                deltaQuaternion.setZ((float) (sinThetaOverTwo * axisZ));
                 deltaQuaternion.setW(-(float) cosThetaOverTwo);
 
                 // Matrix rendering in CubeRenderer does not seem to have this problem.
