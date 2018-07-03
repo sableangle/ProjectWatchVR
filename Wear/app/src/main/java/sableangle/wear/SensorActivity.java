@@ -212,43 +212,31 @@ public class SensorActivity extends WearableActivity {
             public void onOpen(WebSocket webSocket, Response response) {
                 mWebSocket = webSocket;
                 if(ReconnectThread != null){
+                    System.out.println("自動重連成功");
                     ReconnectThread.stop();
                     ReconnectThread = null;
                 }
-                System.out.println("client onOpen");
-                System.out.println("client request header:" + response.request().headers());
-                System.out.println("client response header:" + response.headers());
-                System.out.println("client response:" + response);
 
             }
 
             @Override
             public void onMessage(WebSocket webSocket, String text) {
-                System.out.println("client onMessage");
-                System.out.println("message:" + text);
+
             }
 
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason) {
-                System.out.println("client onClosing");
-                System.out.println("code:" + code + " reason:" + reason);
+
             }
 
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
-                System.out.println("client onClosed");
-                System.out.println("code:" + code + " reason:" + reason);
-            }
-
-            @Override
-            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                //出现异常会进入此回调
-
                 //斷線也會呼叫這個
                 mWebSocket = null;
                 if(DataThread != null){
                     DataThread.stop();
                 }
+                System.out.println("斷線 自動重連開始");
                 ReconnectThread = new Thread(new Runnable(){
                     @Override
                     public void run() {
@@ -268,9 +256,12 @@ public class SensorActivity extends WearableActivity {
                     }
                 });
                 ReconnectThread.start();
-                System.out.println("client onFailure");
-                System.out.println("throwable:" + t);
-                System.out.println("response:" + response);
+            }
+
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+
+
             }
         });
     }
