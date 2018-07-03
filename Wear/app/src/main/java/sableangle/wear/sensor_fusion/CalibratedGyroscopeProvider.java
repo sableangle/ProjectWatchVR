@@ -103,7 +103,7 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
                 double cosThetaOverTwo = Math.cos(thetaOverTwo);
                 deltaQuaternion.setX((float) (sinThetaOverTwo * axisX));
                 deltaQuaternion.setY((float) (sinThetaOverTwo * axisY));
-                deltaQuaternion.setZ((float) (sinThetaOverTwo * axisZ));
+                deltaQuaternion.setZ(-(float) (sinThetaOverTwo * axisZ));
                 deltaQuaternion.setW(-(float) cosThetaOverTwo);
 
                 // Matrix rendering in CubeRenderer does not seem to have this problem.

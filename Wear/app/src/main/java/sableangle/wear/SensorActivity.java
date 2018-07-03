@@ -1,10 +1,12 @@
 package sableangle.wear;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -26,7 +28,9 @@ public class SensorActivity extends WearableActivity {
 
     private static final int MAX_MILLIS_BETWEEN_UPDATES = 50;
     private SensorManager mSensorManager;
+    protected PowerManager.WakeLock mWakeLock;
 
+    //Android Life Cycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +48,21 @@ public class SensorActivity extends WearableActivity {
         //Old
         //MakeSensor();
         // Enables Always-on
-        setAmbientEnabled();
+        //setAmbientEnabled();
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire();
     }
+
+    @Override
+    public void onDestroy() {
+        this.mWakeLock.release();
+        super.onDestroy();
+    }
+
+    //Android Life Cycle
+
+
 
     public void HardWareCheck (SensorManager sensorManager) {
         if(sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
