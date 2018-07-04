@@ -70,18 +70,18 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
         sensorList.add(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
     }
 
-
-
+    public float[] getAccelerometerValues( ){
+        return accelerometerValues;
+    }
+    final private float[] accelerometerValues = new float[3];
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
-            acceData.setX(event.values [0]);
-            acceData.setY(event.values [1]);
-            acceData.setZ(event.values [2]);
+            System.arraycopy(event.values, 0, accelerometerValues, 0, accelerometerValues.length);
         }
         // we received a sensor event. it is a good practice to check
         // that we received the proper event
-        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+        else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 
             // This timestamps delta rotation to be multiplied by the current rotation
             // after computing it from the gyro sample data.

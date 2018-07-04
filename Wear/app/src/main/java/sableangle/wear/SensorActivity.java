@@ -23,7 +23,7 @@ import sableangle.wear.sensor_fusion.Quaternion;
 import sableangle.wear.sensor_fusion.RotationVectorProvider;
 import sableangle.wear.sensor_fusion.Vector3f;
 
-public class SensorActivity extends WearableActivity {
+public class SensorActivity extends WearableActivity  implements ButtonListener {
 
     private TextView mTextView;
 
@@ -32,11 +32,14 @@ public class SensorActivity extends WearableActivity {
     private SensorManager mSensorManager;
     protected PowerManager.WakeLock mWakeLock;
 
+    public static final String BUTTON_PRESS = "buttonPress";
+    public static final String BUTTON_RELEASE = "buttonRelease";
+    public static final String BUTTONS_NAME[]={"Center", "Up", "Down", "Right", "Left", "None"};
     //Android Life Cycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sensor);
+        setContentView(new ButtonView(this, this, ViewType.PadButtonView, true));
 
         mTextView = (TextView) findViewById(R.id.text);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -76,7 +79,7 @@ public class SensorActivity extends WearableActivity {
     }
     Thread DataThread = null;
     private Quaternion quaternion = new Quaternion();
-    private Vector3f accelerometer = new Vector3f();
+    private float[] accelerometer =  new float[3];
     CalibratedGyroscopeProvider orientationProvider;
     void MakeSensorFusion(){
         orientationProvider = new CalibratedGyroscopeProvider(mSensorManager);
@@ -93,11 +96,11 @@ public class SensorActivity extends WearableActivity {
                             continue;
                         }
                         orientationProvider.getQuaternion(quaternion);
-                        orientationProvider.getRowDataAccelerometer(accelerometer);
+                        accelerometer = orientationProvider.getAccelerometerValues();
                         if(mWebSocket != null){
                             mWebSocket.send(
                             quaternion.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()+ "_" + quaternion.getW() + "@" +
-                                accelerometer.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()
+                                accelerometer[0] + "_" +  accelerometer[1] + "_" + accelerometer[2]
                             );
                         }
                         mLastOrientationSent=System.currentTimeMillis();
@@ -264,5 +267,16 @@ public class SensorActivity extends WearableActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onButtonPress(ButtonName PressedButton) {
+        Log.d("onButtonPress",BUTTONS_NAME[PressedButton.ordinal()]);
+    }
+
+    @Override
+    public void onButtonHold(ButtonName HoldButton) {
+        Log.d("onButtonHold",BUTTONS_NAME[HoldButton.ordinal()]);
+
     }
 }
