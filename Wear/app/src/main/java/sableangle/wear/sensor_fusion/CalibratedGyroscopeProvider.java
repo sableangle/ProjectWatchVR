@@ -41,7 +41,7 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
      * slow user-action (threshold > 0.5). 0.1 seems to work fine for most applications.
      * 
      */
-    private static final double EPSILON = 0.2f;
+    private static final double EPSILON = 0.1f;
 
     /**
      * Value giving the total velocity of the gyroscope (will be high, when the device is moving fast and low when
@@ -76,8 +76,8 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
             acceData.setX(event.values [0]);
-            acceData.setX(event.values [1]);
-            acceData.setX(event.values [2]);
+            acceData.setY(event.values [1]);
+            acceData.setZ(event.values [2]);
         }
         // we received a sensor event. it is a good practice to check
         // that we received the proper event

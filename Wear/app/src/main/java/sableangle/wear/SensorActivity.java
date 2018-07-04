@@ -232,7 +232,6 @@ public class SensorActivity extends WearableActivity {
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 //斷線也會呼叫這個
-                mWebSocket = null;
                 if(DataThread != null){
                     DataThread.stop();
                 }
@@ -256,6 +255,7 @@ public class SensorActivity extends WearableActivity {
                     }
                 });
                 ReconnectThread.start();
+                mWebSocket = null;
             }
 
             @Override
