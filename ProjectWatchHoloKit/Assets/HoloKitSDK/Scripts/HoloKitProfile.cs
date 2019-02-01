@@ -150,7 +150,7 @@ namespace HoloKit
         #region Phone Parameters
         private static readonly Phone PhoneAppleiPhoneXSMax = new Phone
         {
-            screenWidth = 0.122f,
+            screenWidth = 0.149f,
             screenHeight = 0.068f,
             screenBottom = 0.0045f,
             cameraOffset = new Vector3(0.069f, -0.063f, -0.0086f)
