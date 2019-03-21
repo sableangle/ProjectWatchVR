@@ -27,7 +27,7 @@ public class Calibration : MonoBehaviour
 
 
     #region Member Field
-    private float targetWaitTime = 1.5f;
+    private float targetWaitTime = 5f;
     private float waitTimer = 0f;
     #endregion // Member Field
 
