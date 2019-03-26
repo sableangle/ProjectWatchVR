@@ -30,7 +30,7 @@ public class ButtonView extends View
     protected int mWidth=0, mHeight=0;
     protected float MidScreenWidth =0, MidScreenHeight =0;
 
-    protected float MidButtonWidth = 25, MidButtonHeight = 25;
+    protected float MidButtonWidth = 100, MidButtonHeight = 100;
     protected Path mUpButtonPath, mDownButtonPath, mRightButtonPath, mLeftButtonPath, mArrowsPath;
 
 
@@ -54,18 +54,7 @@ public class ButtonView extends View
         this.invalidate();
     }
 
-    protected boolean collidesCenterButton(float ex, float ey)
-    {
-        if(!mCenterEnabled) return false;
 
-        if( ex >= MidScreenWidth - MidButtonWidth
-                && ex <= MidScreenWidth + MidButtonWidth
-                && ey >= MidScreenHeight - MidButtonHeight
-                && ey <= MidScreenHeight + MidButtonHeight)
-            return true;
-
-        return false;
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -77,6 +66,9 @@ public class ButtonView extends View
 
         MidScreenWidth =mWidth/2.0f;
         MidScreenHeight =mHeight/2.0f;
+
+        MidButtonWidth =mWidth/3.0f;
+        MidButtonHeight =mHeight/3.0f;
 
         initializePaths();
     }
@@ -109,7 +101,7 @@ public class ButtonView extends View
 
         _linesPaint.setColor(_linesColor);
         _linesPaint.setStyle(Paint.Style.STROKE);
-        _linesPaint.setStrokeWidth(10);
+        _linesPaint.setStrokeWidth(5);
 
         canvas.drawColor(_backgroundColor);
 
@@ -152,8 +144,8 @@ public class ButtonView extends View
         {
             _mainPaint.setStyle(Paint.Style.FILL);
             _mainPaint.setColor(mButtonPressed == ButtonName.Center ? _centralButtonPressedColor:_centralButtonUnpressedColor);
-            canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 20, 20, _mainPaint);
-            canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 20, 20, _linesPaint);
+            canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _mainPaint);
+            canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _linesPaint);
         }
     }
 
@@ -245,7 +237,8 @@ public class ButtonView extends View
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE)
+        //|| event.getAction() == MotionEvent.ACTION_MOVE
+        if (event.getAction() == MotionEvent.ACTION_DOWN )
         {
             setPressedButton(CalculatePressedButton(event.getX(), event.getY()));
             return true;
@@ -273,6 +266,8 @@ public class ButtonView extends View
             this.invalidate();
         }
     }
+
+
 
     private ButtonName CalculatePressedButton(float newX, float newY)
     {
@@ -307,6 +302,19 @@ public class ButtonView extends View
         }
 
         return ButtonName.None;
+    }
+
+    protected boolean collidesCenterButton(float ex, float ey)
+    {
+        if(!mCenterEnabled) return false;
+
+        if( ex >= MidScreenWidth - MidButtonWidth
+                && ex <= MidScreenWidth + MidButtonWidth
+                && ey >= MidScreenHeight - MidButtonHeight
+                && ey <= MidScreenHeight + MidButtonHeight)
+            return true;
+
+        return false;
     }
 
 }

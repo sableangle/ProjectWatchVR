@@ -41,7 +41,7 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
         super.onCreate(savedInstanceState);
         setContentView(new ButtonView(this, this, ViewType.PadButtonView, true));
 
-        mTextView = (TextView) findViewById(R.id.text);
+        //mTextView = (TextView) findViewById(R.id.text);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         HardWareCheck(mSensorManager);
@@ -55,7 +55,7 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
         // Enables Always-on
         //setAmbientEnabled();
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "watch:wakelock");
         this.mWakeLock.acquire();
     }
 
