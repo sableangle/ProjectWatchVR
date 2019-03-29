@@ -29,6 +29,10 @@ public class ButtonView extends View
     protected boolean mCenterEnabled=true;
     protected int mWidth=0, mHeight=0;
     protected float MidScreenWidth =0, MidScreenHeight =0;
+    protected float centerButtonRadius = 0;
+
+    protected int strokeWidth = 10;
+    protected int arrowStrokeWidth = 5;
 
     protected float MidButtonWidth = 100, MidButtonHeight = 100;
     protected Path mUpButtonPath, mDownButtonPath, mRightButtonPath, mLeftButtonPath, mArrowsPath;
@@ -39,13 +43,13 @@ public class ButtonView extends View
     public ButtonName mButtonPressed = ButtonName.None;
     public ButtonName getPressedButton(){return mButtonPressed;}
 
-    public ButtonView(Context context, ButtonListener _listener, ViewType _type, boolean _button) {
-        super(context); mButtonListener =_listener; mViewType =_type; mCenterEnabled =_button;
+    public ButtonView(Context context, ButtonListener _listener, ViewType _type, boolean _centerButton) {
+        super(context); mButtonListener =_listener; mViewType =_type; mCenterEnabled =_centerButton;
     }
 
-    public ButtonView(Context context, ButtonListener _listener, ViewType _tipo)
+    public ButtonView(Context context, ButtonListener _listener, ViewType _type)
     {
-        super(context); mButtonListener=_listener; mViewType =_tipo;
+        super(context); mButtonListener=_listener; mViewType =_type;
     }
 
     public void setCenterButtonEnabled(boolean x)
@@ -70,6 +74,8 @@ public class ButtonView extends View
         MidButtonWidth =mWidth/3.0f;
         MidButtonHeight =mHeight/3.0f;
 
+        centerButtonRadius = MidScreenHeight*0.6f;
+
         initializePaths();
     }
 
@@ -90,6 +96,7 @@ public class ButtonView extends View
     {
         Paint _mainPaint = CreatePaintWithAntialias();
         Paint _linesPaint = CreatePaintWithAntialias();
+        Paint _arrowLinesPaint = CreatePaintWithAntialias();
 
         int _backgroundColor= Color.LTGRAY;
         int _linesColor=Color.GRAY;
@@ -101,7 +108,11 @@ public class ButtonView extends View
 
         _linesPaint.setColor(_linesColor);
         _linesPaint.setStyle(Paint.Style.STROKE);
-        _linesPaint.setStrokeWidth(5);
+        _linesPaint.setStrokeWidth(strokeWidth);
+
+        _arrowLinesPaint.setColor(_linesColor);
+        _arrowLinesPaint.setStyle(Paint.Style.STROKE);
+        _arrowLinesPaint.setStrokeWidth(arrowStrokeWidth);
 
         canvas.drawColor(_backgroundColor);
 
@@ -126,7 +137,7 @@ public class ButtonView extends View
 
         _mainPaint.setColor(_arrowFilledColor);
         canvas.drawPath(mArrowsPath, _mainPaint);
-        canvas.drawPath(mArrowsPath, _linesPaint);
+        canvas.drawPath(mArrowsPath, _arrowLinesPaint);
 
         if (mViewType == ViewType.HorizontalButtonView)
         {
@@ -144,8 +155,10 @@ public class ButtonView extends View
         {
             _mainPaint.setStyle(Paint.Style.FILL);
             _mainPaint.setColor(mButtonPressed == ButtonName.Center ? _centralButtonPressedColor:_centralButtonUnpressedColor);
-            canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _mainPaint);
-            canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _linesPaint);
+            canvas.drawCircle(MidScreenWidth,MidScreenHeight,centerButtonRadius,_mainPaint);
+            canvas.drawCircle(MidScreenWidth,MidScreenHeight,centerButtonRadius,_linesPaint);
+            //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _mainPaint);
+            //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _linesPaint);
         }
     }
 
@@ -196,26 +209,30 @@ public class ButtonView extends View
             mRightButtonPath =getPathFromPoints(new float[]{mWidth, 0, mWidth, mHeight, MidScreenWidth, MidScreenHeight});
             mLeftButtonPath =getPathFromPoints(new float[]{0, 0, 0, mHeight, MidScreenWidth, MidScreenHeight});
 
-            mArrowsPath.moveTo(MidScreenWidth, mHeight /10);
-            mArrowsPath.lineTo(4* mWidth /10, mHeight /5);
-            mArrowsPath.lineTo(4* mWidth /10, mHeight /5);
-            mArrowsPath.lineTo(6* mWidth /10, mHeight /5);
-            mArrowsPath.lineTo(MidScreenWidth, mHeight /10);
 
-            mArrowsPath.moveTo(MidScreenWidth, 9* mHeight /10);
-            mArrowsPath.lineTo(4* mWidth /10, 4* mHeight /5);
-            mArrowsPath.lineTo(6* mWidth /10, 4* mHeight /5);
-            mArrowsPath.lineTo(MidScreenWidth, 9* mHeight /10);
+            //上箭頭
+            mArrowsPath.moveTo(MidScreenWidth, mHeight /12);
+            mArrowsPath.lineTo(5* mWidth /12, mHeight /7);
+            mArrowsPath.lineTo(7* mWidth /12, mHeight /7);
+            mArrowsPath.lineTo(MidScreenWidth, mHeight /12);
 
-            mArrowsPath.moveTo(mWidth /10, MidScreenHeight);
-            mArrowsPath.lineTo(mWidth /5, 4* mHeight /10);
-            mArrowsPath.lineTo(mWidth /5, 6* mHeight /10);
-            mArrowsPath.lineTo(mWidth /10, MidScreenHeight);
+            //下箭頭
+            mArrowsPath.moveTo(MidScreenWidth, 11* mHeight /12);
+            mArrowsPath.lineTo(5* mWidth /12, 6* mHeight /7);
+            mArrowsPath.lineTo(7* mWidth /12, 6* mHeight /7);
+            mArrowsPath.lineTo(MidScreenWidth, 11* mHeight /12);
 
-            mArrowsPath.moveTo(9* mWidth /10, MidScreenHeight);
-            mArrowsPath.lineTo(4* mWidth /5, 4* mHeight /10);
-            mArrowsPath.lineTo(4* mWidth /5, 6* mHeight /10);
-            mArrowsPath.lineTo(9* mWidth /10, MidScreenHeight);
+            //左箭頭
+            mArrowsPath.moveTo(mWidth /12, MidScreenHeight);
+            mArrowsPath.lineTo(mWidth /7, 5* mHeight /12);
+            mArrowsPath.lineTo(mWidth /7, 7* mHeight /12);
+            mArrowsPath.lineTo(mWidth /12, MidScreenHeight);
+
+            //右箭頭
+            mArrowsPath.moveTo(11* mWidth /12, MidScreenHeight);
+            mArrowsPath.lineTo(6* mWidth /7, 5* mHeight /12);
+            mArrowsPath.lineTo(6* mWidth /7, 7* mHeight /12);
+            mArrowsPath.lineTo(11* mWidth /12, MidScreenHeight);
         }
     }
 
@@ -267,8 +284,6 @@ public class ButtonView extends View
         }
     }
 
-
-
     private ButtonName CalculatePressedButton(float newX, float newY)
     {
         if(collidesCenterButton(newX,newY))
@@ -308,13 +323,25 @@ public class ButtonView extends View
     {
         if(!mCenterEnabled) return false;
 
-        if( ex >= MidScreenWidth - MidButtonWidth
-                && ex <= MidScreenWidth + MidButtonWidth
-                && ey >= MidScreenHeight - MidButtonHeight
-                && ey <= MidScreenHeight + MidButtonHeight)
-            return true;
+//        if( ex >= MidScreenWidth - MidButtonWidth &&
+//            ex <= MidScreenWidth + MidButtonWidth &&
+//            ey >= MidScreenHeight - MidButtonHeight &&
+//            ey <= MidScreenHeight + MidButtonHeight)
+//        {
+//            return true;
+//        }
+
+        if( getDistance(ex,ey,MidScreenWidth,MidScreenHeight) < centerButtonRadius){
+            return  true;
+        }
 
         return false;
     }
 
+
+    double getDistance(double pointA_x,double pointA_y,double pointB_x,double pointB_y){
+        double vectorX = pointA_x - pointB_x;
+        double vectorY= pointA_y - pointB_y;
+        return Math.sqrt((vectorX *vectorX) + (vectorY*vectorY));
+    }
 }
