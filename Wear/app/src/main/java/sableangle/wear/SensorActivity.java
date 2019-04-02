@@ -270,13 +270,13 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     }
 
     @Override
-    public void onButtonPress(ButtonName PressedButton) {
-        Log.d("onButtonPress",BUTTONS_NAME[PressedButton.ordinal()]);
+    public void onButtonDown(ButtonName PressedButton) {
+        Log.d("onButtonDown",BUTTONS_NAME[PressedButton.ordinal()]);
     }
 
     @Override
-    public void onButtonHold(ButtonName HoldButton) {
-        Log.d("onButtonHold",BUTTONS_NAME[HoldButton.ordinal()]);
+    public void onButtonUp(ButtonName HoldButton) {
+        Log.d("onButtonUp",BUTTONS_NAME[HoldButton.ordinal()]);
 
     }
 }

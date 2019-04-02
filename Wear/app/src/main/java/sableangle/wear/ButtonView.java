@@ -11,6 +11,7 @@ import android.view.View;
 
 /**
  * Created by Usuario on 05/08/2016.
+ * Modified by Miki on 04/07/2018.
  */
 
 enum ButtonName {Center, Up, Down, Right, Left, None}
@@ -19,8 +20,8 @@ enum ViewType {HorizontalButtonView, PadButtonView, VerticalButtonView}
 
 interface ButtonListener
 {
-    public void onButtonPress(ButtonName PressedButton);
-    public void onButtonHold(ButtonName HoldButton);
+    public void onButtonDown(ButtonName PressedButton);
+    public void onButtonUp(ButtonName HoldButton);
 }
 
 public class ButtonView extends View
@@ -30,6 +31,7 @@ public class ButtonView extends View
     protected int mWidth=0, mHeight=0;
     protected float MidScreenWidth =0, MidScreenHeight =0;
     protected float centerButtonRadius = 0;
+    protected final float movingGate = 5;
 
     protected int strokeWidth = 10;
     protected int arrowStrokeWidth = 5;
@@ -251,38 +253,65 @@ public class ButtonView extends View
         return newPath;
     }
 
+    float lastPosX = -1;
+    float lastPosY = -1;
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
+        float x = event.getX();
+        float y = event.getY();
+        mButtonPressed = CalculatePressedButton(x, y);
         //|| event.getAction() == MotionEvent.ACTION_MOVE
         if (event.getAction() == MotionEvent.ACTION_DOWN )
         {
-            setPressedButton(CalculatePressedButton(event.getX(), event.getY()));
+            mButtonListener.onButtonDown(mButtonPressed);
+            this.invalidate();
+            //setPressedButton();
+            lastPosX = x;
+            lastPosY = y;
             return true;
-        } else if (event.getAction() == MotionEvent.ACTION_UP)
+        }
+
+        if(event.getAction() == MotionEvent.ACTION_MOVE){
+            float deltaX =  Math.abs(lastPosX - x);
+            float deltaY = Math.abs( lastPosY - y);
+            boolean isMoving = deltaX > movingGate || deltaY > movingGate;
+            return isMoving;
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_UP)
         {
-            setPressedButton(ButtonName.None);
+            //setPressedButton(ButtonName.None);
+            // Send Event
+            mButtonListener.onButtonUp(mButtonPressed);
+
+            //Reset
+            mButtonPressed = ButtonName.None;
+            this.invalidate();
+            lastPosX = -1;
+            lastPosY = -1;
+
         }
 
         return true;
         // return detectorGestos.onTouchEvent(event);
     }
 
-    private void setPressedButton(ButtonName _button)
-    {
-        if(_button!= mButtonPressed)
-        {
-            if(mButtonPressed != ButtonName.None)
-                mButtonListener.onButtonHold(mButtonPressed);
-
-            mButtonPressed = _button;
-
-            if(mButtonPressed != ButtonName.None)
-                mButtonListener.onButtonPress(mButtonPressed);
-
-            this.invalidate();
-        }
-    }
+//    private void setPressedButton(ButtonName _button)
+//    {
+//        if(_button!= mButtonPressed)
+//        {
+//            if(mButtonPressed != ButtonName.None)
+//                mButtonListener.onButtonUp(mButtonPressed);
+//
+//            mButtonPressed = _button;
+//
+//            if(mButtonPressed != ButtonName.None)
+//                mButtonListener.onButtonDown(mButtonPressed);
+//
+//            this.invalidate();
+//        }
+//    }
 
     private ButtonName CalculatePressedButton(float newX, float newY)
     {
