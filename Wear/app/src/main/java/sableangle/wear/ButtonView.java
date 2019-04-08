@@ -26,6 +26,7 @@ interface ButtonListener
 
 public class ButtonView extends View
 {
+    protected boolean isMoving = false;
     protected ButtonListener mButtonListener;
     protected boolean mCenterEnabled=true;
     protected int mWidth=0, mHeight=0;
@@ -38,7 +39,7 @@ public class ButtonView extends View
 
     protected float MidButtonWidth = 100, MidButtonHeight = 100;
     protected Path mUpButtonPath, mDownButtonPath, mRightButtonPath, mLeftButtonPath, mArrowsPath;
-
+    protected Path touchPath;
 
     protected ViewType mViewType;
 
@@ -96,6 +97,9 @@ public class ButtonView extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
+
+        Paint _touchPaint = CreatePaintWithAntialias();
+
         Paint _mainPaint = CreatePaintWithAntialias();
         Paint _linesPaint = CreatePaintWithAntialias();
         Paint _arrowLinesPaint = CreatePaintWithAntialias();
@@ -115,6 +119,10 @@ public class ButtonView extends View
         _arrowLinesPaint.setColor(_linesColor);
         _arrowLinesPaint.setStyle(Paint.Style.STROKE);
         _arrowLinesPaint.setStrokeWidth(arrowStrokeWidth);
+
+        _touchPaint.setColor(Color.RED);
+        _touchPaint.setStyle(Paint.Style.STROKE);
+        _touchPaint.setStrokeWidth(3);
 
         canvas.drawColor(_backgroundColor);
 
@@ -162,11 +170,17 @@ public class ButtonView extends View
             //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _mainPaint);
             //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _linesPaint);
         }
+
+
+        if(isMoving){
+            canvas.drawPath(touchPath, _touchPaint);
+        }
     }
 
     private void initializePaths()
     {
-        mArrowsPath =new Path();
+        touchPath = new Path();
+        mArrowsPath = new Path();
         if (mViewType == ViewType.HorizontalButtonView)
         {
             MidButtonWidth = mWidth *0.4f;
@@ -261,37 +275,54 @@ public class ButtonView extends View
         float x = event.getX();
         float y = event.getY();
         mButtonPressed = CalculatePressedButton(x, y);
-        //|| event.getAction() == MotionEvent.ACTION_MOVE
-        if (event.getAction() == MotionEvent.ACTION_DOWN )
-        {
-            mButtonListener.onButtonDown(mButtonPressed);
-            this.invalidate();
-            //setPressedButton();
-            lastPosX = x;
-            lastPosY = y;
-            return true;
+//        if (event.getAction() == MotionEvent.ACTION_DOWN )
+//        {
+//
+//            return true;
+//        }
+
+//        if(event.getAction() == MotionEvent.ACTION_MOVE){
+//
+//        }
+//        if (event.getAction() == MotionEvent.ACTION_UP)
+//        {
+//            //setPressedButton(ButtonName.None);
+//            // Send Event
+//
+//
+//        }
+
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mButtonListener.onButtonDown(mButtonPressed);
+                lastPosX = x;
+                lastPosY = y;
+                touchPath.moveTo(x,y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float deltaX =  Math.abs(lastPosX - x);
+                float deltaY = Math.abs( lastPosY - y);
+                isMoving = deltaX > movingGate || deltaY > movingGate;
+                touchPath.lineTo(x, y);
+                break;
+            case MotionEvent.ACTION_UP:
+                if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed);
+                //Reset
+                mButtonPressed = ButtonName.None;
+                lastPosX = -1;
+                lastPosY = -1;
+
+                //Draw Line
+                touchPath.lineTo(x, y);
+                touchPath = new Path();
+                isMoving = false;
+                break;
+            default:
+                return false;
         }
 
-        if(event.getAction() == MotionEvent.ACTION_MOVE){
-            float deltaX =  Math.abs(lastPosX - x);
-            float deltaY = Math.abs( lastPosY - y);
-            boolean isMoving = deltaX > movingGate || deltaY > movingGate;
-            return isMoving;
-        }
-
-        if (event.getAction() == MotionEvent.ACTION_UP)
-        {
-            //setPressedButton(ButtonName.None);
-            // Send Event
-            mButtonListener.onButtonUp(mButtonPressed);
-
-            //Reset
-            mButtonPressed = ButtonName.None;
-            this.invalidate();
-            lastPosX = -1;
-            lastPosY = -1;
-
-        }
+        invalidate();
 
         return true;
         // return detectorGestos.onTouchEvent(event);
