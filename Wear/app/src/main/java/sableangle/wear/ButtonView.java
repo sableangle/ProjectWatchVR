@@ -20,8 +20,9 @@ enum ViewType {HorizontalButtonView, PadButtonView, VerticalButtonView}
 
 interface ButtonListener
 {
-    public void onButtonDown(ButtonName PressedButton);
-    public void onButtonUp(ButtonName HoldButton);
+    public void onButtonDown(ButtonName PressedButton,float x,float y);
+    public void onButtonUp(ButtonName HoldButton,float x,float y);
+    public void onButtonMove(float x,float y);
 }
 
 public class ButtonView extends View
@@ -131,17 +132,18 @@ public class ButtonView extends View
 
         if(mViewType != ViewType.HorizontalButtonView)
         {
-            if(mButtonPressed == ButtonName.Right)
+            if(mButtonPressed == ButtonName.Right && !isMoving)
                 canvas.drawPath(mRightButtonPath, _mainPaint);
-            if(mButtonPressed == ButtonName.Left)
+            if(mButtonPressed == ButtonName.Left && !isMoving)
                 canvas.drawPath(mLeftButtonPath, _mainPaint);
         }
 
         if(mViewType != ViewType.VerticalButtonView)
         {
-            if(mButtonPressed == ButtonName.Up)
+
+            if(mButtonPressed == ButtonName.Up && !isMoving)
                 canvas.drawPath(mUpButtonPath, _mainPaint);
-            if(mButtonPressed == ButtonName.Down)
+            if(mButtonPressed == ButtonName.Down && !isMoving)
                 canvas.drawPath(mDownButtonPath, _mainPaint);
         }
 
@@ -164,7 +166,7 @@ public class ButtonView extends View
         if(mCenterEnabled)
         {
             _mainPaint.setStyle(Paint.Style.FILL);
-            _mainPaint.setColor(mButtonPressed == ButtonName.Center ? _centralButtonPressedColor:_centralButtonUnpressedColor);
+            _mainPaint.setColor(mButtonPressed == ButtonName.Center && !isMoving ? _centralButtonPressedColor:_centralButtonUnpressedColor);
             canvas.drawCircle(MidScreenWidth,MidScreenHeight,centerButtonRadius,_mainPaint);
             canvas.drawCircle(MidScreenWidth,MidScreenHeight,centerButtonRadius,_linesPaint);
             //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _mainPaint);
@@ -295,7 +297,7 @@ public class ButtonView extends View
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mButtonListener.onButtonDown(mButtonPressed);
+                mButtonListener.onButtonDown(mButtonPressed,x,y);
                 lastPosX = x;
                 lastPosY = y;
                 touchPath.moveTo(x,y);
@@ -305,9 +307,10 @@ public class ButtonView extends View
                 float deltaY = Math.abs( lastPosY - y);
                 isMoving = deltaX > movingGate || deltaY > movingGate;
                 touchPath.lineTo(x, y);
+                mButtonListener.onButtonMove(x,y);
                 break;
             case MotionEvent.ACTION_UP:
-                if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed);
+                if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed,x,y);
                 //Reset
                 mButtonPressed = ButtonName.None;
                 lastPosX = -1;

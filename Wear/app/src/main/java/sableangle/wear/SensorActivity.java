@@ -65,9 +65,6 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
         super.onDestroy();
     }
 
-    //Android Life Cycle
-
-
 
     public void HardWareCheck (SensorManager sensorManager) {
         if(sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
@@ -114,88 +111,8 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
         DataThread.start();
     }
 
-
-
-
-    private SensorEventListener mOrientationListener;
-    float azimuth;
-    float pitch;
-    float roll;
     long mLastOrientationSent=0;
 
-    final int worldAxisForDeviceAxisX = SensorManager.AXIS_MINUS_Z;
-    final int worldAxisForDeviceAxisY = SensorManager.AXIS_X;
-    void MakeSensor(){
-
-
-        mOrientationListener=new SensorEventListener()
-        {
-            float [] mGravityValues;
-            float [] mGeoMagneticValues;
-
-            float [] R=new float[9];
-            float [] orientation=new float[3];
-            float [] adjustedRotationMatrix = new float[9];
-
-            @Override
-            public void onSensorChanged(SensorEvent event)
-            {
-                switch(event.sensor.getType())
-                {
-                    case Sensor.TYPE_ACCELEROMETER:
-                        mGravityValues =event.values;
-                        break;
-
-                    case Sensor.TYPE_MAGNETIC_FIELD:
-                        mGeoMagneticValues =event.values;
-                        break;
-                }
-
-                if(System.currentTimeMillis()-mLastOrientationSent < MAX_MILLIS_BETWEEN_UPDATES){
-                    return;
-                }
-
-                //Log.d("Send","Send");
-                if(mGeoMagneticValues !=null && mGravityValues !=null)
-                {
-                    if(SensorManager.getRotationMatrix(R, null, mGravityValues, mGeoMagneticValues))
-                    {
-
-                        SensorManager.remapCoordinateSystem(R, worldAxisForDeviceAxisX, worldAxisForDeviceAxisY, adjustedRotationMatrix);
-                        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
-
-                        azimuth = orientation[0] * 57.2957795f; //looks like we don't need this one
-                        pitch =orientation[1] * 57.2957795f;
-                        roll = orientation[2] * 57.2957795f;
-                        if(mWebSocket != null){
-                            mWebSocket.send(azimuth + "_" +  pitch+ "_" + roll);
-                        }
-                        mLastOrientationSent=System.currentTimeMillis();
-                    }
-                }
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {}
-        };
-
-        ActiveSensors();
-    }
-    boolean mSensorsActivated = false;
-    public void ActiveSensors()
-    {
-        if(!mSensorsActivated)
-        {
-            List<Sensor> sensorsAcelerometer = mSensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-            List<Sensor> sensorsMagnetic = mSensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
-            if (sensorsAcelerometer.size() > 0 && sensorsMagnetic.size()>0)
-            {
-                mSensorManager.registerListener(mOrientationListener, sensorsAcelerometer.get(0), SensorManager.SENSOR_DELAY_GAME);
-                mSensorManager.registerListener(mOrientationListener, sensorsMagnetic.get(0), SensorManager.SENSOR_DELAY_GAME);
-                mSensorsActivated = true;
-            }
-        }
-    }
     private String WebSocketTAG = "";
     private String wsUrl = "ws://192.168.0.131:24681/Rotation";
     private WebSocket mWebSocket;
@@ -270,13 +187,100 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     }
 
     @Override
-    public void onButtonDown(ButtonName PressedButton) {
+    public void onButtonDown(ButtonName PressedButton,float x, float y) {
         Log.d("onButtonDown",BUTTONS_NAME[PressedButton.ordinal()]);
     }
 
     @Override
-    public void onButtonUp(ButtonName HoldButton) {
+    public void onButtonUp(ButtonName HoldButton,float x, float y) {
         Log.d("onButtonUp",BUTTONS_NAME[HoldButton.ordinal()]);
 
     }
+
+    @Override
+    public void onButtonMove(float x, float y) {
+
+    }
+
+
+
+    // Old
+//    private SensorEventListener mOrientationListener;
+//    float azimuth;
+//    float pitch;
+//    float roll;
+//    boolean mSensorsActivated = false;
+//    final int worldAxisForDeviceAxisX = SensorManager.AXIS_MINUS_Z;
+//    final int worldAxisForDeviceAxisY = SensorManager.AXIS_X;
+//    void MakeSensor(){
+//
+//
+//        mOrientationListener=new SensorEventListener()
+//        {
+//            float [] mGravityValues;
+//            float [] mGeoMagneticValues;
+//
+//            float [] R=new float[9];
+//            float [] orientation=new float[3];
+//            float [] adjustedRotationMatrix = new float[9];
+//
+//            @Override
+//            public void onSensorChanged(SensorEvent event)
+//            {
+//                switch(event.sensor.getType())
+//                {
+//                    case Sensor.TYPE_ACCELEROMETER:
+//                        mGravityValues =event.values;
+//                        break;
+//
+//                    case Sensor.TYPE_MAGNETIC_FIELD:
+//                        mGeoMagneticValues =event.values;
+//                        break;
+//                }
+//
+//                if(System.currentTimeMillis()-mLastOrientationSent < MAX_MILLIS_BETWEEN_UPDATES){
+//                    return;
+//                }
+//
+//                //Log.d("Send","Send");
+//                if(mGeoMagneticValues !=null && mGravityValues !=null)
+//                {
+//                    if(SensorManager.getRotationMatrix(R, null, mGravityValues, mGeoMagneticValues))
+//                    {
+//
+//                        SensorManager.remapCoordinateSystem(R, worldAxisForDeviceAxisX, worldAxisForDeviceAxisY, adjustedRotationMatrix);
+//                        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
+//
+//                        azimuth = orientation[0] * 57.2957795f; //looks like we don't need this one
+//                        pitch =orientation[1] * 57.2957795f;
+//                        roll = orientation[2] * 57.2957795f;
+//                        if(mWebSocket != null){
+//                            mWebSocket.send(azimuth + "_" +  pitch+ "_" + roll);
+//                        }
+//                        mLastOrientationSent=System.currentTimeMillis();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onAccuracyChanged(Sensor sensor, int i) {}
+//        };
+//
+//        ActiveSensors();
+//    }
+
+//    public void ActiveSensors()
+//    {
+//        if(!mSensorsActivated)
+//        {
+//            List<Sensor> sensorsAcelerometer = mSensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+//            List<Sensor> sensorsMagnetic = mSensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
+//            if (sensorsAcelerometer.size() > 0 && sensorsMagnetic.size()>0)
+//            {
+//                mSensorManager.registerListener(mOrientationListener, sensorsAcelerometer.get(0), SensorManager.SENSOR_DELAY_GAME);
+//                mSensorManager.registerListener(mOrientationListener, sensorsMagnetic.get(0), SensorManager.SENSOR_DELAY_GAME);
+//                mSensorsActivated = true;
+//            }
+//        }
+//    }
 }
