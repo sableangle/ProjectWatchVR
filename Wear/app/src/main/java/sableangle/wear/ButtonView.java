@@ -23,6 +23,8 @@ interface ButtonListener
     public void onButtonDown(ButtonName PressedButton,float x,float y);
     public void onButtonUp(ButtonName HoldButton,float x,float y);
     public void onButtonMove(float x,float y);
+    public void onButtonMoveStart(float x,float y);
+    public void onButtonMoveEnd(float x,float y);
 }
 
 public class ButtonView extends View
@@ -305,12 +307,15 @@ public class ButtonView extends View
             case MotionEvent.ACTION_MOVE:
                 float deltaX =  Math.abs(lastPosX - x);
                 float deltaY = Math.abs( lastPosY - y);
+
+                if(isMoving == false)mButtonListener.onButtonMoveStart(x,y);
                 isMoving = deltaX > movingGate || deltaY > movingGate;
                 touchPath.lineTo(x, y);
                 mButtonListener.onButtonMove(x,y);
                 break;
             case MotionEvent.ACTION_UP:
                 if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed,x,y);
+                else mButtonListener.onButtonMoveEnd(x,y);
                 //Reset
                 mButtonPressed = ButtonName.None;
                 lastPosX = -1;

@@ -8,9 +8,9 @@ public class ConnectModels : MonoBehaviour {
 	public static Quaternion rotation;
 	public static Vector3 accelerometer;
 	public static Vector3 rotationEular;
-	public class WatchRotation : WebSocketBehavior {
+	public class WatchSensor : WebSocketBehavior {
 		protected override void OnMessage (MessageEventArgs e) {
-			Debug.Log("OnMessage"+e.Data);
+			//Debug.Log("OnMessage"+e.Data);
 			var msg = e.Data.Split('@');
 			// 四元數
 			float qua_w,qua_x,qua_y,qua_z;
@@ -35,6 +35,17 @@ public class ConnectModels : MonoBehaviour {
 			accelerometer = new Vector3(acc_x,acc_y,acc_z);
 
 			//rotationEular = new Vector3(x,y,z);
+		}
+	}
+
+	public class WatchInput : WebSocketBehavior {
+		protected override void OnMessage (MessageEventArgs e) {
+			//Debug.Log("OnMessage"+e.Data);
+			var msg = e.Data.Split(',');
+			float x,y;
+			float.TryParse(msg[1],out x);
+			float.TryParse(msg[2],out y);
+			Debug.LogFormat("{0} , x : {1} , y : {2}",msg[0],x,y);
 		}
 	}
 }

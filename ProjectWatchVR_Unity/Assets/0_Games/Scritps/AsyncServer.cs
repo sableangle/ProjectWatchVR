@@ -18,9 +18,9 @@ public class AsyncServer : MonoBehaviour {
         server = new Socket(AddressFamily.InterNetwork,
                   SocketType.Stream, ProtocolType.Tcp);
 
-    	IPAddress ipAd = IPAddress.Parse("192.168.0.131");
-        //IPEndPoint iep = new IPEndPoint(IPAddress.Any, 1234);
-        IPEndPoint iep = new IPEndPoint(ipAd, 1234);
+    	IPAddress ipAd = IPAddress.Parse("192.168.0.145");
+        IPEndPoint iep = new IPEndPoint(IPAddress.Any, 1234);
+        //IPEndPoint iep = new IPEndPoint(ipAd, 1234);
         server.Bind(iep);
         server.Listen(5);
 		Debug.Log("Start Socket");

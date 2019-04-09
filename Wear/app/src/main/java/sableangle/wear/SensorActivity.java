@@ -28,12 +28,9 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     private TextView mTextView;
 
 
-    private static final int MAX_MILLIS_BETWEEN_UPDATES = 50;
     private SensorManager mSensorManager;
     protected PowerManager.WakeLock mWakeLock;
 
-    public static final String BUTTON_PRESS = "buttonPress";
-    public static final String BUTTON_RELEASE = "buttonRelease";
     public static final String BUTTONS_NAME[]={"Center", "Up", "Down", "Right", "Left", "None"};
     //Android Life Cycle
     @Override
@@ -47,13 +44,8 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
         HardWareCheck(mSensorManager);
 
         ConnectWebSocket();
+        StartTrackingSensor();
 
-        MakeSensorFusion();
-
-        //Old
-        //MakeSensor();
-        // Enables Always-on
-        //setAmbientEnabled();
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "watch:wakelock");
         this.mWakeLock.acquire();
@@ -62,9 +54,10 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onDestroy() {
         this.mWakeLock.release();
+        DataThread.destroy();
+        orientationProvider.stop();
         super.onDestroy();
     }
-
 
     public void HardWareCheck (SensorManager sensorManager) {
         if(sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
@@ -74,29 +67,35 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
             Log.e("No Support","No Support");
         }
     }
-    Thread DataThread = null;
+
     private Quaternion quaternion = new Quaternion();
     private float[] accelerometer =  new float[3];
     CalibratedGyroscopeProvider orientationProvider;
-    void MakeSensorFusion(){
+    void StartTrackingSensor(){
         orientationProvider = new CalibratedGyroscopeProvider(mSensorManager);
-
         orientationProvider.start();
-        //quaternion.getX(), quaternion.getY(), quaternion.getZ()
+    }
+
+    private Thread DataThread = null;
+    private static final int MAX_MILLIS_BETWEEN_UPDATES = 50;
+    void BuildDataThread(){
+        if(DataThread != null){
+            DataThread.destroy();
+        }
         DataThread = new Thread(new Runnable(){
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 while(true){
                     try{
+                        //小於間隔時間跳過
                         if(System.currentTimeMillis() - mLastOrientationSent < MAX_MILLIS_BETWEEN_UPDATES){
                             continue;
                         }
                         orientationProvider.getQuaternion(quaternion);
                         accelerometer = orientationProvider.getAccelerometerValues();
-                        if(mWebSocket != null){
-                            mWebSocket.send(
-                            quaternion.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()+ "_" + quaternion.getW() + "@" +
+                        if(sensorSocket != null){
+                            sensorSocket.send(
+                                quaternion.getX() + "_" +  quaternion.getY()+ "_" + quaternion.getZ()+ "_" + quaternion.getW() + "@" +
                                 accelerometer[0] + "_" +  accelerometer[1] + "_" + accelerometer[2]
                             );
                         }
@@ -112,94 +111,93 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     }
 
     long mLastOrientationSent=0;
-
     private String WebSocketTAG = "";
-    private String wsUrl = "ws://192.168.0.131:24681/Rotation";
-    private WebSocket mWebSocket;
-    private int RECONNECT_TIME = 500;
-    long mLastReconnectTime=0;
-    Thread ReconnectThread = null;
+    private String sensorUrl = "ws://192.168.0.145:24681/Sensor";
+    private String inputUrl = "ws://192.168.0.145:24681/Input";
+
+    private WebSocket sensorSocket;
+    private WebSocket inputSocket;
+
     void ConnectWebSocket() {
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
-        //构造request对象
-        Request request = new Request.Builder()
-                .url(wsUrl)
+        //建立 WebSocketRequest
+        Request sensorRequset = new Request.Builder()
+                .url(sensorUrl)
                 .build();
-        //建立连接
-        client.newWebSocket(request, new WebSocketListener() {
+
+        //建立 感應器資料連線
+        client.newWebSocket(sensorRequset, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-                mWebSocket = webSocket;
-                if(ReconnectThread != null){
-                    System.out.println("自動重連成功");
-                    ReconnectThread.stop();
-                    ReconnectThread = null;
-                }
-
+                sensorSocket = webSocket;
+                BuildDataThread();
             }
-
-            @Override
-            public void onMessage(WebSocket webSocket, String text) {
-
-            }
-
-            @Override
-            public void onClosing(WebSocket webSocket, int code, String reason) {
-
-            }
-
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
-                //斷線也會呼叫這個
-                if(DataThread != null){
-                    DataThread.stop();
-                }
-                System.out.println("斷線 自動重連開始");
-                ReconnectThread = new Thread(new Runnable(){
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        while(true){
-                            try{
-                                if(System.currentTimeMillis() - mLastReconnectTime < RECONNECT_TIME){
-                                    continue;
-                                }
-                                ConnectWebSocket();
-                                mLastReconnectTime=System.currentTimeMillis();
-                            }
-                            catch(Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                });
-                ReconnectThread.start();
-                mWebSocket = null;
+                sensorSocket = null;
             }
 
             @Override
-            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            public void onMessage(WebSocket webSocket, String text) {}
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason) {}
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {}
+        });
 
+        //建立 WebSocketRequest
+        Request inputRequset = new Request.Builder()
+                .url(inputUrl)
+                .build();
 
+        //建立 輸入連線
+        client.newWebSocket(inputRequset, new WebSocketListener() {
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                inputSocket = webSocket;
             }
+            @Override
+            public void onClosed(WebSocket webSocket, int code, String reason) {
+                inputSocket = null;
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {}
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason) {}
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {}
         });
     }
 
+     String TagButtonEvent = "buttonEvent";
     @Override
-    public void onButtonDown(ButtonName PressedButton,float x, float y) {
-        Log.d("onButtonDown",BUTTONS_NAME[PressedButton.ordinal()]);
+    public void onButtonDown(ButtonName button,float x, float y) {
+        Log.d(TagButtonEvent, "onButtonDown : " + button.toString());
+        inputSocket.send("Down," + x + "," + y + "," + button.toString());
     }
 
     @Override
-    public void onButtonUp(ButtonName HoldButton,float x, float y) {
-        Log.d("onButtonUp",BUTTONS_NAME[HoldButton.ordinal()]);
-
+    public void onButtonUp(ButtonName button,float x, float y) {
+        Log.d(TagButtonEvent,"onButtonUp : " + button.toString());
+        inputSocket.send("Up," + x + "," + y + "," + button.toString());
     }
 
     @Override
     public void onButtonMove(float x, float y) {
-
+        Log.d(TagButtonEvent,"onButtonMove : ");
+        inputSocket.send("Move," + x + "," + y + ",");
+    }
+    @Override
+    public void onButtonMoveStart(float x, float y) {
+        Log.d(TagButtonEvent,"onButtonMoveStart : ");
+        inputSocket.send("MoveStart," + x + "," + y + ",");
+    }
+    @Override
+    public void onButtonMoveEnd(float x, float y) {
+        Log.d(TagButtonEvent,"onButtonMoveEnd : " );
+        inputSocket.send("MoveEnd," + x + "," + y + ",");
     }
 
 
