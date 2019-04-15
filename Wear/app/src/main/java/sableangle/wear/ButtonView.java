@@ -296,7 +296,6 @@ public class ButtonView extends View
 //
 //        }
 
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mButtonListener.onButtonDown(mButtonPressed,x,y);
