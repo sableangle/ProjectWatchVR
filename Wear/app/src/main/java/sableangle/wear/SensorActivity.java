@@ -207,12 +207,12 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onButtonMoveStart(float x, float y) {
         Log.d(TagButtonEvent,"onButtonMoveStart : ");
-        inputSocket.send("MoveStart," + x + "," + y + ",");
+        inputSocket.send("Start," + x + "," + y + ",");
     }
     @Override
     public void onButtonMoveEnd(float x, float y) {
         Log.d(TagButtonEvent,"onButtonMoveEnd : " );
-        inputSocket.send("MoveEnd," + x + "," + y + ",");
+        inputSocket.send("End," + x + "," + y + ",");
     }
 
 

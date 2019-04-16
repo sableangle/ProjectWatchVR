@@ -23,7 +23,7 @@ public class WearController : MonoBehaviour
     void SetTouchPosition(Vector2 screenPosition)
     {
         // touchPosition.localPosition = new Vector3(screenPosition.x * lineUnit, screenPosition.y * lineUnit, 0.00378f);
-        screenMaterial.SetTextureOffset("_TouchDotTex", new Vector2(screenPosition.x * -10 - 0.5f, (1-screenPosition.y) * -10 - 0.5f));
+        screenMaterial.SetTextureOffset("_TouchDotTex", new Vector2(screenPosition.x * -10 + 0.5f, (1-screenPosition.y) * -10 + 0.5f));
     }
 
     public float lineUnit = 0.021f;

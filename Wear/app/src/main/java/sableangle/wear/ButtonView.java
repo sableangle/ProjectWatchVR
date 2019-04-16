@@ -308,7 +308,7 @@ public class ButtonView extends View
                 float deltaY = Math.abs( lastPosY - y);
 
                 if(isMoving == false)mButtonListener.onButtonMoveStart(x/mWidth,y/mHeight);
-                isMoving = deltaX > movingGate || deltaY > movingGate;
+                isMoving = true;
                 touchPath.lineTo(x, y);
                 mButtonListener.onButtonMove(x/mWidth,y/mHeight);
                 break;

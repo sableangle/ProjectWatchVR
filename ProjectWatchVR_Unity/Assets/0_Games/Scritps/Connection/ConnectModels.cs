@@ -61,6 +61,11 @@ public class ConnectModels : MonoBehaviour
             float.TryParse(msg[2], out y);
             Debug.LogFormat("{0} , x : {1} , y : {2}", msg[0], x, y);
             screenPosition = new Vector2(x, y);
+
+            if (msg[0].Contains("End") || msg[0].Contains("Up") )
+            {
+                screenPosition = new Vector2(0, 0);
+            }
             // if (msg[0].Contains("End"))
             // {
             // 	case 
