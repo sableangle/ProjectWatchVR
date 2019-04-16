@@ -53,10 +53,20 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         this.mWakeLock.release();
         DataThread.destroy();
-        orientationProvider.stop();
-        super.onDestroy();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        ConnectWebSocket();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
     }
 
     public void HardWareCheck (SensorManager sensorManager) {
@@ -117,6 +127,11 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
 
     private WebSocket sensorSocket;
     private WebSocket inputSocket;
+
+    void DestoryWebSocket(){
+        sensorSocket.cancel();
+        inputSocket.cancel();
+    }
 
     void ConnectWebSocket() {
         OkHttpClient client = new OkHttpClient.Builder()

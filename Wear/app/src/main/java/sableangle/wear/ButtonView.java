@@ -298,7 +298,7 @@ public class ButtonView extends View
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mButtonListener.onButtonDown(mButtonPressed,x,y);
+                mButtonListener.onButtonDown(mButtonPressed,x/mWidth,y/mHeight);
                 lastPosX = x;
                 lastPosY = y;
                 touchPath.moveTo(x,y);
@@ -307,14 +307,14 @@ public class ButtonView extends View
                 float deltaX =  Math.abs(lastPosX - x);
                 float deltaY = Math.abs( lastPosY - y);
 
-                if(isMoving == false)mButtonListener.onButtonMoveStart(x,y);
+                if(isMoving == false)mButtonListener.onButtonMoveStart(x/mWidth,y/mHeight);
                 isMoving = deltaX > movingGate || deltaY > movingGate;
                 touchPath.lineTo(x, y);
-                mButtonListener.onButtonMove(x,y);
+                mButtonListener.onButtonMove(x/mWidth,y/mHeight);
                 break;
             case MotionEvent.ACTION_UP:
-                if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed,x,y);
-                else mButtonListener.onButtonMoveEnd(x,y);
+                if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed,x/mWidth,y/mHeight);
+                else mButtonListener.onButtonMoveEnd(x/mWidth,y/mHeight);
                 //Reset
                 mButtonPressed = ButtonName.None;
                 lastPosX = -1;
