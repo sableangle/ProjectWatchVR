@@ -18,11 +18,21 @@ public class WearController : MonoBehaviour
 
     void Update()
     {
+        if (InputModels.GetWatchButtonDown(InputModels.Buttons.Up))
+        {
+            Debug.Log("Up Button Down");
+        }
+
+        if (InputModels.GetWatchButtonUp(InputModels.Buttons.Up))
+        {
+            Debug.Log("Up Button Up");
+        }
+
         if (!editorSimlator)
         {
-            var r = new Vector3(0, ConnectModels.rotation.eulerAngles.z, -ConnectModels.rotation.eulerAngles.x);
+            var r = new Vector3(0, InputModels.rotation.eulerAngles.z, -InputModels.rotation.eulerAngles.x);
             transform.eulerAngles = r;
-            SetTouchPosition(ConnectModels.screenPosition);
+            SetTouchPosition(InputModels.screenPosition);
         }
         else
         {

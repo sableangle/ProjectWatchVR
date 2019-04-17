@@ -4,8 +4,11 @@ using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
-public class ConnectModels : MonoBehaviour
+public class InputModels : MonoBehaviour
 {
+
+
+
     public static Quaternion rotation;
     public static Vector3 accelerometer;
 
@@ -40,37 +43,94 @@ public class ConnectModels : MonoBehaviour
         }
     }
 
-    public enum InputType
-    {
-        Start, End, Move, Up, Down, Left, Right, None
-    }
-    private InputType lastWatchMove = InputType.None;
     public delegate void _OnWatchMoveChange(Vector2 pos);
     public static event _OnWatchMoveChange OnWatchMoveChange;
+
+    public enum Buttons
+    {
+        None = -1, Up = 0, Down = 1, Left = 2, Right = 3
+    }
+    public enum ButtonAction
+    {
+        None = -1, Up = 0, Down = 1
+    }
+    static Buttons lastButtons = Buttons.None;
+    static ButtonAction lastButtonAction = ButtonAction.None;
     public class WatchInput : WebSocketBehavior
     {
         protected override void OnMessage(MessageEventArgs e)
         {
-            //Debug.Log("OnMessage"+e.Data);
             var msg = e.Data.Split(',');
+            //Debug.Log(e.Data);
+
             float x, y;
+
             float.TryParse(msg[1], out x);
             float.TryParse(msg[2], out y);
-            //Debug.LogFormat("{0} , x : {1} , y : {2}", msg[0], x, y);
+
             screenPosition = new Vector2(x, y);
 
-            if (msg[0].Contains("End") || msg[0].Contains("Up") )
+            if (msg[0].Contains("End") || msg[0].Contains("Up"))
             {
                 screenPosition = new Vector2(0, 0);
             }
-            // if (msg[0].Contains("End"))
-            // {
-            // 	case 
-            // }
-            // if (OnWatchMoveChange != null)
-            // {
-            //     OnWatchMoveChange(screenPosition);
-            // }
+
+            if (msg[0].Contains("Down") || msg[0].Contains("Up"))
+            {
+                var action = msg[0].Split('_');
+                try
+                {
+                    lastButtons = (Buttons)System.Enum.Parse(typeof(Buttons), action[1]);
+                }
+                catch
+                {
+                    lastButtons = Buttons.None;
+                }
+                try
+                {
+                    lastButtonAction = (ButtonAction)System.Enum.Parse(typeof(ButtonAction), action[0]);
+                }
+                catch
+                {
+                    lastButtonAction = ButtonAction.None;
+                }
+            }
+            else
+            {
+
+            }
         }
+    }
+
+    public static bool GetWatchButtonDown(int index)
+    {
+        return GetWatchButtonDown((Buttons)index);
+
+    }
+    public static bool GetWatchButtonDown(Buttons index)
+    {
+        var resutl = lastButtons == index && lastButtonAction == ButtonAction.Down;
+        if (resutl)
+        {
+            lastButtons = Buttons.None;
+            lastButtonAction = ButtonAction.None;
+        }
+        return resutl;
+    }
+
+    public static bool GetWatchButtonUp(int index)
+    {
+        return GetWatchButtonUp((Buttons)index);
+
+    }
+    public static bool GetWatchButtonUp(Buttons index)
+    {
+        var resutl = lastButtons == index && lastButtonAction == ButtonAction.Up;
+        if (resutl)
+        {
+            lastButtons = Buttons.None;
+            lastButtonAction = ButtonAction.None;
+        }
+        return resutl;
     }
 }
