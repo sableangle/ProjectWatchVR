@@ -34,12 +34,12 @@ public abstract class OrientationProvider implements SensorEventListener {
     /**
      * The matrix that holds the current rotation
      */
-    protected final MatrixF4x4 currentOrientationRotationMatrix;
+    protected  MatrixF4x4 currentOrientationRotationMatrix;
 
     /**
      * The quaternion that holds the current rotation
      */
-    protected final Quaternion currentOrientationQuaternion;
+    protected  Quaternion currentOrientationQuaternion;
     /**
      * The quaternion that holds the current rotation
      */
@@ -78,7 +78,13 @@ public abstract class OrientationProvider implements SensorEventListener {
                     SensorManager.SENSOR_DELAY_GAME);
         }
     }
+    public void reset(){
+        // Initialise with identity
+        currentOrientationRotationMatrix = new MatrixF4x4();
 
+        // Initialise with identity
+        currentOrientationQuaternion = new Quaternion();
+    }
     /**
      * Stops the sensor fusion (e.g. when pausing/suspending the activity)
      */

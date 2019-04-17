@@ -29,7 +29,7 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
 
 
     private SensorManager mSensorManager;
-    protected PowerManager.WakeLock mWakeLock;
+//    protected PowerManager.WakeLock mWakeLock;
 
     public static final String BUTTONS_NAME[]={"Center", "Up", "Down", "Right", "Left", "None"};
     //Android Life Cycle
@@ -45,16 +45,17 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
 
         ConnectWebSocket();
         StartTrackingSensor();
+        BuildDataThread();
 
-        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "watch:wakelock");
-        this.mWakeLock.acquire();
+//        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "watch:wakelock");
+//        this.mWakeLock.acquire();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.mWakeLock.release();
+//        this.mWakeLock.release();
         DataThread.destroy();
     }
 
@@ -62,11 +63,13 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     public void onResume(){
         super.onResume();
         ConnectWebSocket();
+        orientationProvider.start();
     }
 
     @Override
     public void onPause(){
         super.onPause();
+        orientationProvider.stop();
     }
 
     public void HardWareCheck (SensorManager sensorManager) {
@@ -146,7 +149,6 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 sensorSocket = webSocket;
-                BuildDataThread();
             }
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
