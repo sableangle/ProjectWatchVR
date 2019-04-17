@@ -30,8 +30,10 @@ public class WearController : MonoBehaviour
 
         if (!editorSimlator)
         {
-            var r = new Vector3(0, InputModels.rotation.eulerAngles.z, -InputModels.rotation.eulerAngles.x);
-            transform.eulerAngles = r;
+            // var r = new Vector3(InputModels.rotation.eulerAngles.y, InputModels.rotation.eulerAngles.z, 0);
+            // transform.eulerAngles = r;
+            transform.rotation = InputModels.rotation;
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, InputModels.accelerometer.x * 10);
             SetTouchPosition(InputModels.screenPosition);
         }
         else

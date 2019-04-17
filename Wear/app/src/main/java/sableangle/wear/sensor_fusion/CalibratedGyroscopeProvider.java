@@ -89,8 +89,8 @@ public class CalibratedGyroscopeProvider extends OrientationProvider {
                 final float dT = (event.timestamp - timestamp) * NS2S;
                 // Axis of the rotation sample, not normalized yet.
                 float axisX = event.values[0];
-                float axisY = event.values[1];
-                float axisZ = event.values[2];
+                float axisY = event.values[2];
+                float axisZ = event.values[1];
 
                 // Calculate the angular speed of the sample
                 gyroscopeRotationVelocity = Math.sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ);

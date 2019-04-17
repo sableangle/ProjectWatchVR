@@ -48,7 +48,7 @@ public class InputModels : MonoBehaviour
 
     public enum Buttons
     {
-        None = -1, Up = 0, Down = 1, Left = 2, Right = 3
+        None = -1, Up = 0, Down = 1, Left = 2, Right = 3, Center = 4
     }
     public enum ButtonAction
     {
@@ -121,7 +121,6 @@ public class InputModels : MonoBehaviour
     public static bool GetWatchButtonUp(int index)
     {
         return GetWatchButtonUp((Buttons)index);
-
     }
     public static bool GetWatchButtonUp(Buttons index)
     {
