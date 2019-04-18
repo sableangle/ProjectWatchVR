@@ -18,15 +18,15 @@ public class WearController : MonoBehaviour
 
     void Update()
     {
-        if (InputModels.GetWatchButtonDown(InputModels.Buttons.Up))
-        {
-            Debug.Log("Up Button Down");
-        }
+        // if (InputModels.GetWatchButtonDown(InputModels.Buttons.Up))
+        // {
+        //     Debug.Log("Up Button Down");
+        // }
 
-        if (InputModels.GetWatchButtonUp(InputModels.Buttons.Up))
-        {
-            Debug.Log("Up Button Up");
-        }
+        // if (InputModels.GetWatchButtonUp(InputModels.Buttons.Up))
+        // {
+        //     Debug.Log("Up Button Up");
+        // }
 
         if (!editorSimlator)
         {

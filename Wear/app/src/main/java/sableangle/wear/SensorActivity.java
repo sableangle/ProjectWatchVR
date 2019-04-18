@@ -125,8 +125,8 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
 
     long mLastOrientationSent=0;
     private String WebSocketTAG = "";
-    private String sensorUrl = "ws://192.168.0.148:24681/Sensor";
-    private String inputUrl = "ws://192.168.0.148:24681/Input";
+    private String sensorUrl = "ws://192.168.0.5:24681/Sensor";
+    private String inputUrl = "ws://192.168.0.5:24681/Input";
 
     private WebSocket sensorSocket;
     private WebSocket inputSocket;
