@@ -39,6 +39,9 @@ public class LookAt : MonoBehaviour
 	
 	private void Update ()
 	{
+		if(lookTarget == null){
+			lookTarget = Camera.main.transform;
+		}
 		Vector3 r = transform.eulerAngles;
 		transform.LookAt(lookTarget);
 

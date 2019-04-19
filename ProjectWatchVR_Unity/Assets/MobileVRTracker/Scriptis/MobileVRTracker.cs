@@ -10,15 +10,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.iOS;
 
-public class MobileVRTracker : MonoBehaviour
+public class MobileVRTracker : UnitySingleton<MobileVRTracker>
 {
     #region Singleton
-    private static MobileVRTracker instance;
+    // private static MobileVRTracker instance;
 
-    public static MobileVRTracker Instance
-    {
-        get { return instance; }
-    }
+    // public static MobileVRTracker Instance
+    // {
+    //     get { return instance; }
+    // }
     #endregion // Singleton
 
 
@@ -59,18 +59,30 @@ public class MobileVRTracker : MonoBehaviour
         {
             trackingCamera = Camera.main;
         }
+
+        if (trackingCamera == null)
+        {
+            Instantiate(Resources.Load("VRCameraRig"), Vector3.zero, Quaternion.identity);
+            trackingCamera = Camera.main;
+        }
+
         trackingCamera.transform.parent.localPosition = new Vector3(0f, eyeHeight, 0f);  // 目線の高さ設定
+    }
+
+    void UpdateEyeHeight()
+    {
+        trackingCamera.transform.parent.localPosition = Vector3.Lerp(trackingCamera.transform.parent.localPosition, new Vector3(0f, eyeHeight, 0f), Time.deltaTime);
     }
 #if UNITY_EDITOR
     private void Awake()
     {
-        instance = this;
         InitCamera();
     }
 
     private void Update()
     {
         UpdateEditorEmulation();
+        UpdateEyeHeight();
     }
     private float mouseX = 0;
     private float mouseY = 0;
@@ -150,9 +162,9 @@ public class MobileVRTracker : MonoBehaviour
     #region MonoBehaviour Methods
     private void Awake()
     {
-        instance = this;                    // インスタンス取得
-        Application.targetFrameRate = 60;   // fpsセット
-        DontDestroyOnLoad(gameObject);      // 永続化
+        Application.targetFrameRate = 60;   // 鎖定 FPS
+        DontDestroyOnLoad(gameObject);      
+        InitCamera();
 
         // ARKitセッションの初期化 ----
         session = UnityARSessionNativeInterface.GetARSessionNativeInterface();
@@ -163,7 +175,6 @@ public class MobileVRTracker : MonoBehaviour
         config.enableLightEstimation = false;
         session.RunWithConfig(config);  // セッション実行
 
-        InitCamera();
         // Cardboardの自動ヘッドトラッキング停止
         UnityEngine.XR.XRDevice.DisableAutoXRCameraTracking(trackingCamera, true);
 
@@ -180,23 +191,25 @@ public class MobileVRTracker : MonoBehaviour
             trackingCamera.transform.localPosition = UnityARMatrixOps.GetPosition(matrix);
             trackingCamera.transform.localRotation = UnityARMatrixOps.GetRotation(matrix);
         }
+
+        UpdateEyeHeight();
     }
     #endregion // MonoBehaviour Methodss
 
 
     #region Member Methods
     // シーン遷移時にコール
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (trackingCamera == null)
-        {
-            // カメラの更新(シーン遷移などでカメラが剥がれた時の処理)
-            trackingCamera = Camera.main;    // Camera取得
-            trackingCamera.transform.parent.localPosition = new Vector3(0f, eyeHeight, 0f);  // 目線の高さ設定
-            // Cardboardの自動ヘッドトラッキング停止
-            UnityEngine.XR.XRDevice.DisableAutoXRCameraTracking(trackingCamera, true);
-        }
-    }
+    // private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    // {
+    //     if (trackingCamera == null)
+    //     {
+    //         // カメラの更新(シーン遷移などでカメラが剥がれた時の処理)
+    //         trackingCamera = Camera.main;    // Camera取得
+         
+    //         // Cardboardの自動ヘッドトラッキング停止
+    //         UnityEngine.XR.XRDevice.DisableAutoXRCameraTracking(trackingCamera, true);
+    //     }
+    // }
     #endregion // Member Methods
 
 

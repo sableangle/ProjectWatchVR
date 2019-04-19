@@ -11,19 +11,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class Calibration : MonoBehaviour
+public class ReadyForPutEgg : MonoBehaviour
 {
     #region Inspector Settings
-    [SerializeField] private MobileVRTrackerCalibration gvrTrackerCalibration;
     [SerializeField] private Transform floorObj;
     [SerializeField] private Transform mark;
     [SerializeField] private Image circleImage;
     [SerializeField] private Text heightText;
     [SerializeField] private Text noticeText;
     [SerializeField] private ParticleSystem effect;
-    [SerializeField] private bool Calibrated = false;
-    [Header("UserSettings")]
-    public string nextScene = "";
+    
     #endregion // Inspector Settings
 
 
@@ -57,10 +54,7 @@ public class Calibration : MonoBehaviour
     #region Member Methods
     public void CalibrationUpdate(CalibrationData data)
     {
-        if (Calibrated)
-        {
-            return;
-        }
+        
         if (data != null)
         {
             if (!mark.gameObject.activeSelf)
@@ -77,12 +71,9 @@ public class Calibration : MonoBehaviour
             }
             else
             {
-                Calibrated = true;
-                StartCoroutine(SetFloor(data));
+                StartCoroutine(PutEgg(data));
                 return;
             }
-
-            gvrTrackerCalibration.UpdateEyeHeight(data.height);
         }
         else if (mark.gameObject.activeSelf)
         {
@@ -93,7 +84,7 @@ public class Calibration : MonoBehaviour
         }
     }
 
-    private IEnumerator SetFloor(CalibrationData data)
+    private IEnumerator PutEgg(CalibrationData data)
     {
         //gvrTrackerCalibration.SetEyeHeight();
 

@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class WearController : MonoBehaviour
 {
+    private Transform transformCache;
     public Material screenMaterial;
     public bool editorSimlator = false;
+
+    void Awake()
+    {
+        transformCache = transform;
+    }
     void Start()
     {
     }
@@ -18,22 +24,13 @@ public class WearController : MonoBehaviour
 
     void Update()
     {
-        // if (InputModels.GetWatchButtonDown(InputModels.Buttons.Up))
-        // {
-        //     Debug.Log("Up Button Down");
-        // }
-
-        // if (InputModels.GetWatchButtonUp(InputModels.Buttons.Up))
-        // {
-        //     Debug.Log("Up Button Up");
-        // }
 
         if (!editorSimlator)
         {
             // var r = new Vector3(InputModels.rotation.eulerAngles.y, InputModels.rotation.eulerAngles.z, 0);
             // transform.eulerAngles = r;
-            transform.rotation = InputModels.rotation;
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, InputModels.accelerometer.x * 10);
+            transformCache.rotation = InputModels.rotation;
+            transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, InputModels.accelerometer.x * 10);
             SetTouchPosition(InputModels.screenPosition);
         }
         else
@@ -53,11 +50,32 @@ public class WearController : MonoBehaviour
                 mouseY -= Input.GetAxis(AXIS_MOUSE_Y) * 6f;
                 mouseY = Mathf.Clamp(mouseY, -85, 85);
 
-                WearRotation = Quaternion.Euler(mouseY, mouseX, mouseZ);
+                WearRotation = Quaternion.Euler(mouseY, mouseX - transformCache.parent.eulerAngles.y, mouseZ);
 
                 // Update all VR cameras using Head position and rotation information.
-                transform.localRotation = WearRotation;
+                transformCache.localRotation = WearRotation;
             }
+        }
+        RayCast();
+    }
+
+    public Transform pointer;
+    public Vector3 oriPointerPosition = new Vector3(0, 0, 1.6f);
+    private bool isHit = false;
+    private RaycastHit hit;
+    public float lerpSpeed = 10;
+    void RayCast()
+    {
+        Vector3 fwd = transformCache.TransformDirection(Vector3.forward);
+        isHit = Physics.Raycast(transformCache.position, fwd, out hit, 100);
+        if (isHit)
+        {
+            var p = Vector3.Lerp(transformCache.position, hit.point, 0.85f);
+            pointer.position = Vector3.Lerp(pointer.position, p, lerpSpeed * Time.deltaTime);
+        }
+        else
+        {
+            pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
         }
     }
 

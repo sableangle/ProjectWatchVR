@@ -1,4 +1,4 @@
-﻿Shader "Example/Diffuse Texture" {
+﻿Shader "Custom/SreeenUV" {
     Properties {
       _MainTex ("Texture", 2D) = "white" {}
     }

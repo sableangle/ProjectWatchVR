@@ -31,7 +31,7 @@ public class MobileVRTrackerCalibration : MonoBehaviour
     [SerializeField] private ParticleSystem pointCloudParticlePrefab;
     [SerializeField] private int maxPointsToShow = 10000;
     [SerializeField] private float particleSize = 0.01f;
-	// UnityEvents
+    // UnityEvents
     public CalibrationUpdateEvent onCalibrationUpdate;
     #endregion // Inspector Settings
 
@@ -75,12 +75,12 @@ public class MobileVRTrackerCalibration : MonoBehaviour
     {
         if (calibrated) return;
 
-		// 生成されたPlaneに対するRaycast処理 --------
+        // 生成されたPlaneに対するRaycast処理 --------
         Vector3 fwd = vrTacker.TrackingCamera.TransformDirection(Vector3.forward);
         isHit = Physics.Raycast(vrTacker.TrackingCamera.position, fwd, out hit, 100);
         if (isHit)
         {
-			// データ更新
+            // データ更新
             calibData.hitPlaneInfo = hit;
             calibData.height = vrTacker.TrackingCamera.position.y - hit.point.y;
             onCalibrationUpdate.Invoke(calibData);	// イベント通知
@@ -133,7 +133,7 @@ public class MobileVRTrackerCalibration : MonoBehaviour
 
 
     #region Member Methods
-	// ARKitによるフレーム更新処理
+    // ARKitによるフレーム更新処理
     private void ARFrameUpdated(UnityARCamera camera)
     {
         // PointCloud情報の取得
@@ -146,8 +146,13 @@ public class MobileVRTrackerCalibration : MonoBehaviour
     {
         // 目線位置の確定
         vrTacker.EyeHeight = vrTacker.TrackingCamera.parent.position.y - hit.point.y;
-		calibrated = true;          // キャリブレーション完了
+        calibrated = true;          // キャリブレーション完了
         anchorManager.Destroy();    // 生成したPlaneを全て削除する
+    }
+
+    public void UpdateEyeHeight(float height)
+    {
+        vrTacker.EyeHeight = vrTacker.TrackingCamera.parent.position.y - hit.point.y;
     }
     #endregion // Member Methods
 }

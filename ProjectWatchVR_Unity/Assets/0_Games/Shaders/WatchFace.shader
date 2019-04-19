@@ -16,10 +16,10 @@
 
         half4 LightingSimpleShadingForward(SurfaceOutput s, half3 lightDir, half atten)
         {
-			half NdotL = dot(s.Normal, lightDir);
+			///half NdotL = dot(s.Normal, lightDir);
 
 			half4 c;
-			c.rgb = s.Albedo * _LightColor0.rgb * (NdotL * atten * 2);
+			c.rgb = s.Albedo ;
 			c.a = s.Alpha;
 
 			return c;
