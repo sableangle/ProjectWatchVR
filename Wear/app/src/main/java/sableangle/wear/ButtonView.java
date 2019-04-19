@@ -80,7 +80,7 @@ public class ButtonView extends View
         MidButtonWidth =mWidth/3.0f;
         MidButtonHeight =mHeight/3.0f;
 
-        centerButtonRadius = MidScreenHeight*0.6f;
+        centerButtonRadius = MidScreenHeight*0.75f;
 
         initializePaths();
     }
@@ -231,28 +231,28 @@ public class ButtonView extends View
 
 
             //上箭頭
-            mArrowsPath.moveTo(MidScreenWidth, mHeight /12);
-            mArrowsPath.lineTo(5* mWidth /12, mHeight /7);
-            mArrowsPath.lineTo(7* mWidth /12, mHeight /7);
-            mArrowsPath.lineTo(MidScreenWidth, mHeight /12);
+            mArrowsPath.moveTo(MidScreenWidth, mHeight /30);
+            mArrowsPath.lineTo(14* mWidth /30, mHeight /30 * 2.5f);
+            mArrowsPath.lineTo(16* mWidth /30, mHeight /30 * 2.5f);
+            mArrowsPath.lineTo(MidScreenWidth, mHeight /30);
 
             //下箭頭
-            mArrowsPath.moveTo(MidScreenWidth, 11* mHeight /12);
-            mArrowsPath.lineTo(5* mWidth /12, 6* mHeight /7);
-            mArrowsPath.lineTo(7* mWidth /12, 6* mHeight /7);
-            mArrowsPath.lineTo(MidScreenWidth, 11* mHeight /12);
+            mArrowsPath.moveTo(MidScreenWidth, 29* mHeight / 30);
+            mArrowsPath.lineTo(14* mWidth / 30, mHeight / 30 * 27.5f);
+            mArrowsPath.lineTo(16* mWidth / 30, mHeight / 30 * 27.5f);
+            mArrowsPath.lineTo(MidScreenWidth, 29* mHeight / 30);
 
             //左箭頭
-            mArrowsPath.moveTo(mWidth /12, MidScreenHeight);
-            mArrowsPath.lineTo(mWidth /7, 5* mHeight /12);
-            mArrowsPath.lineTo(mWidth /7, 7* mHeight /12);
-            mArrowsPath.lineTo(mWidth /12, MidScreenHeight);
+            mArrowsPath.moveTo(mWidth /30, MidScreenHeight);
+            mArrowsPath.lineTo(mWidth / 30 * 2.5f, 14* mHeight /30);
+            mArrowsPath.lineTo(mWidth / 30 * 2.5f, 16* mHeight /30);
+            mArrowsPath.lineTo(mWidth /30, MidScreenHeight);
 
             //右箭頭
-            mArrowsPath.moveTo(11* mWidth /12, MidScreenHeight);
-            mArrowsPath.lineTo(6* mWidth /7, 5* mHeight /12);
-            mArrowsPath.lineTo(6* mWidth /7, 7* mHeight /12);
-            mArrowsPath.lineTo(11* mWidth /12, MidScreenHeight);
+            mArrowsPath.moveTo(29* mWidth /30, MidScreenHeight);
+            mArrowsPath.lineTo( mWidth / 30  * 27.5f, 14* mHeight /30);
+            mArrowsPath.lineTo( mWidth / 30 * 27.5f, 16* mHeight /30);
+            mArrowsPath.lineTo(29* mWidth /30, MidScreenHeight);
         }
     }
 

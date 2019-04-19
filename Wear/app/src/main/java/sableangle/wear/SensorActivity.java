@@ -192,29 +192,29 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onButtonDown(ButtonName button,float x, float y) {
         Log.d(TagButtonEvent, "onButtonDown : " + button.toString());
-        inputSocket.send("Down_"+  button.toString() + "," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("Down_"+  button.toString() + "," + x + "," + y + ",");
     }
 
     @Override
     public void onButtonUp(ButtonName button,float x, float y) {
         Log.d(TagButtonEvent,"onButtonUp : " + button.toString());
-        inputSocket.send("Up_"+  button.toString() +"," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("Up_"+  button.toString() +"," + x + "," + y + ",");
     }
 
     @Override
     public void onButtonMove(float x, float y) {
         Log.d(TagButtonEvent,"onButtonMove : ");
-        inputSocket.send("Move," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("Move," + x + "," + y + ",");
     }
     @Override
     public void onButtonMoveStart(float x, float y) {
         Log.d(TagButtonEvent,"onButtonMoveStart : ");
-        inputSocket.send("Start," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("Start," + x + "," + y + ",");
     }
     @Override
     public void onButtonMoveEnd(float x, float y) {
         Log.d(TagButtonEvent,"onButtonMoveEnd : " );
-        inputSocket.send("End," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("End," + x + "," + y + ",");
     }
 
 
