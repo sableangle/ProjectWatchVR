@@ -4,23 +4,31 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
-	cakeslice.Outline outline;
-	void Awake(){
-		outline = gameObject.AddComponent<cakeslice.Outline>();
-		outline.eraseRenderer = true;
-	}
+    cakeslice.Outline outline;
+    Rigidbody rigibody;
+    void Awake()
+    {
+        outline = gameObject.AddComponent<cakeslice.Outline>();
+        outline.eraseRenderer = true;
+
+        rigibody = GetComponent<Rigidbody>();
+    }
     public void OnPointEnter()
     {
-		outline.eraseRenderer = false;
+        outline.eraseRenderer = false;
     }
 
     public void OnPointOut()
     {
-		outline.eraseRenderer = true;
+        outline.eraseRenderer = true;
     }
 
-    public void OnPick()
+    public void OnPickStart()
     {
-
+        if (rigibody) rigibody.isKinematic = true;
+    }
+    public void OnPickFinish()
+    {
+        if (rigibody) rigibody.isKinematic = false;
     }
 }

@@ -57,6 +57,41 @@ public class WearController : MonoBehaviour
             }
         }
         RayCast();
+        ProcessPick();
+    }
+
+    Transform oriPickerParent;
+    bool isPicking
+    {
+        get
+        {
+            return pointer.childCount > 0;
+        }
+    }
+    void ProcessPick()
+    {
+        if (lastPickable == null)
+        {
+            return;
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            oriPickerParent = lastPickable.transform.parent;
+            lastPickable.OnPickStart();
+            lastPickable.transform.SetParent(pointer);
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            lastPickable.OnPickFinish();
+            lastPickable.transform.SetParent(oriPickerParent);
+        }
+        if (isPicking)
+        {
+            pointer.localPosition = Vector3.Lerp(
+                pointer.localPosition,
+                 pointer.localPosition + new Vector3(0, 0, Input.GetAxis("Mouse ScrollWheel")),
+                lerpSpeed * Time.deltaTime);
+        }
     }
 
     public Transform pointer;
@@ -68,6 +103,10 @@ public class WearController : MonoBehaviour
     PickableObject lastPickable;
     void RayCast()
     {
+        if (isPicking == true)
+        {
+            return;
+        }
         Vector3 fwd = transformCache.TransformDirection(Vector3.forward);
         isHit = Physics.Raycast(transformCache.position, fwd, out hit, 100);
         if (isHit)
@@ -77,6 +116,7 @@ public class WearController : MonoBehaviour
             var g = hit.collider.gameObject;
             if (!g.CompareTag("Pickable"))
             {
+                ResetCurrentPickable();
                 return;
             }
             var pickable = g.GetComponent<PickableObject>();
@@ -84,25 +124,24 @@ public class WearController : MonoBehaviour
             {
                 return;
             }
-            if (lastPickable != null)
-            {
-                lastPickable.OnPointOut();
-                lastPickable = null;
-            }
+            ResetCurrentPickable();
             lastPickable = pickable;
             lastPickable.OnPointEnter();
         }
         else
         {
-            if (lastPickable != null)
-            {
-                lastPickable.OnPointOut();
-                lastPickable = null;
-            }
+            ResetCurrentPickable();
             pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
         }
     }
-
+    void ResetCurrentPickable()
+    {
+        if (lastPickable != null)
+        {
+            lastPickable.OnPointOut();
+            lastPickable = null;
+        }
+    }
     void SetTouchPosition(Vector2 screenPosition)
     {
         // touchPosition.localPosition = new Vector3(screenPosition.x * lineUnit, screenPosition.y * lineUnit, 0.00378f);
