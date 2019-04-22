@@ -60,10 +60,12 @@ public class WearController : MonoBehaviour
     }
 
     public Transform pointer;
-    public Vector3 oriPointerPosition = new Vector3(0, 0, 1.6f);
+    private Vector3 oriPointerPosition = new Vector3(0, 0, -0.6f);
     private bool isHit = false;
     private RaycastHit hit;
     public float lerpSpeed = 10;
+
+    PickableObject lastPickable;
     void RayCast()
     {
         Vector3 fwd = transformCache.TransformDirection(Vector3.forward);
@@ -72,9 +74,31 @@ public class WearController : MonoBehaviour
         {
             var p = Vector3.Lerp(transformCache.position, hit.point, 0.85f);
             pointer.position = Vector3.Lerp(pointer.position, p, lerpSpeed * Time.deltaTime);
+            var g = hit.collider.gameObject;
+            if (!g.CompareTag("Pickable"))
+            {
+                return;
+            }
+            var pickable = g.GetComponent<PickableObject>();
+            if (pickable == lastPickable)
+            {
+                return;
+            }
+            if (lastPickable != null)
+            {
+                lastPickable.OnPointOut();
+                lastPickable = null;
+            }
+            lastPickable = pickable;
+            lastPickable.OnPointEnter();
         }
         else
         {
+            if (lastPickable != null)
+            {
+                lastPickable.OnPointOut();
+                lastPickable = null;
+            }
             pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
         }
     }
