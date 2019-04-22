@@ -35,7 +35,7 @@ public class WearController : MonoBehaviour
         }
         else
         {
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButton(0))
             {
                 mouseX += Input.GetAxis(AXIS_MOUSE_X) * 6;
                 if (mouseX <= -180)
@@ -61,6 +61,7 @@ public class WearController : MonoBehaviour
     }
 
     Transform oriPickerParent;
+    Vector3 targetPointerPosition;
     bool isPicking
     {
         get
@@ -77,6 +78,7 @@ public class WearController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             oriPickerParent = lastPickable.transform.parent;
+            targetPointerPosition = pointer.localPosition;
             lastPickable.OnPickStart();
             lastPickable.transform.SetParent(pointer);
         }
@@ -87,9 +89,10 @@ public class WearController : MonoBehaviour
         }
         if (isPicking)
         {
+            targetPointerPosition += new Vector3(0, 0, Input.GetAxis("Mouse ScrollWheel")) * 1;
             pointer.localPosition = Vector3.Lerp(
                 pointer.localPosition,
-                 pointer.localPosition + new Vector3(0, 0, Input.GetAxis("Mouse ScrollWheel")),
+                targetPointerPosition,
                 lerpSpeed * Time.deltaTime);
         }
     }

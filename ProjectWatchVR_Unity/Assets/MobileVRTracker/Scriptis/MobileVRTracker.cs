@@ -179,7 +179,7 @@ public class MobileVRTracker : UnitySingleton<MobileVRTracker>
         UnityEngine.XR.XRDevice.DisableAutoXRCameraTracking(trackingCamera, true);
 
         // シーン遷移時のイベント登録
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        //SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void Update()

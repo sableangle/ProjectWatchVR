@@ -4215,6 +4215,7 @@ GameObject:
   - component: {fileID: 1086924169}
   - component: {fileID: 1086924168}
   - component: {fileID: 1086924173}
+  - component: {fileID: 1086924174}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Pickable
@@ -4314,6 +4315,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1086924174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1086924167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ec0fb3ff2a5454e8863609a58514d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlowColor: {r: 0.77931035, g: 1, b: 0, a: 1}
+  LerpFactor: 10
 --- !u!1 &1160903205
 GameObject:
   m_ObjectHideFlags: 0
@@ -7915,7 +7929,7 @@ ReflectionProbe:
   m_Enabled: 1
   serializedVersion: 2
   m_Type: 0
-  m_Mode: 1
+  m_Mode: 0
   m_RefreshMode: 0
   m_TimeSlicingMode: 0
   m_Resolution: 128
