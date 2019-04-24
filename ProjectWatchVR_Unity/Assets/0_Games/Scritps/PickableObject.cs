@@ -5,6 +5,7 @@ using UnityEngine;
 public class PickableObject : MonoBehaviour
 {
     // cakeslice.Outline outline;
+    //static Vector3 _gravity = new Vector3(0, -9.8f, 0);
     Rigidbody rigibody;
     void Awake()
     {
@@ -39,10 +40,12 @@ public class PickableObject : MonoBehaviour
 
     public void OnPickStart()
     {
+        //Physics.gravity = Vector3.zero;
         if (rigibody) rigibody.isKinematic = true;
     }
     public void OnPickFinish()
     {
+        //Physics.gravity = _gravity;
         if (rigibody) rigibody.isKinematic = false;
     }
 

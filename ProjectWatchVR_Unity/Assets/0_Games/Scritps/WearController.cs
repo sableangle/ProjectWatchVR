@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class WearController : MonoBehaviour
 {
+    public enum HandType
+    {
+        Right, Left
+    }
+    public HandType CurrentHand;
+    public GameObject[] Hands;
     private Transform transformCache;
     public Material screenMaterial;
     public bool editorSimlator = false;
@@ -11,6 +17,19 @@ public class WearController : MonoBehaviour
     void Awake()
     {
         transformCache = transform;
+        foreach (var item in Hands)
+        {
+            item.SetActive(false);
+        }
+
+        if (CurrentHand == HandType.Right)
+        {
+            Hands[0].SetActive(true);
+        }
+        else
+        {
+            Hands[1].SetActive(true);
+        }
     }
     void Start()
     {
@@ -35,7 +54,7 @@ public class WearController : MonoBehaviour
         }
         else
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(1))
             {
                 mouseX += Input.GetAxis(AXIS_MOUSE_X) * 6;
                 if (mouseX <= -180)
@@ -98,6 +117,8 @@ public class WearController : MonoBehaviour
     }
 
     public Transform pointer;
+    private Vector3 pointerTargetScale = new Vector3(4.5f, 4.5f, 0.045f);
+
     private Vector3 oriPointerPosition = new Vector3(0, 0, -0.6f);
     private bool isHit = false;
     private RaycastHit hit;
@@ -116,6 +137,8 @@ public class WearController : MonoBehaviour
         {
             var p = Vector3.Lerp(transformCache.position, hit.point, 0.85f);
             pointer.position = Vector3.Lerp(pointer.position, p, lerpSpeed * Time.deltaTime);
+            pointer.localScale = Vector3.Lerp(pointer.localScale, pointerTargetScale, lerpSpeed * Time.deltaTime);
+
             var g = hit.collider.gameObject;
             if (!g.CompareTag("Pickable"))
             {
@@ -134,6 +157,7 @@ public class WearController : MonoBehaviour
         else
         {
             ResetCurrentPickable();
+            pointer.localScale = Vector3.Lerp(pointer.localScale, Vector3.zero, lerpSpeed * Time.deltaTime);
             pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
         }
     }
