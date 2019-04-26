@@ -48,12 +48,12 @@ namespace Wacki
 
         public override void OnEnterControl(GameObject control)
         {
-            Debug.Log("OnEnterControl " + control.name);
+            //Debug.Log("OnEnterControl " + control.name);
         }
 
         public override void OnExitControl(GameObject control)
         {
-            Debug.Log("OnExitControl " + control.name);
+            //Debug.Log("OnExitControl " + control.name);
         }
     }
 

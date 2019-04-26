@@ -6,11 +6,12 @@ public class GlowPrePass : MonoBehaviour
 {
     private static RenderTexture PrePass;
     private static RenderTexture Blurred;
-
+    public Camera sourceCamera;
     private Material _blurMat;
 
     void OnEnable()
     {
+        sourceCamera = transform.parent.GetComponent<Camera>();
         PrePass = new RenderTexture(Screen.width, Screen.height, 24);
         PrePass.antiAliasing = QualitySettings.antiAliasing;
         Blurred = new RenderTexture(Screen.width >> 1, Screen.height >> 1, 0);
@@ -26,7 +27,18 @@ public class GlowPrePass : MonoBehaviour
         _blurMat = new Material(Shader.Find("Hidden/Blur"));
         _blurMat.SetVector("_BlurSize", new Vector2(Blurred.texelSize.x * 1.5f, Blurred.texelSize.y * 1.5f));
     }
+    void OnPreRender()
+    {
+        if (PrePass == null || PrePass.width != sourceCamera.pixelWidth || PrePass.height != sourceCamera.pixelHeight)
+        {
+            PrePass = new RenderTexture(sourceCamera.pixelWidth, sourceCamera.pixelHeight, 16, RenderTextureFormat.Default);
+            Blurred = new RenderTexture(sourceCamera.pixelWidth >> 1, sourceCamera.pixelHeight >> 1, 0);
 
+            GetComponent<Camera>().targetTexture = PrePass;
+            Shader.SetGlobalTexture("_GlowPrePassTex", PrePass);
+            Shader.SetGlobalTexture("_GlowBlurredTex", Blurred);
+        }
+    }
     void OnRenderImage(RenderTexture src, RenderTexture dst)
     {
         Graphics.Blit(src, dst);
@@ -44,5 +56,5 @@ public class GlowPrePass : MonoBehaviour
             RenderTexture.ReleaseTemporary(temp);
         }
     }
-   
+
 }

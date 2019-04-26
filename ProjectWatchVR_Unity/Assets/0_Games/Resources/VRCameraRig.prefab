@@ -525,7 +525,7 @@ GameObject:
   - component: {fileID: 20274256673514010}
   - component: {fileID: 114173300161110602}
   m_Layer: 0
-  m_Name: GlowPrePassCamera (1)
+  m_Name: GlowPrePassCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
