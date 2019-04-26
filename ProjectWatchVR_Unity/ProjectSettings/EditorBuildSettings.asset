@@ -9,8 +9,9 @@ EditorBuildSettings:
     path: Assets/0_Games/Scenes/Watch.unity
     guid: 52b266276689bd54dbfa22f25b85bafb
   - enabled: 1
-    path: Assets/0_Games/Scenes/Calibration.unity
-    guid: 91317b4f01dcb41ffb0ad33ef0009ac7
-  - enabled: 1
     path: Assets/0_Games/Scenes/Demo.unity
+    guid: 91317b4f01dcb41ffb0ad33ef0009ac7
+  - enabled: 0
+    path: Assets/0_Games/Scenes/Demo_old.unity
     guid: 3494b825f0b3a4f5eb6d55c521c66370
+  m_configObjects: {}

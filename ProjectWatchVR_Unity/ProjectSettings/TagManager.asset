@@ -7,6 +7,19 @@ TagManager:
   - Fly
   - Pickable
   - Water
+  - VRUIIcon
+  - VRUIButtonList
+  - VRUIText
+  - VRUIBackground
+  - VRUIButton
+  - VRUIButtonControlBar
+  - VRUIRadio
+  - VRUIOutline
+  - VRUICheckbox
+  - VRUISlider
+  - VRUIButtonTab
+  - VRUIToggle
+  - Pointer
   layers:
   - Default
   - TransparentFX

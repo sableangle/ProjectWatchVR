@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class WearController : MonoBehaviour
 {
+    public static WearController Instance;
     public enum HandType
     {
         Right, Left
@@ -16,6 +18,7 @@ public class WearController : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
         transformCache = transform;
         foreach (var item in Hands)
         {
@@ -77,7 +80,10 @@ public class WearController : MonoBehaviour
         }
         RayCast();
         ProcessPick();
+
     }
+
+  
 
     Transform oriPickerParent;
     Vector3 targetPointerPosition;
