@@ -80,10 +80,32 @@ public class WearController : MonoBehaviour
         }
         RayCast();
         ProcessPick();
+        FlashLight();
 
     }
 
-  
+    [SerializeField]
+    private Transform flashlight;
+    private Vector3 flashlightPosition = new Vector3(0, 0, 1.5f);
+    private Vector3 flashlightOpensize = new Vector3(0.5f, 0.5f, 0.5f);
+    private Vector3 flashlightTargetSize = new Vector3(0, 0, 0);
+    void FlashLight()
+    {
+        if (Input.GetKey(KeyCode.J))
+        {
+            flashlightTargetSize = flashlightOpensize;
+        }
+        else
+        {
+            flashlightTargetSize = Vector3.zero;
+        }
+        flashlightPosition = new Vector3(0, 0, Mathf.Clamp(flashlightPosition.z + Input.GetAxis("Mouse ScrollWheel") * 0.2f, 0.5f, 2f));
+        flashlight.localPosition = Vector3.Lerp(
+            flashlight.localPosition,
+            flashlightPosition,
+            lerpSpeed * Time.deltaTime);
+        flashlight.localScale = Vector3.Lerp(flashlight.localScale, flashlightTargetSize, lerpSpeed * Time.deltaTime);
+    }
 
     Transform oriPickerParent;
     Vector3 targetPointerPosition;
@@ -114,7 +136,7 @@ public class WearController : MonoBehaviour
         }
         if (isPicking)
         {
-            targetPointerPosition += new Vector3(0, 0, Input.GetAxis("Mouse ScrollWheel")) * 1;
+            targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + Input.GetAxis("Mouse ScrollWheel"), 0, 6f));
             pointer.localPosition = Vector3.Lerp(
                 pointer.localPosition,
                 targetPointerPosition,
