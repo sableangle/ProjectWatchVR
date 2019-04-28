@@ -72,7 +72,7 @@ public class VRInputReciver : MonoBehaviour
                 screenPosition = new Vector2(0, 0);
             }
 
-            if (msg[0].Contains("Down") || msg[0].Contains("Release"))
+            if (msg[0].Contains("Press") || msg[0].Contains("Release"))
             {
                 var action = msg[0].Split('_');
                 try
@@ -85,7 +85,7 @@ public class VRInputReciver : MonoBehaviour
                     lastButtons = Buttons.None;
                 }
 
-                if (OnWatchButtonDown != null && msg[0].Contains("Down"))
+                if (OnWatchButtonDown != null && msg[0].Contains("Press"))
                 {
                     OnWatchButtonDown(lastButtons);
                 }

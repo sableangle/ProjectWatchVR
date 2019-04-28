@@ -60,6 +60,14 @@ public class WearController : MonoBehaviour
         //Debug.Log("OnWatchButtonUp " + btn);
         if (btn == VRInputReciver.Buttons.Center) UnityMainThreadDispatcher.Instance().Enqueue(PickEnd);
         if (btn == VRInputReciver.Buttons.Right) _flishlight = false;
+        if (btn == VRInputReciver.Buttons.Down)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                UI_ScreenSpace.Instance.ExitHint_Reset();
+            });
+            _resetTimerSwitch = false;
+        }
     }
 
     private void OnWatchButtonDown(VRInputReciver.Buttons btn)
@@ -74,6 +82,14 @@ public class WearController : MonoBehaviour
             lastScreenPosY = VRInputReciver.screenPosition.y;
             _flishlight = true;
         }
+        if (btn == VRInputReciver.Buttons.Down)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                UI_ScreenSpace.Instance.ShowHint_Reset();
+            });
+            _resetTimerSwitch = true;
+        }
     }
     //Triggers
 
@@ -87,6 +103,22 @@ public class WearController : MonoBehaviour
         else
         {
             return _flishlight;
+        }
+    }
+    bool _resetTimerSwitch = false;
+    float _resetTimer = 0;
+    public static float resetNeedTime = 3f;
+    public float GetResetSensorTimer()
+    { return _resetTimer; }
+    public bool GetResetSensor()
+    {
+        if (editorSimlator)
+        {
+            return Input.GetKey(KeyCode.G);
+        }
+        else
+        {
+            return _resetTimerSwitch;
         }
     }
 
@@ -111,14 +143,11 @@ public class WearController : MonoBehaviour
     private const string AXIS_MOUSE_X = "Mouse X";
     private const string AXIS_MOUSE_Y = "Mouse Y";
     public Quaternion WearRotation { get; private set; }
-
     void Update()
     {
 
         if (!editorSimlator)
         {
-            // var r = new Vector3(InputModels.rotation.eulerAngles.y, InputModels.rotation.eulerAngles.z, 0);
-            // transform.eulerAngles = r;
             transformCache.rotation = VRInputReciver.rotation;
             transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
             SetTouchPosition(VRInputReciver.screenPosition);
@@ -146,11 +175,28 @@ public class WearController : MonoBehaviour
                 transformCache.localRotation = WearRotation;
             }
         }
+
         RayCast();
         ProcessPick();
         FlashLight();
+        ResetSensor();
     }
-
+    void ResetSensor()
+    {
+        if (GetResetSensor())
+        {
+            _resetTimer += Time.deltaTime;
+            if (_resetTimer > resetNeedTime)
+            {
+                WebScoketServer.Instance.SendMsg("Reset Sensor");
+                _resetTimerSwitch = false;
+            }
+        }
+        else
+        {
+            _resetTimer = 0;
+        }
+    }
     // void OnGUI()
     // {
     //     GUILayout.BeginVertical();

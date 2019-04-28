@@ -180,7 +180,11 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
             }
 
             @Override
-            public void onMessage(WebSocket webSocket, String text) {}
+            public void onMessage(WebSocket webSocket, String text) {
+                if(text.equals("Reset Sensor") ){
+                    orientationProvider.reset();
+                }
+            }
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason) {}
             @Override
@@ -192,13 +196,16 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onButtonDown(ButtonName button,float x, float y) {
         Log.d(TagButtonEvent, "onButtonDown : " + button.toString());
-        if(inputSocket!=null)inputSocket.send("Down_"+  button.toString() + "," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("Press_"+  button.toString() + "," + x + "," + y + ",");
     }
 
     @Override
     public void onButtonUp(ButtonName button,float x, float y) {
         Log.d(TagButtonEvent,"onButtonUp : " + button.toString());
         if(inputSocket!=null)inputSocket.send("Release_"+  button.toString() +"," + x + "," + y + ",");
+//        if(button == ButtonName.Down){
+//            orientationProvider.reset();
+//        }
     }
 
     @Override
