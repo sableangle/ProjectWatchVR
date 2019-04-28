@@ -47,6 +47,7 @@ public class ButtonView extends View
     protected ViewType mViewType;
 
     public ButtonName mButtonPressed = ButtonName.None;
+    public ButtonName mButtonPressedLast = ButtonName.None;
     public ButtonName getPressedButton(){return mButtonPressed;}
 
     public ButtonView(Context context, ButtonListener _listener, ViewType _type, boolean _centerButton) {
@@ -304,6 +305,7 @@ public class ButtonView extends View
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mButtonListener.onButtonDown(mButtonPressed,x/mWidth,y/mHeight);
+                mButtonPressedLast = mButtonPressed;
                 lastPosX = x;
                 lastPosY = y;
                // touchPath.moveTo(x,y);
@@ -319,9 +321,10 @@ public class ButtonView extends View
                 break;
             case MotionEvent.ACTION_UP:
                 if(isMoving == true) mButtonListener.onButtonMoveEnd(x/mWidth,y/mHeight);
-                mButtonListener.onButtonUp(mButtonPressed,x/mWidth,y/mHeight);
+                mButtonListener.onButtonUp(mButtonPressedLast,x/mWidth,y/mHeight);
                 //Reset
                 mButtonPressed = ButtonName.None;
+                mButtonPressedLast =  ButtonName.None;
                 lastPosX = -1;
                 lastPosY = -1;
 

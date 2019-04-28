@@ -54,24 +54,30 @@ public class WearController : MonoBehaviour
             VRInputReciver.OnWatchButtonDown += OnWatchButtonDown;
             VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
         }
-
-
     }
     private void OnWatchButtonUp(VRInputReciver.Buttons btn)
     {
-        Debug.Log("OnWatchButtonUp " + btn);
-        UnityMainThreadDispatcher.Instance().Enqueue(PickEnd);
+        //Debug.Log("OnWatchButtonUp " + btn);
+        if (btn == VRInputReciver.Buttons.Center) UnityMainThreadDispatcher.Instance().Enqueue(PickEnd);
+        if (btn == VRInputReciver.Buttons.Right) _flishlight = false;
     }
 
     private void OnWatchButtonDown(VRInputReciver.Buttons btn)
     {
-        Debug.Log("OnWatchButtonDown " + btn);
+        //Debug.Log("OnWatchButtonDown " + btn);
         if (btn == VRInputReciver.Buttons.Center)
         {
             UnityMainThreadDispatcher.Instance().Enqueue(PickStart);
         }
+        if (btn == VRInputReciver.Buttons.Right)
+        {
+            lastScreenPosY = VRInputReciver.screenPosition.y;
+            _flishlight = true;
+        }
     }
     //Triggers
+
+    bool _flishlight = false;
     bool GetFlishlightOpen()
     {
         if (editorSimlator)
@@ -80,31 +86,24 @@ public class WearController : MonoBehaviour
         }
         else
         {
-            return VRInputReciver.GetWatchButton(VRInputReciver.Buttons.Right);
+            return _flishlight;
         }
     }
-    // bool GetPickButtonDown()
-    // {
-    //     if (editorSimlator)
-    //     {
-    //         return Input.GetMouseButtonDown(0);
-    //     }
-    //     else
-    //     {
-    //         return VRInputReciver.GetWatchButtonDown(VRInputReciver.Buttons.Center);
-    //     }
-    // }
-    // bool GetPickButtonUp()
-    // {
-    //     if (editorSimlator)
-    //     {
-    //         return Input.GetMouseButtonUp(0);
-    //     }
-    //     else
-    //     {
-    //         return VRInputReciver.GetWatchButtonUp(VRInputReciver.Buttons.Center);
-    //     }
-    // }
+
+    float lastScreenPosY;
+    float getScreenMoven()
+    {
+        if (editorSimlator)
+        {
+            return Input.GetAxis("Mouse ScrollWheel");
+        }
+        else
+        {
+            float result = lastScreenPosY - VRInputReciver.screenPosition.y;
+            lastScreenPosY = VRInputReciver.screenPosition.y;
+            return result * 10;
+        }
+    }
 
     private float mouseX = 0;
     private float mouseY = 0;
@@ -179,7 +178,7 @@ public class WearController : MonoBehaviour
         {
             flashlightTargetSize = Vector3.zero;
         }
-        flashlightPosition = new Vector3(0, 0, Mathf.Clamp(flashlightPosition.z + Input.GetAxis("Mouse ScrollWheel") * 0.2f, 0.5f, 2f));
+        flashlightPosition = new Vector3(0, 0, Mathf.Clamp(flashlightPosition.z + getScreenMoven() * 0.2f, 0.5f, 2f));
         flashlight.localPosition = Vector3.Lerp(
             flashlight.localPosition,
             flashlightPosition,
@@ -233,11 +232,11 @@ public class WearController : MonoBehaviour
         // }
         if (isPicking)
         {
-            // targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + Input.GetAxis("Mouse ScrollWheel"), 0, 6f));
-            // pointer.localPosition = Vector3.Lerp(
-            //     pointer.localPosition,
-            //     targetPointerPosition,
-            //     lerpSpeed * Time.deltaTime);
+            targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + getScreenMoven(), 0, 6f));
+            pointer.localPosition = Vector3.Lerp(
+                pointer.localPosition,
+                targetPointerPosition,
+                lerpSpeed * Time.deltaTime);
         }
     }
 

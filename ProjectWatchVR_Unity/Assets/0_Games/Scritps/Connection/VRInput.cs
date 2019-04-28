@@ -39,8 +39,6 @@ public class VRInputReciver : MonoBehaviour
         }
     }
 
-    public delegate void _OnWatchMoveChange(Vector2 pos);
-    public static event _OnWatchMoveChange OnWatchMoveChange;
 
     public enum Buttons
     {
@@ -98,6 +96,14 @@ public class VRInputReciver : MonoBehaviour
                 }
             }
 
+            // if (msg[0].Contains("Start"))
+            // {
+            //     if (OnWatchMoveChange != null)
+            //     {
+            //         OnWatchMoveChange
+            //     }
+            // }
+
             // //偵測 Up Down 事件
             // if (msg[0].Contains("Down") || msg[0].Contains("Release"))
             // {
@@ -140,52 +146,52 @@ public class VRInputReciver : MonoBehaviour
     }
 
 
-
     public delegate void _OnWatchButtonDown(Buttons btn);
     public static event _OnWatchButtonDown OnWatchButtonDown;
     public delegate void _OnWatchButtonUp(Buttons btn);
     public static event _OnWatchButtonUp OnWatchButtonUp;
+    public delegate void _OnWatchMoveChange(Vector2 pos);
+    public static event _OnWatchMoveChange OnWatchMoveChange;
 
 
+    // public static bool GetWatchButton(int index)
+    // {
+    //     return GetWatchButton((Buttons)index);
+    // }
 
-    public static bool GetWatchButton(int index)
-    {
-        return GetWatchButton((Buttons)index);
-    }
+    // public static bool GetWatchButton(Buttons index)
+    // {
+    //     var resutl = lastHoldButtons == index && isHold;
+    //     return resutl;
+    // }
 
-    public static bool GetWatchButton(Buttons index)
-    {
-        var resutl = lastHoldButtons == index && isHold;
-        return resutl;
-    }
+    // public static bool GetWatchButtonDown(int index)
+    // {
+    //     return GetWatchButtonDown((Buttons)index);
+    // }
+    // public static bool GetWatchButtonDown(Buttons index)
+    // {
+    //     var resutl = lastButtons == index && lastButtonAction == ButtonAction.Down;
+    //     if (resutl)
+    //     {
+    //         lastButtons = Buttons.None;
+    //         lastButtonAction = ButtonAction.None;
+    //     }
+    //     return resutl;
+    // }
 
-    public static bool GetWatchButtonDown(int index)
-    {
-        return GetWatchButtonDown((Buttons)index);
-    }
-    public static bool GetWatchButtonDown(Buttons index)
-    {
-        var resutl = lastButtons == index && lastButtonAction == ButtonAction.Down;
-        if (resutl)
-        {
-            lastButtons = Buttons.None;
-            lastButtonAction = ButtonAction.None;
-        }
-        return resutl;
-    }
-
-    public static bool GetWatchButtonUp(int index)
-    {
-        return GetWatchButtonUp((Buttons)index);
-    }
-    public static bool GetWatchButtonUp(Buttons index)
-    {
-        var resutl = lastButtons == index && lastButtonAction == ButtonAction.Release;
-        if (resutl)
-        {
-            lastButtons = Buttons.None;
-            lastButtonAction = ButtonAction.None;
-        }
-        return resutl;
-    }
+    // public static bool GetWatchButtonUp(int index)
+    // {
+    //     return GetWatchButtonUp((Buttons)index);
+    // }
+    // public static bool GetWatchButtonUp(Buttons index)
+    // {
+    //     var resutl = lastButtons == index && lastButtonAction == ButtonAction.Release;
+    //     if (resutl)
+    //     {
+    //         lastButtons = Buttons.None;
+    //         lastButtonAction = ButtonAction.None;
+    //     }
+    //     return resutl;
+    // }
 }
