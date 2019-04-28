@@ -51,9 +51,9 @@ public class WearController : MonoBehaviour
         {
             // var r = new Vector3(InputModels.rotation.eulerAngles.y, InputModels.rotation.eulerAngles.z, 0);
             // transform.eulerAngles = r;
-            transformCache.rotation = InputModels.rotation;
-            transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, InputModels.accelerometer.x * 10);
-            SetTouchPosition(InputModels.screenPosition);
+            transformCache.rotation = VRInput.rotation;
+            transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInput.accelerometer.x * 10);
+            SetTouchPosition(VRInput.screenPosition);
         }
         else
         {
@@ -82,6 +82,19 @@ public class WearController : MonoBehaviour
         ProcessPick();
         FlashLight();
 
+
+    }
+
+    void OnGUI()
+    {
+        GUILayout.BeginVertical();
+        foreach (VRInput.Buttons suit in (VRInput.Buttons[])System.Enum.GetValues(typeof(VRInput.Buttons)))
+        {
+            GUILayout.Label(suit.ToString() + " Down : " + VRInput.GetWatchButtonDown(suit));
+            GUILayout.Label(suit.ToString() + " Up : " + VRInput.GetWatchButtonUp(suit));
+            GUILayout.Label(suit.ToString() + " Hold : " + VRInput.GetWatchButton(suit));
+        }
+        GUILayout.EndVertical();
     }
 
     [SerializeField]

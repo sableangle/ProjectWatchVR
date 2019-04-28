@@ -198,7 +198,7 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onButtonUp(ButtonName button,float x, float y) {
         Log.d(TagButtonEvent,"onButtonUp : " + button.toString());
-        if(inputSocket!=null)inputSocket.send("Up_"+  button.toString() +"," + x + "," + y + ",");
+        if(inputSocket!=null)inputSocket.send("Release_"+  button.toString() +"," + x + "," + y + ",");
     }
 
     @Override

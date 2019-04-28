@@ -7,7 +7,7 @@ public class RotationArmController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		var r = new Vector3(InputModels.rotation.eulerAngles.y,-InputModels.rotation.eulerAngles.z,InputModels.rotation.eulerAngles.x);
+		var r = new Vector3(VRInput.rotation.eulerAngles.y,-VRInput.rotation.eulerAngles.z,VRInput.rotation.eulerAngles.x);
 		transform.eulerAngles = r;
 	}
 }

@@ -4,11 +4,8 @@ using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
-public class InputModels : MonoBehaviour
+public class VRInput : MonoBehaviour
 {
-
-
-
     public static Quaternion rotation;
     public static Vector3 accelerometer;
 
@@ -52,16 +49,18 @@ public class InputModels : MonoBehaviour
     }
     public enum ButtonAction
     {
-        None = -1, Up = 0, Down = 1
+        None = -1, Release = 0, Down = 1
     }
     static Buttons lastButtons = Buttons.None;
+    static Buttons lastHoldButtons = Buttons.None;
     static ButtonAction lastButtonAction = ButtonAction.None;
+    static bool isHold = false;
     public class WatchInput : WebSocketBehavior
     {
         protected override void OnMessage(MessageEventArgs e)
         {
             var msg = e.Data.Split(',');
-            //Debug.Log(e.Data);
+            Debug.Log(e.Data);
 
             float x, y;
 
@@ -70,17 +69,21 @@ public class InputModels : MonoBehaviour
 
             screenPosition = new Vector2(x, y);
 
-            if (msg[0].Contains("End") || msg[0].Contains("Up"))
+            //歸零游標位置
+            if (msg[0].Contains("End") || msg[0].Contains("Release"))
             {
                 screenPosition = new Vector2(0, 0);
             }
 
-            if (msg[0].Contains("Down") || msg[0].Contains("Up"))
+            //偵測 Up Down 事件
+            if (msg[0].Contains("Down") || msg[0].Contains("Release"))
             {
+
                 var action = msg[0].Split('_');
                 try
                 {
                     lastButtons = (Buttons)System.Enum.Parse(typeof(Buttons), action[1]);
+                    lastHoldButtons = lastButtons;
                 }
                 catch
                 {
@@ -94,18 +97,38 @@ public class InputModels : MonoBehaviour
                 {
                     lastButtonAction = ButtonAction.None;
                 }
+                if (msg[0].Contains("Down") && lastButtons != Buttons.None)
+                {
+                    isHold = true;
+                }
             }
             else
             {
 
             }
+            if (msg[0].Contains("Release") ||
+                msg[0].Contains("Start") ||
+                msg[0].Contains("End"))
+            {
+                isHold = false;
+                lastHoldButtons = Buttons.None;
+            }
         }
+    }
+    public static bool GetWatchButton(int index)
+    {
+        return GetWatchButton((Buttons)index);
+    }
+
+    public static bool GetWatchButton(Buttons index)
+    {
+        var resutl = lastHoldButtons == index && isHold;
+        return resutl;
     }
 
     public static bool GetWatchButtonDown(int index)
     {
         return GetWatchButtonDown((Buttons)index);
-
     }
     public static bool GetWatchButtonDown(Buttons index)
     {
@@ -124,7 +147,7 @@ public class InputModels : MonoBehaviour
     }
     public static bool GetWatchButtonUp(Buttons index)
     {
-        var resutl = lastButtons == index && lastButtonAction == ButtonAction.Up;
+        var resutl = lastButtons == index && lastButtonAction == ButtonAction.Release;
         if (resutl)
         {
             lastButtons = Buttons.None;

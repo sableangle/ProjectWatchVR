@@ -42,7 +42,7 @@ public class ButtonView extends View
 
     protected float MidButtonWidth = 100, MidButtonHeight = 100;
     protected Path mUpButtonPath, mDownButtonPath, mRightButtonPath, mLeftButtonPath, mArrowsPath;
-    protected Path touchPath;
+    //protected Path touchPath;
 
     protected ViewType mViewType;
 
@@ -124,7 +124,7 @@ public class ButtonView extends View
         _arrowLinesPaint.setStrokeWidth(arrowStrokeWidth);
 
         _touchPaint.setColor(Color.RED);
-        _touchPaint.setStyle(Paint.Style.STROKE);
+        _touchPaint.setStyle(Paint.Style.FILL);
         _touchPaint.setStrokeWidth(3);
 
         canvas.drawColor(_backgroundColor);
@@ -177,13 +177,14 @@ public class ButtonView extends View
 
 
         if(isMoving){
-            canvas.drawPath(touchPath, _touchPaint);
+            canvas.drawCircle( currentPosX,currentPosY,15,_touchPaint);
+            //canvas.drawPath(touchPath, _touchPaint);
         }
     }
 
     private void initializePaths()
     {
-        touchPath = new Path();
+        //touchPath = new Path();
         mArrowsPath = new Path();
         if (mViewType == ViewType.HorizontalButtonView)
         {
@@ -273,11 +274,15 @@ public class ButtonView extends View
 
     float lastPosX = -1;
     float lastPosY = -1;
+    float currentPosX = -1;
+    float currentPosY = -1;
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
         float x = event.getX();
         float y = event.getY();
+        currentPosX = x;
+        currentPosY = y;
         mButtonPressed = CalculatePressedButton(x, y);
 //        if (event.getAction() == MotionEvent.ACTION_DOWN )
 //        {
@@ -301,7 +306,7 @@ public class ButtonView extends View
                 mButtonListener.onButtonDown(mButtonPressed,x/mWidth,y/mHeight);
                 lastPosX = x;
                 lastPosY = y;
-                touchPath.moveTo(x,y);
+               // touchPath.moveTo(x,y);
                 break;
             case MotionEvent.ACTION_MOVE:
                 float deltaX =  Math.abs(lastPosX - x);
@@ -309,7 +314,7 @@ public class ButtonView extends View
 
                 if(isMoving == false)mButtonListener.onButtonMoveStart(x/mWidth,y/mHeight);
                 isMoving = true;
-                touchPath.lineTo(x, y);
+                //touchPath.lineTo(x, y);
                 mButtonListener.onButtonMove(x/mWidth,y/mHeight);
                 break;
             case MotionEvent.ACTION_UP:
@@ -321,8 +326,8 @@ public class ButtonView extends View
                 lastPosY = -1;
 
                 //Draw Line
-                touchPath.lineTo(x, y);
-                touchPath = new Path();
+                //touchPath.lineTo(x, y);
+                //touchPath = new Path();
                 isMoving = false;
                 break;
             default:
