@@ -21,8 +21,8 @@ public class WebScoketServer : MonoBehaviour {
 	// Use this for initialization
 	void Init () {
 		webSocketServer = new WebSocketServer (24681);
-		webSocketServer.AddWebSocketService<VRInput.WatchSensor> ("/Sensor");
-		webSocketServer.AddWebSocketService<VRInput.WatchInput> ("/Input");
+		webSocketServer.AddWebSocketService<VRInputReciver.WatchSensor> ("/Sensor");
+		webSocketServer.AddWebSocketService<VRInputReciver.WatchInput> ("/Input");
 		webSocketServer.Start ();
 	}
 

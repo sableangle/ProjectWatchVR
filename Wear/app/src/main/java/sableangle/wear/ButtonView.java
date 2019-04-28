@@ -318,8 +318,8 @@ public class ButtonView extends View
                 mButtonListener.onButtonMove(x/mWidth,y/mHeight);
                 break;
             case MotionEvent.ACTION_UP:
-                if(isMoving == false)mButtonListener.onButtonUp(mButtonPressed,x/mWidth,y/mHeight);
-                else mButtonListener.onButtonMoveEnd(x/mWidth,y/mHeight);
+                if(isMoving == true) mButtonListener.onButtonMoveEnd(x/mWidth,y/mHeight);
+                mButtonListener.onButtonUp(mButtonPressed,x/mWidth,y/mHeight);
                 //Reset
                 mButtonPressed = ButtonName.None;
                 lastPosX = -1;

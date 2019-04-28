@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UniRx;
 public class WearController : MonoBehaviour
 {
     public static WearController Instance;
@@ -36,7 +36,76 @@ public class WearController : MonoBehaviour
     }
     void Start()
     {
+        if (editorSimlator)
+        {
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0)).Subscribe(_ =>
+                {
+                    PickStart();
+                });
+            Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonUp(0)).Subscribe(_ =>
+            {
+                PickEnd();
+            });
+        }
+        else
+        {
+            VRInputReciver.OnWatchButtonDown += OnWatchButtonDown;
+            VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
+        }
+
+
     }
+    private void OnWatchButtonUp(VRInputReciver.Buttons btn)
+    {
+        Debug.Log("OnWatchButtonUp " + btn);
+        UnityMainThreadDispatcher.Instance().Enqueue(PickEnd);
+    }
+
+    private void OnWatchButtonDown(VRInputReciver.Buttons btn)
+    {
+        Debug.Log("OnWatchButtonDown " + btn);
+        if (btn == VRInputReciver.Buttons.Center)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(PickStart);
+        }
+    }
+    //Triggers
+    bool GetFlishlightOpen()
+    {
+        if (editorSimlator)
+        {
+            return Input.GetKey(KeyCode.J);
+        }
+        else
+        {
+            return VRInputReciver.GetWatchButton(VRInputReciver.Buttons.Right);
+        }
+    }
+    // bool GetPickButtonDown()
+    // {
+    //     if (editorSimlator)
+    //     {
+    //         return Input.GetMouseButtonDown(0);
+    //     }
+    //     else
+    //     {
+    //         return VRInputReciver.GetWatchButtonDown(VRInputReciver.Buttons.Center);
+    //     }
+    // }
+    // bool GetPickButtonUp()
+    // {
+    //     if (editorSimlator)
+    //     {
+    //         return Input.GetMouseButtonUp(0);
+    //     }
+    //     else
+    //     {
+    //         return VRInputReciver.GetWatchButtonUp(VRInputReciver.Buttons.Center);
+    //     }
+    // }
+
     private float mouseX = 0;
     private float mouseY = 0;
     private float mouseZ = 0;
@@ -51,9 +120,9 @@ public class WearController : MonoBehaviour
         {
             // var r = new Vector3(InputModels.rotation.eulerAngles.y, InputModels.rotation.eulerAngles.z, 0);
             // transform.eulerAngles = r;
-            transformCache.rotation = VRInput.rotation;
-            transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInput.accelerometer.x * 10);
-            SetTouchPosition(VRInput.screenPosition);
+            transformCache.rotation = VRInputReciver.rotation;
+            transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
+            SetTouchPosition(VRInputReciver.screenPosition);
         }
         else
         {
@@ -81,21 +150,19 @@ public class WearController : MonoBehaviour
         RayCast();
         ProcessPick();
         FlashLight();
-
-
     }
 
-    void OnGUI()
-    {
-        GUILayout.BeginVertical();
-        foreach (VRInput.Buttons suit in (VRInput.Buttons[])System.Enum.GetValues(typeof(VRInput.Buttons)))
-        {
-            GUILayout.Label(suit.ToString() + " Down : " + VRInput.GetWatchButtonDown(suit));
-            GUILayout.Label(suit.ToString() + " Up : " + VRInput.GetWatchButtonUp(suit));
-            GUILayout.Label(suit.ToString() + " Hold : " + VRInput.GetWatchButton(suit));
-        }
-        GUILayout.EndVertical();
-    }
+    // void OnGUI()
+    // {
+    //     GUILayout.BeginVertical();
+    //     foreach (VRInput.Buttons suit in (VRInput.Buttons[])System.Enum.GetValues(typeof(VRInput.Buttons)))
+    //     {
+    //         GUILayout.Label(suit.ToString() + " Down : " + VRInput.GetWatchButtonDown(suit));
+    //         GUILayout.Label(suit.ToString() + " Up : " + VRInput.GetWatchButtonUp(suit));
+    //         GUILayout.Label(suit.ToString() + " Hold : " + VRInput.GetWatchButton(suit));
+    //     }
+    //     GUILayout.EndVertical();
+    // }
 
     [SerializeField]
     private Transform flashlight;
@@ -104,7 +171,7 @@ public class WearController : MonoBehaviour
     private Vector3 flashlightTargetSize = new Vector3(0, 0, 0);
     void FlashLight()
     {
-        if (Input.GetKey(KeyCode.J))
+        if (GetFlishlightOpen())
         {
             flashlightTargetSize = flashlightOpensize;
         }
@@ -129,31 +196,48 @@ public class WearController : MonoBehaviour
             return pointer.childCount > 0;
         }
     }
-    void ProcessPick()
+    void PickStart()
     {
         if (lastPickable == null)
         {
             return;
         }
-        if (Input.GetMouseButtonDown(0))
+        oriPickerParent = lastPickable.transform.parent;
+        targetPointerPosition = pointer.localPosition;
+        lastPickable.OnPickStart();
+        lastPickable.transform.SetParent(pointer);
+    }
+    void PickEnd()
+    {
+        if (lastPickable == null)
         {
-            oriPickerParent = lastPickable.transform.parent;
-            targetPointerPosition = pointer.localPosition;
-            lastPickable.OnPickStart();
-            lastPickable.transform.SetParent(pointer);
+            return;
         }
-        if (Input.GetMouseButtonUp(0))
-        {
-            lastPickable.OnPickFinish();
-            lastPickable.transform.SetParent(oriPickerParent);
-        }
+        lastPickable.OnPickFinish();
+        lastPickable.transform.SetParent(oriPickerParent);
+    }
+
+    void ProcessPick()
+    {
+        // if (GetPickButtonDown())
+        // {
+        //     oriPickerParent = lastPickable.transform.parent;
+        //     targetPointerPosition = pointer.localPosition;
+        //     lastPickable.OnPickStart();
+        //     lastPickable.transform.SetParent(pointer);
+        // }
+        // if (GetPickButtonUp())
+        // {
+        //     lastPickable.OnPickFinish();
+        //     lastPickable.transform.SetParent(oriPickerParent);
+        // }
         if (isPicking)
         {
-            targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + Input.GetAxis("Mouse ScrollWheel"), 0, 6f));
-            pointer.localPosition = Vector3.Lerp(
-                pointer.localPosition,
-                targetPointerPosition,
-                lerpSpeed * Time.deltaTime);
+            // targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + Input.GetAxis("Mouse ScrollWheel"), 0, 6f));
+            // pointer.localPosition = Vector3.Lerp(
+            //     pointer.localPosition,
+            //     targetPointerPosition,
+            //     lerpSpeed * Time.deltaTime);
         }
     }
 
