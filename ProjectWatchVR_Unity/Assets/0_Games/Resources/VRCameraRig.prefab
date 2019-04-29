@@ -493,15 +493,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 773a1addf91068641bb0d12ec6ca3f09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  editorSimlator: 0
   CurrentHand: 0
   Hands:
   - {fileID: 1472350648031036}
   - {fileID: 1627989138476386}
   screenMaterial: {fileID: 2100000, guid: 80de1b37bce15442d822b4f07479434d, type: 2}
-  editorSimlator: 0
   flashlight: {fileID: 4030080249349495}
   pointer: {fileID: 4161459408380180}
   lerpSpeed: 10
+  lerpSpeedForRotation: 15
 --- !u!114 &1513086495
 MonoBehaviour:
   m_ObjectHideFlags: 0

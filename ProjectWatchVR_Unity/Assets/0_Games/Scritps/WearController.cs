@@ -5,6 +5,10 @@ using UnityEngine.EventSystems;
 using UniRx;
 public class WearController : MonoBehaviour
 {
+
+    [Header("開啟編輯器滑鼠模擬")]
+    public bool editorSimlator = false;
+
     public static WearController Instance;
     public enum HandType
     {
@@ -14,7 +18,6 @@ public class WearController : MonoBehaviour
     public GameObject[] Hands;
     private Transform transformCache;
     public Material screenMaterial;
-    public bool editorSimlator = false;
 
     void Awake()
     {
@@ -148,8 +151,13 @@ public class WearController : MonoBehaviour
 
         if (!editorSimlator)
         {
-            transformCache.rotation = VRInputReciver.rotation;
-            transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
+            // transformCache.rotation = VRInputReciver.rotation;
+            // transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
+            transformCache.rotation = Quaternion.Lerp(
+                transformCache.rotation,
+                Quaternion.Euler(VRInputReciver.rotation.eulerAngles.x, VRInputReciver.rotation.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10),
+                lerpSpeedForRotation * Time.deltaTime);
+
             SetTouchPosition(VRInputReciver.screenPosition);
         }
         else
@@ -293,6 +301,7 @@ public class WearController : MonoBehaviour
     private bool isHit = false;
     private RaycastHit hit;
     public float lerpSpeed = 10;
+    public float lerpSpeedForRotation = 20;
 
     PickableObject lastPickable;
     void RayCast()
