@@ -7,4 +7,5 @@
     <string name="hello_world">Hello Square World!</string>
     <string name="title_activity_sensor">SensorActivity</string>
     <string name="title_activity_pair">PairActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
 </resources>

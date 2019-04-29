@@ -2,10 +2,14 @@ package sableangle.wear;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -25,6 +29,7 @@ interface ButtonListener
     public void onButtonMove(float x,float y);
     public void onButtonMoveStart(float x,float y);
     public void onButtonMoveEnd(float x,float y);
+    public void onButtonLongPress(ButtonName HoldButton);
 }
 
 public class ButtonView extends View
@@ -39,6 +44,7 @@ public class ButtonView extends View
 
     protected int strokeWidth = 10;
     protected int arrowStrokeWidth = 5;
+    protected Bitmap settingIcon;
 
     protected float MidButtonWidth = 100, MidButtonHeight = 100;
     protected Path mUpButtonPath, mDownButtonPath, mRightButtonPath, mLeftButtonPath, mArrowsPath;
@@ -101,6 +107,9 @@ public class ButtonView extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
+
+        Paint iconPaint =new Paint();
+        iconPaint.setColor(Color.RED);
 
         Paint _touchPaint = CreatePaintWithAntialias();
 
@@ -175,7 +184,7 @@ public class ButtonView extends View
             //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _mainPaint);
             //canvas.drawRoundRect(MidScreenWidth - MidButtonWidth, MidScreenHeight - MidButtonHeight, MidScreenWidth + MidButtonWidth, MidScreenHeight + MidButtonHeight, 25, 25, _linesPaint);
         }
-
+        canvas.drawBitmap(settingIcon, MidScreenWidth-settingIcon.getWidth()*0.5f,  settingIcon.getHeight()*0.3f, iconPaint);
 
         if(isMoving){
             canvas.drawCircle( currentPosX,currentPosY,15,_touchPaint);
@@ -231,12 +240,13 @@ public class ButtonView extends View
             mRightButtonPath =getPathFromPoints(new float[]{mWidth, 0, mWidth, mHeight, MidScreenWidth, MidScreenHeight});
             mLeftButtonPath =getPathFromPoints(new float[]{0, 0, 0, mHeight, MidScreenWidth, MidScreenHeight});
 
+            settingIcon  = BitmapFactory.decodeResource(getResources(), R.drawable.outline_settings_black_18);
 
             //上箭頭
-            mArrowsPath.moveTo(MidScreenWidth, mHeight /30);
-            mArrowsPath.lineTo(14* mWidth /30, mHeight /30 * 2.5f);
-            mArrowsPath.lineTo(16* mWidth /30, mHeight /30 * 2.5f);
-            mArrowsPath.lineTo(MidScreenWidth, mHeight /30);
+//            mArrowsPath.moveTo(MidScreenWidth, mHeight /30);
+//            mArrowsPath.lineTo(14* mWidth /30, mHeight /30 * 2.5f);
+//            mArrowsPath.lineTo(16* mWidth /30, mHeight /30 * 2.5f);
+//            mArrowsPath.lineTo(MidScreenWidth, mHeight /30);
 
             //下箭頭
             mArrowsPath.moveTo(MidScreenWidth, 29* mHeight / 30);
@@ -272,6 +282,13 @@ public class ButtonView extends View
         newPath.close();
         return newPath;
     }
+    long longPressTime = 2000;
+    final Handler handler = new Handler();
+    Runnable mLongPressed = new Runnable() {
+        public void run() {
+            mButtonListener.onButtonLongPress(ButtonName.Up);
+        }
+    };
 
     float lastPosX = -1;
     float lastPosY = -1;
@@ -285,27 +302,14 @@ public class ButtonView extends View
         currentPosX = x;
         currentPosY = y;
         mButtonPressed = CalculatePressedButton(x, y);
-//        if (event.getAction() == MotionEvent.ACTION_DOWN )
-//        {
-//
-//            return true;
-//        }
-
-//        if(event.getAction() == MotionEvent.ACTION_MOVE){
-//
-//        }
-//        if (event.getAction() == MotionEvent.ACTION_UP)
-//        {
-//            //setPressedButton(ButtonName.None);
-//            // Send Event
-//
-//
-//        }
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mButtonListener.onButtonDown(mButtonPressed,x/mWidth,y/mHeight);
                 mButtonPressedLast = mButtonPressed;
+                if(mButtonPressed == ButtonName.Up){
+                    handler.postDelayed(mLongPressed, longPressTime);
+                }
                 lastPosX = x;
                 lastPosY = y;
                // touchPath.moveTo(x,y);
@@ -318,6 +322,7 @@ public class ButtonView extends View
                 isMoving = true;
                 //touchPath.lineTo(x, y);
                 mButtonListener.onButtonMove(x/mWidth,y/mHeight);
+                handler.removeCallbacks(mLongPressed);
                 break;
             case MotionEvent.ACTION_UP:
                 if(isMoving == true) mButtonListener.onButtonMoveEnd(x/mWidth,y/mHeight);
@@ -332,6 +337,7 @@ public class ButtonView extends View
                 //touchPath.lineTo(x, y);
                 //touchPath = new Path();
                 isMoving = false;
+                handler.removeCallbacks(mLongPressed);
                 break;
             default:
                 return false;
@@ -342,22 +348,6 @@ public class ButtonView extends View
         return true;
         // return detectorGestos.onTouchEvent(event);
     }
-
-//    private void setPressedButton(ButtonName _button)
-//    {
-//        if(_button!= mButtonPressed)
-//        {
-//            if(mButtonPressed != ButtonName.None)
-//                mButtonListener.onButtonUp(mButtonPressed);
-//
-//            mButtonPressed = _button;
-//
-//            if(mButtonPressed != ButtonName.None)
-//                mButtonListener.onButtonDown(mButtonPressed);
-//
-//            this.invalidate();
-//        }
-//    }
 
     private ButtonName CalculatePressedButton(float newX, float newY)
     {

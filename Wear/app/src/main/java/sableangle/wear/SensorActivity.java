@@ -1,11 +1,13 @@
 package sableangle.wear;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.PowerManager;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
@@ -18,6 +20,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okhttp3.internal.Util;
 import sableangle.wear.sensor_fusion.CalibratedGyroscopeProvider;
 import sableangle.wear.sensor_fusion.Quaternion;
 import sableangle.wear.sensor_fusion.RotationVectorProvider;
@@ -26,7 +29,7 @@ import sableangle.wear.sensor_fusion.Vector3f;
 public class SensorActivity extends WearableActivity  implements ButtonListener {
 
     private TextView mTextView;
-
+    private String ipAddress;
 
     private SensorManager mSensorManager;
 //    protected PowerManager.WakeLock mWakeLock;
@@ -37,8 +40,7 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(new ButtonView(this, this, ViewType.PadButtonView, true));
-
-        //mTextView = (TextView) findViewById(R.id.text);
+        ipAddress = Utils.getPString(this,GlobalDefine.ipAddressKey);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         HardWareCheck(mSensorManager);
@@ -62,6 +64,13 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onResume(){
         super.onResume();
+        ipAddress = Utils.getPString(this,GlobalDefine.ipAddressKey);
+    try{
+        DestoryWebSocket();
+    }
+    catch (Exception ex){
+
+    }
         ConnectWebSocket();
         orientationProvider.start();
     }
@@ -125,8 +134,9 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
 
     long mLastOrientationSent=0;
     private String WebSocketTAG = "";
-    private String sensorUrl = "ws://192.168.0.5:24681/Sensor";
-    private String inputUrl = "ws://192.168.0.5:24681/Input";
+    private String prootool = "ws://";
+    private String sensorUrl = ":24681/Sensor";
+    private String inputUrl = ":24681/Input";
 
     private WebSocket sensorSocket;
     private WebSocket inputSocket;
@@ -140,8 +150,13 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
         //建立 WebSocketRequest
+        Log.d("WebSocket", "ipAddress: " + ipAddress);
+
+        String finalUrl = prootool + ipAddress + sensorUrl;
+        Log.d("WebSocket", "finalUrl: " + finalUrl);
+
         Request sensorRequset = new Request.Builder()
-                .url(sensorUrl)
+                .url(finalUrl)
                 .build();
 
         //建立 感應器資料連線
@@ -163,9 +178,12 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
             public void onFailure(WebSocket webSocket, Throwable t, Response response) {}
         });
 
+        Log.d("WebSocket", "ipAddress: " + ipAddress);
+        String finalUrl2 = prootool + ipAddress + inputUrl;
+        Log.d("WebSocket", "finalUrl2: " + finalUrl2);
         //建立 WebSocketRequest
         Request inputRequset = new Request.Builder()
-                .url(inputUrl)
+                .url(finalUrl2)
                 .build();
 
         //建立 輸入連線
@@ -193,6 +211,14 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     }
 
      String TagButtonEvent = "buttonEvent";
+    @Override
+    public void onButtonLongPress(ButtonName button) {
+        Log.d(TagButtonEvent, "onButtonLongPress : " + button.toString());
+        Intent mIntent = new Intent();
+        mIntent.setClass(this,SettingActivity.class);
+        startActivity(mIntent);
+    }
+
     @Override
     public void onButtonDown(ButtonName button,float x, float y) {
         Log.d(TagButtonEvent, "onButtonDown : " + button.toString());
