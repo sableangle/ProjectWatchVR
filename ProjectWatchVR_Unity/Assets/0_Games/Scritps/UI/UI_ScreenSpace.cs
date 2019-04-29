@@ -14,6 +14,7 @@ public class UI_ScreenSpace : MonoBehaviour
     void Start()
     {
         Hint_Reset.gameObject.SetActive(false);
+        Hint_Setting.gameObject.SetActive(false);
     }
     [Header("Reset Panel")]
     [SerializeField]
@@ -43,9 +44,43 @@ public class UI_ScreenSpace : MonoBehaviour
         Hint_ResetProgress.fillAmount = 0;
         while (WearController.Instance.GetResetSensor() && Hint_ResetProgress.fillAmount < 1)
         {
-            Hint_ResetProgress.fillAmount = WearController.Instance.GetResetSensorTimer() / WearController.resetNeedTime;
+            Hint_ResetProgress.fillAmount = WearController.Instance.GetResetSensorTimer() / GlobalDefine.resetNeedTime;
             yield return null;
         }
         ExitHint_Reset();
+    }
+
+    [Header("Setting Panel")]
+    [SerializeField]
+    CanvasGroup Hint_Setting;
+    [SerializeField]
+    Image Hint_SettingProgress;
+    Coroutine SettingHintCoroutine;
+    public void ShowHint_Setting()
+    {
+        SettingHintCoroutine = StartCoroutine(StartSettingUIConter());
+        Hint_Setting.DOFade(1, 0.4f).OnStart(() =>
+        {
+            Hint_Setting.alpha = 0;
+            Hint_Setting.gameObject.SetActive(true);
+        });
+    }
+    public void ExitHint_Setting()
+    {
+        StopCoroutine(SettingHintCoroutine);
+        Hint_Setting.DOFade(0, 0.4f).OnComplete(() =>
+        {
+            Hint_Setting.gameObject.SetActive(false);
+        });
+    }
+    public IEnumerator StartSettingUIConter()
+    {
+        Hint_SettingProgress.fillAmount = 0;
+        while (WearController.Instance.GetSettingSensor() && Hint_SettingProgress.fillAmount < 1)
+        {
+            Hint_SettingProgress.fillAmount = WearController.Instance.GetSettingTimer() / GlobalDefine.settingNeedTime;
+            yield return null;
+        }
+        ExitHint_Setting();
     }
 }

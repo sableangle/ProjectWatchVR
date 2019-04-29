@@ -183,7 +183,7 @@ Camera:
   m_GameObject: {fileID: 96875183}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 3
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -239,9 +239,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 96875183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fae4bd3c522442ea908dc25711f18b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 5db2efa0966c347fa98ed762765bc78a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resWidth: 1024
+  resHeight: 1024
 --- !u!84 &207793265
 RenderTexture:
   m_ObjectHideFlags: 0
@@ -716,7 +718,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1874565579
 Light:
   m_ObjectHideFlags: 0

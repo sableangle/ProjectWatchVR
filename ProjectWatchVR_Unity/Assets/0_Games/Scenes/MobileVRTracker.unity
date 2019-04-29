@@ -221,7 +221,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1149554360}
+      objectReference: {fileID: 1468326658}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c754d55399184465ac67361320ee714, type: 3}
 --- !u!1001 &1007381007
@@ -281,7 +281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45edb6e5bdfec4d46a7369dcef1f191f, type: 3}
---- !u!84 &1149554360
+--- !u!84 &1468326658
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

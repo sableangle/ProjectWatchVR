@@ -71,6 +71,14 @@ public class WearController : MonoBehaviour
             });
             _resetTimerSwitch = false;
         }
+        if (btn == VRInputReciver.Buttons.Up)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                UI_ScreenSpace.Instance.ExitHint_Setting();
+            });
+            _settingHintSwitch = false;
+        }
     }
 
     private void OnWatchButtonDown(VRInputReciver.Buttons btn)
@@ -93,6 +101,14 @@ public class WearController : MonoBehaviour
             });
             _resetTimerSwitch = true;
         }
+        if (btn == VRInputReciver.Buttons.Up)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                UI_ScreenSpace.Instance.ShowHint_Setting();
+            });
+            _settingHintSwitch = true;
+        }
     }
     //Triggers
 
@@ -110,7 +126,6 @@ public class WearController : MonoBehaviour
     }
     bool _resetTimerSwitch = false;
     float _resetTimer = 0;
-    public static float resetNeedTime = 3f;
     public float GetResetSensorTimer()
     { return _resetTimer; }
     public bool GetResetSensor()
@@ -124,6 +139,23 @@ public class WearController : MonoBehaviour
             return _resetTimerSwitch;
         }
     }
+    float _settingTimer = 0;
+
+    bool _settingHintSwitch = false;
+    public float GetSettingTimer()
+    { return _settingTimer; }
+    public bool GetSettingSensor()
+    {
+        if (editorSimlator)
+        {
+            return Input.GetKey(KeyCode.Y);
+        }
+        else
+        {
+            return _settingHintSwitch;
+        }
+    }
+
 
     float lastScreenPosY;
     float getScreenMoven()
@@ -188,13 +220,14 @@ public class WearController : MonoBehaviour
         ProcessPick();
         FlashLight();
         ResetSensor();
+        SettingHint();
     }
     void ResetSensor()
     {
         if (GetResetSensor())
         {
             _resetTimer += Time.deltaTime;
-            if (_resetTimer > resetNeedTime)
+            if (_resetTimer > GlobalDefine.resetNeedTime)
             {
                 WebScoketServer.Instance.SendMsg("Reset Sensor");
                 _resetTimerSwitch = false;
@@ -203,6 +236,22 @@ public class WearController : MonoBehaviour
         else
         {
             _resetTimer = 0;
+        }
+    }
+    void SettingHint()
+    {
+        if (GetSettingSensor())
+        {
+            _settingTimer += Time.deltaTime;
+            if (_settingTimer > GlobalDefine.settingNeedTime)
+            {
+                //WebScoketServer.Instance.SendMsg("Reset Sensor");
+                _settingHintSwitch = false;
+            }
+        }
+        else
+        {
+            _settingTimer = 0;
         }
     }
     // void OnGUI()
