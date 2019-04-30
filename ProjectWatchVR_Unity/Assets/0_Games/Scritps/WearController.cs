@@ -79,6 +79,14 @@ public class WearController : MonoBehaviour
             });
             _settingHintSwitch = false;
         }
+
+        if (btn == VRInputReciver.Buttons.Left)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                UI_MainMenu.Instance.Swtich();
+            });
+        }
     }
 
     private void OnWatchButtonDown(VRInputReciver.Buttons btn)

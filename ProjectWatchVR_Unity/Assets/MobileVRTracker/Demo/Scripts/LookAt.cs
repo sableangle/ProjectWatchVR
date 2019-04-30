@@ -11,59 +11,61 @@ using UnityEngine;
 
 public class LookAt : MonoBehaviour
 {
-	#region Inspector Settings
-	[SerializeField] private Transform lookTarget;
-	[Header("Follow Angles")]
-	[SerializeField] private bool x = true;
+    #region Inspector Settings
+    [SerializeField] private Transform lookTarget;
+    [SerializeField] private bool FlipY = false;
+    [Header("Follow Angles")]
+    [SerializeField] private bool x = true;
     [SerializeField] private bool y = true;
     [SerializeField] private bool z = true;
-	#endregion // Inspector Settings
+    #endregion // Inspector Settings
 
 
-	#region Member Field
+    #region Member Field
 
-	#endregion // Member Field
+    #endregion // Member Field
 
-	
-	#region MonoBehaviour Methods
 
-	private void Awake ()
-	{
-		
-	}
+    #region MonoBehaviour Methods
 
-	private void Start ()
-	{
-		
-	}
-	
-	private void Update ()
-	{
-		if(lookTarget == null){
-			lookTarget = Camera.main.transform;
-		}
-		Vector3 r = transform.eulerAngles;
-		transform.LookAt(lookTarget);
+    private void Awake()
+    {
 
-		if(x)
-		{
-			r = new Vector3(transform.eulerAngles.x, r.y, r.z);
-		}
-		if(y)
+    }
+
+    private void Start()
+    {
+
+    }
+
+    private void Update()
+    {
+        if (lookTarget == null)
         {
-            r = new Vector3(r.x, transform.eulerAngles.y, r.z);
-		}
-		if(z)
+            lookTarget = Camera.main.transform;
+        }
+        Vector3 r = transform.eulerAngles;
+        transform.LookAt(lookTarget);
+
+        if (x)
+        {
+            r = new Vector3(transform.eulerAngles.x, r.y, r.z);
+        }
+        if (y)
+        {
+            r = new Vector3(r.x, transform.eulerAngles.y + (FlipY ? 180 : 0), r.z);
+        }
+        if (z)
         {
             r = new Vector3(r.x, r.y, transform.eulerAngles.z);
-		}
-		transform.rotation = Quaternion.Euler(r);
-	}
+        }
+        transform.rotation = Quaternion.Euler(r);
+    }
 
-	#endregion // MonoBehaviour Methods
+    #endregion // MonoBehaviour Methods
 
 
-	#region Member Methods
+    #region Member Methods
 
-	#endregion // Member Methods
+    #endregion // Member Methods
 }
