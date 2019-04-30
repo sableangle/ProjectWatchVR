@@ -24,6 +24,7 @@ public class UI_ScreenSpace : MonoBehaviour
     Coroutine ResetHintCoroutine;
     public void ShowHint_Reset()
     {
+        DOTween.Kill(Hint_Reset);
         ResetHintCoroutine = StartCoroutine(StartResetUIConter());
         Hint_Reset.DOFade(1, 0.4f).OnStart(() =>
         {
@@ -33,6 +34,7 @@ public class UI_ScreenSpace : MonoBehaviour
     }
     public void ExitHint_Reset()
     {
+        DOTween.Kill(Hint_Reset);
         StopCoroutine(ResetHintCoroutine);
         Hint_Reset.DOFade(0, 0.4f).OnComplete(() =>
         {
@@ -58,6 +60,7 @@ public class UI_ScreenSpace : MonoBehaviour
     Coroutine SettingHintCoroutine;
     public void ShowHint_Setting()
     {
+        DOTween.Kill(Hint_Setting);
         SettingHintCoroutine = StartCoroutine(StartSettingUIConter());
         Hint_Setting.DOFade(1, 0.4f).OnStart(() =>
         {
@@ -67,6 +70,7 @@ public class UI_ScreenSpace : MonoBehaviour
     }
     public void ExitHint_Setting()
     {
+        DOTween.Kill(Hint_Setting);
         StopCoroutine(SettingHintCoroutine);
         Hint_Setting.DOFade(0, 0.4f).OnComplete(() =>
         {
