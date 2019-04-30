@@ -291,23 +291,25 @@ public class WearController : MonoBehaviour
 
     Transform oriPickerParent;
     Vector3 targetPointerPosition;
-    bool isPicking
-    {
-        get
-        {
-            return pointer.childCount > 0;
-        }
-    }
+    bool isPicking = false;
+    // bool isPicking
+    // {
+    //     get
+    //     {
+    //         return pointer.childCount > 0;
+    //     }
+    // }
     void PickStart()
     {
         if (lastPickable == null)
         {
             return;
         }
-        oriPickerParent = lastPickable.transform.parent;
+        isPicking = true;
+        //oriPickerParent = lastPickable.transform.parent;
         targetPointerPosition = pointer.localPosition;
-        lastPickable.OnPickStart();
-        lastPickable.transform.SetParent(pointer);
+        lastPickable.OnPickStart(pointer);
+        //lastPickable.transform.SetParent(pointer);
     }
     void PickEnd()
     {
@@ -315,8 +317,9 @@ public class WearController : MonoBehaviour
         {
             return;
         }
+        isPicking = false;
         lastPickable.OnPickFinish();
-        lastPickable.transform.SetParent(oriPickerParent);
+        //lastPickable.transform.SetParent(oriPickerParent);
     }
 
     void ProcessPick()
@@ -382,7 +385,7 @@ public class WearController : MonoBehaviour
             lastPickable = pickable;
             lastPickable.OnPointEnter();
         }
-        else
+        else 
         {
             ResetCurrentPickable();
             pointer.localScale = Vector3.Lerp(pointer.localScale, Vector3.zero, lerpSpeed * Time.deltaTime);

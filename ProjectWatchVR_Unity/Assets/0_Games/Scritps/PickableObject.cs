@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(Rigidbody))]
 public class PickableObject : MonoBehaviour
 {
     // cakeslice.Outline outline;
@@ -26,8 +26,18 @@ public class PickableObject : MonoBehaviour
     void Update()
     {
         ApplyGlow();
-    }
 
+    }
+    float dragDamper = 10.0f;
+
+    void FixedUpdate()
+    {
+        if (isPicked)
+        {
+            var velocity = picker.position - transform.position;
+            rigibody.velocity = velocity * dragDamper;
+        }
+    }
     public void OnPointEnter()
     {
         _targetColor = GlowColor;
@@ -38,15 +48,32 @@ public class PickableObject : MonoBehaviour
         _targetColor = Color.black;
     }
 
-    public void OnPickStart()
+    bool isPicked
     {
+        get
+        {
+            return picker != null;
+        }
+    }
+    private Transform picker;
+    public void OnPickStart(Transform pickPointer)
+    {
+        picker = pickPointer;
+        rigibody.useGravity = false;
+        rigibody.constraints = RigidbodyConstraints.FreezeRotation;
+
         //Physics.gravity = Vector3.zero;
-        if (rigibody) rigibody.isKinematic = true;
+        //if (rigibody) rigibody.isKinematic = true;
     }
     public void OnPickFinish()
     {
+        rigibody.useGravity = true;
+
+        picker = null;
+        rigibody.constraints = RigidbodyConstraints.None;
+
         //Physics.gravity = _gravity;
-        if (rigibody) rigibody.isKinematic = false;
+        //if (rigibody) rigibody.isKinematic = false;
     }
 
     //Glow Effect
