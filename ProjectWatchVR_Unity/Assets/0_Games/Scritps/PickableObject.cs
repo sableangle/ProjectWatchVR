@@ -7,12 +7,11 @@ public class PickableObject : MonoBehaviour
     // cakeslice.Outline outline;
     //static Vector3 _gravity = new Vector3(0, -9.8f, 0);
     Rigidbody rigibody;
+    Transform _transform;
     void Awake()
     {
-        // outline = gameObject.AddComponent<cakeslice.Outline>();
-        // outline.eraseRenderer = true;
-
         rigibody = GetComponent<Rigidbody>();
+        _transform = transform;
     }
     void Start()
     {
@@ -28,13 +27,13 @@ public class PickableObject : MonoBehaviour
         ApplyGlow();
 
     }
-    float dragDamper = 10.0f;
+    float dragDamper = 15.0f;
 
     void FixedUpdate()
     {
         if (isPicked)
         {
-            var velocity = picker.position - transform.position;
+            var velocity = picker.position - _transform.position;
             rigibody.velocity = velocity * dragDamper;
         }
     }
@@ -61,9 +60,6 @@ public class PickableObject : MonoBehaviour
         picker = pickPointer;
         rigibody.useGravity = false;
         rigibody.constraints = RigidbodyConstraints.FreezeRotation;
-
-        //Physics.gravity = Vector3.zero;
-        //if (rigibody) rigibody.isKinematic = true;
     }
     public void OnPickFinish()
     {
@@ -71,9 +67,6 @@ public class PickableObject : MonoBehaviour
 
         picker = null;
         rigibody.constraints = RigidbodyConstraints.None;
-
-        //Physics.gravity = _gravity;
-        //if (rigibody) rigibody.isKinematic = false;
     }
 
     //Glow Effect

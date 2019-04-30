@@ -289,9 +289,10 @@ public class WearController : MonoBehaviour
         flashlight.localScale = Vector3.Lerp(flashlight.localScale, flashlightTargetSize, lerpSpeed * Time.deltaTime);
     }
 
-    Transform oriPickerParent;
+    Transform pickWrapper;
     Vector3 targetPointerPosition;
     bool isPicking = false;
+
     // bool isPicking
     // {
     //     get
@@ -305,11 +306,15 @@ public class WearController : MonoBehaviour
         {
             return;
         }
+        if (pickWrapper == null)
+        {
+            pickWrapper = new GameObject("PickWrapper").transform;
+        }
+        pickWrapper.position = lastPickable.transform.position;
+        pickWrapper.SetParent(pointer);
         isPicking = true;
-        //oriPickerParent = lastPickable.transform.parent;
         targetPointerPosition = pointer.localPosition;
-        lastPickable.OnPickStart(pointer);
-        //lastPickable.transform.SetParent(pointer);
+        lastPickable.OnPickStart(pickWrapper);
     }
     void PickEnd()
     {
@@ -319,23 +324,10 @@ public class WearController : MonoBehaviour
         }
         isPicking = false;
         lastPickable.OnPickFinish();
-        //lastPickable.transform.SetParent(oriPickerParent);
     }
 
     void ProcessPick()
     {
-        // if (GetPickButtonDown())
-        // {
-        //     oriPickerParent = lastPickable.transform.parent;
-        //     targetPointerPosition = pointer.localPosition;
-        //     lastPickable.OnPickStart();
-        //     lastPickable.transform.SetParent(pointer);
-        // }
-        // if (GetPickButtonUp())
-        // {
-        //     lastPickable.OnPickFinish();
-        //     lastPickable.transform.SetParent(oriPickerParent);
-        // }
         if (isPicking)
         {
             targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + getScreenMoven(), 0, 6f));
@@ -385,7 +377,7 @@ public class WearController : MonoBehaviour
             lastPickable = pickable;
             lastPickable.OnPointEnter();
         }
-        else 
+        else
         {
             ResetCurrentPickable();
             pointer.localScale = Vector3.Lerp(pointer.localScale, Vector3.zero, lerpSpeed * Time.deltaTime);
