@@ -9,6 +9,15 @@ public class UI_SummonListPanel : UI_WorldItem
     Button closeButton;
     public static UI_SummonListPanel Instance;
 
+
+
+    [SerializeField]
+    Button summonBoxButton;
+    [SerializeField]
+    Button summonBallButton;
+    [SerializeField]
+    Button summonFoodButton;
+
     protected override void Awake()
     {
         base.Awake();
@@ -24,6 +33,30 @@ public class UI_SummonListPanel : UI_WorldItem
                 Hide();
             }
         );
+        summonBoxButton.OnClickAsObservable().Subscribe(
+           _ =>
+           {
+               GameController.Instance.SommonBox();
+           }
+       );
+        summonBallButton.OnClickAsObservable().Subscribe(
+           _ =>
+           {
+               GameController.Instance.SommonBall();
+           }
+       );
+        summonFoodButton.OnClickAsObservable().Subscribe(
+           _ =>
+           {
+               GameController.Instance.SommonFood();
+           }
+       );
+    }
+
+    void Update(){
+        if(Input.GetKeyDown(KeyCode.Q)){
+            UI_MainMenu.Instance.Swtich();
+        }
     }
 
 }

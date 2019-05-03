@@ -5,12 +5,7 @@ using DG.Tweening;
 public class UI_WorldItem : MonoBehaviour
 {
     // Start is called before the first frame update
-    protected Vector3 GetCameraFrontPosition(float height, float front)
-    {
-        Vector3 p = Camera.main.transform.TransformPoint(new Vector3(0, 0, front));
-        p.y = height;
-        return p;
-    }
+    
 
     CanvasGroup canvasGroup;
     Transform transfromCache;
@@ -27,7 +22,7 @@ public class UI_WorldItem : MonoBehaviour
 
     public void Show()
     {
-        transfromCache.position = GetCameraFrontPosition(generateHeight, 3);
+        transfromCache.position = Utilitys.GetCameraFrontPosition(generateHeight, 3);
         DOTween.Kill(canvasGroup);
         isItemOpen = true;
         canvasGroup.DOFade(1, 0.4f).OnStart(
