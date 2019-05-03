@@ -169,7 +169,7 @@ public class MobileVRTracker : UnitySingleton<MobileVRTracker>
         // ARKitセッションの初期化 ----
         session = UnityARSessionNativeInterface.GetARSessionNativeInterface();
         ARKitWorldTrackingSessionConfiguration config = new ARKitWorldTrackingSessionConfiguration();
-        config.planeDetection = UnityARPlaneDetection.Horizontal;
+        config.planeDetection = UnityARPlaneDetection.HorizontalAndVertical;
         config.alignment = UnityARAlignment.UnityARAlignmentGravity;
         config.getPointCloudData = true;
         config.enableLightEstimation = false;

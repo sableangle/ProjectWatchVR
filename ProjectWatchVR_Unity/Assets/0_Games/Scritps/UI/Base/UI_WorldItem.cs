@@ -11,9 +11,10 @@ public class UI_WorldItem : MonoBehaviour
         p.y = height;
         return p;
     }
-    CanvasGroup canvasGroup;
 
+    CanvasGroup canvasGroup;
     Transform transfromCache;
+    protected float generateHeight = 2.8f;
     bool isItemOpen = false;
     protected virtual void Awake()
     {
@@ -26,7 +27,7 @@ public class UI_WorldItem : MonoBehaviour
 
     public void Show()
     {
-        transfromCache.position = GetCameraFrontPosition(2.8f, 3);
+        transfromCache.position = GetCameraFrontPosition(generateHeight, 3);
         DOTween.Kill(canvasGroup);
         isItemOpen = true;
         canvasGroup.DOFade(1, 0.4f).OnStart(
@@ -39,7 +40,7 @@ public class UI_WorldItem : MonoBehaviour
     }
 
     Tween hideTween;
-    public void Hide()
+    public void Hide(System.Action OnComplete = null)
     {
         DOTween.Kill(canvasGroup);
         isItemOpen = false;
@@ -47,6 +48,10 @@ public class UI_WorldItem : MonoBehaviour
             () =>
             {
                 gameObject.SetActive(false);
+                if (OnComplete != null)
+                {
+                    OnComplete.Invoke();
+                }
             }
         );
     }
