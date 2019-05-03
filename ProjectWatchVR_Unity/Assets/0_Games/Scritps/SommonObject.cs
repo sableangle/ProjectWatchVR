@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
-public class PickableObject : MonoBehaviour
+public class SommonObject : MonoBehaviour, IPickable
 {
     // cakeslice.Outline outline;
     //static Vector3 _gravity = new Vector3(0, -9.8f, 0);
@@ -25,7 +25,6 @@ public class PickableObject : MonoBehaviour
     void Update()
     {
         ApplyGlow();
-
     }
     float dragDamper = 15.0f;
 
@@ -101,5 +100,10 @@ public class PickableObject : MonoBehaviour
         {
             return;
         }
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
     }
 }

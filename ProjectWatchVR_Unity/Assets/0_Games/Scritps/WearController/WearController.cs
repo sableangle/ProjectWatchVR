@@ -299,7 +299,7 @@ public class WearController : MonoBehaviour
 
     Transform pickWrapper;
     Vector3 targetPointerPosition;
-    bool isPicking = false;
+    public static bool isPicking = false;
 
     // bool isPicking
     // {
@@ -308,7 +308,7 @@ public class WearController : MonoBehaviour
     //         return pointer.childCount > 0;
     //     }
     // }
-    void PickStart()
+    public void PickStart()
     {
         if (lastPickable == null)
         {
@@ -318,13 +318,13 @@ public class WearController : MonoBehaviour
         {
             pickWrapper = new GameObject("PickWrapper").transform;
         }
-        pickWrapper.position = lastPickable.transform.position;
+        pickWrapper.position = lastPickable.GetTransform().position;
         pickWrapper.SetParent(pointer);
         isPicking = true;
         targetPointerPosition = pointer.localPosition;
         lastPickable.OnPickStart(pickWrapper);
     }
-    void PickEnd()
+    public void PickEnd()
     {
         if (lastPickable == null)
         {
@@ -345,7 +345,10 @@ public class WearController : MonoBehaviour
                 lerpSpeed * Time.deltaTime);
         }
     }
-
+    public void SetCurrentPickable(IPickable pickable)
+    {
+        lastPickable = pickable;
+    }
     public Transform pointer;
     private Vector3 pointerTargetScale = new Vector3(4.5f, 4.5f, 0.045f);
 
@@ -355,7 +358,7 @@ public class WearController : MonoBehaviour
     public float lerpSpeed = 10;
     public float lerpSpeedForRotation = 20;
 
-    PickableObject lastPickable;
+    IPickable lastPickable;
     void RayCast()
     {
         if (isPicking == true)
@@ -376,7 +379,7 @@ public class WearController : MonoBehaviour
                 ResetCurrentPickable();
                 return;
             }
-            var pickable = g.GetComponent<PickableObject>();
+            var pickable = g.GetComponent<IPickable>();
             if (pickable == lastPickable)
             {
                 return;

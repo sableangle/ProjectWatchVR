@@ -9,13 +9,18 @@ public class UI_GroundObjectListPanel : UI_WorldItem
     [SerializeField]
     Button closeButton;
 
+    [SerializeField]
+    Button flowerButton;
+    [SerializeField]
+    Button grassButton;
+
     public static UI_GroundObjectListPanel Instance;
 
     protected override void Awake()
     {
         base.Awake();
         Instance = this;
-                generateHeight = 2.4f;
+        generateHeight = 2.4f;
 
     }
 
@@ -25,6 +30,18 @@ public class UI_GroundObjectListPanel : UI_WorldItem
             _ =>
             {
                 Hide();
+            }
+        );
+        flowerButton.OnClickAsObservable().Subscribe(
+            _ =>
+            {
+                GameController.Instance.CreateFlower();
+            }
+        );
+        grassButton.OnClickAsObservable().Subscribe(
+            _ =>
+            {
+                GameController.Instance.CreateGrass();
             }
         );
     }

@@ -42,7 +42,43 @@ public class GameController : MonoBehaviour
 
     #region GroundObject
 
+    public GameObject[] GroundObjectPrefabs;
+    public enum GroundObject
+    {
+        Flower = 0, Grass = 1
+    }
+
+    public void CreateFlower()
+    {
+        CreateGroundObject((int)GroundObject.Flower);
+    }
+    public void CreateGrass()
+    {
+        CreateGroundObject((int)GroundObject.Grass);
+    }
+
+    public void CreateGroundObject(int i)
+    {
+        if (WearController.isPicking)
+        {
+            return;
+        }
+        var go = Instantiate<GameObject>(GroundObjectPrefabs[i],
+        WearController.Instance.pointer.position,
+        Quaternion.identity);
+        var pickable = go.GetComponent<IPickable>();
+        WearController.Instance.SetCurrentPickable(pickable);
+        WearController.Instance.PickStart();
+    }
     #endregion
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            UI_MainMenu.Instance.Swtich();
+        }
+    }
 
 
 }

@@ -53,10 +53,4 @@ public class UI_SummonListPanel : UI_WorldItem
        );
     }
 
-    void Update(){
-        if(Input.GetKeyDown(KeyCode.Q)){
-            UI_MainMenu.Instance.Swtich();
-        }
-    }
-
 }
