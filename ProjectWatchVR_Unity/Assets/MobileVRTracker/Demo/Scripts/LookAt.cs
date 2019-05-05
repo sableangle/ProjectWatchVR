@@ -14,10 +14,12 @@ public class LookAt : MonoBehaviour
     #region Inspector Settings
     [SerializeField] private Transform lookTarget;
     [SerializeField] private bool FlipY = false;
-    [Header("Follow Angles")]
+    [Header("Affect Angles")]
     [SerializeField] private bool x = true;
     [SerializeField] private bool y = true;
     [SerializeField] private bool z = true;
+
+
     #endregion // Inspector Settings
 
 

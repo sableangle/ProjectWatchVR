@@ -5,11 +5,8 @@ using UniRx;
 using UnityEngine.UI;
 public class UI_SummonListPanel : UI_WorldItem
 {
-    [SerializeField]
-    Button closeButton;
+   
     public static UI_SummonListPanel Instance;
-
-
 
     [SerializeField]
     Button summonBoxButton;
@@ -25,14 +22,9 @@ public class UI_SummonListPanel : UI_WorldItem
         generateHeight = 2.4f;
 
     }
-    void Start()
+    protected override void  Start()
     {
-        closeButton.OnClickAsObservable().Subscribe(
-            _ =>
-            {
-                Hide();
-            }
-        );
+       base.Start();
         summonBoxButton.OnClickAsObservable().Subscribe(
            _ =>
            {

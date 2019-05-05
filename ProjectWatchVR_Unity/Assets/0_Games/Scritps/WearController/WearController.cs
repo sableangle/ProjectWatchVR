@@ -359,11 +359,7 @@ public class WearController : MonoBehaviour
 
         if (isPicking)
         {
-            if (lastPickable is SommonObject)
-            {
-                targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + getScreenMoven(), 0, 6f));
 
-            }
             if (lastPickable is GroundObject)
             {
                 if (isHit && hit.collider.CompareTag("Floor"))
@@ -371,9 +367,14 @@ public class WearController : MonoBehaviour
                     targetPointerPosition = new Vector3(0, 0, hit.distance / 1.8f);
                     ((GroundObject)lastPickable).SetIsGround(true);
                 }
-                else{
+                else
+                {
                     ((GroundObject)lastPickable).SetIsGround(false);
                 }
+            }
+            else
+            {
+                targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + getScreenMoven(), 0, 6f));
             }
             pointer.localPosition = Vector3.Lerp(
                               pointer.localPosition,

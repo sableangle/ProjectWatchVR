@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class UI_GroundObjectListPanel : UI_WorldItem
 {
-    [SerializeField]
-    Button closeButton;
+
 
     [SerializeField]
     Button flowerButton;
@@ -24,14 +23,9 @@ public class UI_GroundObjectListPanel : UI_WorldItem
 
     }
 
-    void Start()
+    protected override void Start()
     {
-        closeButton.OnClickAsObservable().Subscribe(
-            _ =>
-            {
-                Hide();
-            }
-        );
+        base.Start();
         flowerButton.OnClickAsObservable().Subscribe(
             _ =>
             {

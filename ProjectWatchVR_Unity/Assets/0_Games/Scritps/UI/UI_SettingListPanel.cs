@@ -5,8 +5,7 @@ using UniRx;
 using UnityEngine.UI;
 public class UI_SettingListPanel : UI_WorldItem
 {
-    [SerializeField]
-    Button closeButton;
+
 
     public static UI_SettingListPanel Instance;
 
@@ -18,14 +17,9 @@ public class UI_SettingListPanel : UI_WorldItem
 
     }
 
-    void Start()
+    protected override void Start()
     {
-        closeButton.OnClickAsObservable().Subscribe(
-            _ =>
-            {
-                Hide();
-            }
-        );
+        base.Start();
     }
 
 }

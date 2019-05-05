@@ -23,8 +23,9 @@ public class UI_MainMenu : UI_WorldItem
         Instance = this;
         generateHeight = 2.8f;
     }
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         summonItemMenu.OnClickAsObservable().Subscribe(
             _ =>
             {

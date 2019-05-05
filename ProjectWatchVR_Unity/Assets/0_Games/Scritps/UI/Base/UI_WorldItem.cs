@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-public class UI_WorldItem : MonoBehaviour
+using UnityEngine.UI;
+using UniRx;
+using UniRx.Triggers;
+
+public class UI_WorldItem : MonoBehaviour, IPickable
 {
     // Start is called before the first frame update
-    
+    [SerializeField]
+    Button closeButton;
+    [SerializeField]
+    Button moveButton;
 
     CanvasGroup canvasGroup;
     Transform transfromCache;
@@ -19,6 +26,36 @@ public class UI_WorldItem : MonoBehaviour
         canvasGroup.alpha = 0;
         gameObject.SetActive(false);
     }
+
+    protected virtual void Start()
+    {
+        closeButton.OnClickAsObservable().Subscribe(
+            _ =>
+            {
+                Hide();
+            }
+        );
+
+        moveButton.OnPointerDownAsObservable().Subscribe(
+             _ =>
+            {
+                if (WearController.isPicking)
+                {
+                    return;
+                }
+                WearController.Instance.SetCurrentPickable(this);
+                WearController.Instance.PickStart();
+            }
+        );
+
+        moveButton.OnPointerUpAsObservable().Subscribe(
+            _ =>
+            {
+                WearController.Instance.PickEnd();
+            }
+        );
+    }
+
 
     public void Show()
     {
@@ -62,4 +99,42 @@ public class UI_WorldItem : MonoBehaviour
             Show();
         }
     }
+
+    void Update()
+    {
+        if (isPick)
+        {
+            transfromCache.position = picker.position;
+        }
+    }
+    #region  Pickable
+    bool isPick = false;
+        private Transform picker;
+
+    public void OnPickStart(Transform pickPointer)
+    {
+        picker = pickPointer;
+        isPick = true;
+    }
+
+    public void OnPickFinish()
+    {
+        //transfromCache.SetParent(null);
+
+        isPick = false;
+    }
+
+    public void OnPointEnter()
+    {
+    }
+
+    public void OnPointOut()
+    {
+    }
+
+    public Transform GetTransform()
+    {
+        return transfromCache;
+    }
+    #endregion
 }
