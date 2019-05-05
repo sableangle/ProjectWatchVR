@@ -336,14 +336,7 @@ public class WearController : MonoBehaviour
 
     void ProcessPick()
     {
-        if (isPicking)
-        {
-            targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + getScreenMoven(), 0, 6f));
-            pointer.localPosition = Vector3.Lerp(
-                pointer.localPosition,
-                targetPointerPosition,
-                lerpSpeed * Time.deltaTime);
-        }
+
     }
     public void SetCurrentPickable(IPickable pickable)
     {
@@ -361,18 +354,38 @@ public class WearController : MonoBehaviour
     IPickable lastPickable;
     void RayCast()
     {
-        if (isPicking == true)
-        {
-            return;
-        }
         Vector3 fwd = transformCache.TransformDirection(Vector3.forward);
         isHit = Physics.Raycast(transformCache.position, fwd, out hit, 100);
+
+        if (isPicking)
+        {
+            if (lastPickable is SommonObject)
+            {
+                targetPointerPosition = new Vector3(0, 0, Mathf.Clamp(targetPointerPosition.z + getScreenMoven(), 0, 6f));
+
+            }
+            if (lastPickable is GroundObject)
+            {
+                if (isHit && hit.collider.CompareTag("Floor"))
+                {
+                    targetPointerPosition = new Vector3(0, 0, hit.distance / 1.8f);
+                    ((GroundObject)lastPickable).SetIsGround(true);
+                }
+                else{
+                    ((GroundObject)lastPickable).SetIsGround(false);
+                }
+            }
+            pointer.localPosition = Vector3.Lerp(
+                              pointer.localPosition,
+                              targetPointerPosition,
+                              lerpSpeed * Time.deltaTime);
+            return;
+        }
         if (isHit)
         {
             var p = Vector3.Lerp(transformCache.position, hit.point, 0.85f);
             pointer.position = Vector3.Lerp(pointer.position, p, lerpSpeed * Time.deltaTime);
-            pointer.localScale = Vector3.Lerp(pointer.localScale, pointerTargetScale, lerpSpeed * Time.deltaTime);
-
+            //pointer.localScale = Vector3.Lerp(pointer.localScale, pointerTargetScale, lerpSpeed * Time.deltaTime);
             var g = hit.collider.gameObject;
             if (!g.CompareTag("Pickable"))
             {
@@ -388,12 +401,12 @@ public class WearController : MonoBehaviour
             lastPickable = pickable;
             lastPickable.OnPointEnter();
         }
-        else
-        {
-            ResetCurrentPickable();
-            pointer.localScale = Vector3.Lerp(pointer.localScale, Vector3.zero, lerpSpeed * Time.deltaTime);
-            pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
-        }
+        // else
+        // {
+        //     ResetCurrentPickable();
+        //     pointer.localScale = Vector3.Lerp(pointer.localScale, Vector3.zero, lerpSpeed * Time.deltaTime);
+        //     pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
+        // }
     }
     void ResetCurrentPickable()
     {

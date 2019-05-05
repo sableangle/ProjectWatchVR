@@ -5,6 +5,7 @@ using UnityEngine;
 public class GroundObject : MonoBehaviour, IPickable
 {
     Transform _transform;
+    public bool isGround = false;
     public Transform GetTransform()
     {
         return transform;
@@ -13,6 +14,14 @@ public class GroundObject : MonoBehaviour, IPickable
     public void OnPickFinish()
     {
         isPick = false;
+
+        if(isGround){
+            //Do something
+        }
+        else{
+            //Do something
+            Destroy(gameObject);
+        }
     }
 
     bool isPick = false;
@@ -29,6 +38,10 @@ public class GroundObject : MonoBehaviour, IPickable
     public void OnPointOut()
     {
         //throw new System.NotImplementedException();
+    }
+
+    public void SetIsGround(bool isGround){
+        this.isGround = isGround;
     }
 
     // Start is called before the first frame update
