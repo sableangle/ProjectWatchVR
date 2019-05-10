@@ -1,21 +1,21 @@
 fileFormatVersion: 2
 guid: 7404ff1730e5d664ab0cc7f41b2fac9d
-timeCreated: 1530116941
-licenseType: Free
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
   iconMap: {}
   executionOrder: {}
+  defineConstraints: []
   isPreloaded: 0
   isOverridable: 0
+  isExplicitlyReferenced: 0
   platformData:
   - first:
       '': Any
     second:
       enabled: 0
       settings:
-        Exclude Android: 1
+        Exclude Android: 0
         Exclude Editor: 0
         Exclude Linux: 0
         Exclude Linux64: 0
@@ -27,7 +27,7 @@ PluginImporter:
   - first:
       Android: Android
     second:
-      enabled: 0
+      enabled: 1
       settings:
         CPU: ARMv7
   - first:
@@ -101,6 +101,7 @@ PluginImporter:
     second:
       enabled: 1
       settings:
+        AddToEmbeddedBinaries: false
         CompileFlags: 
         FrameworkDependencies: 
   userData: 

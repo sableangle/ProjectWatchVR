@@ -133,6 +133,7 @@ public class WearController : MonoBehaviour
     {
         if (editorSimlator)
         {
+            //return true;
             return Input.GetKey(KeyCode.J);
         }
         else
