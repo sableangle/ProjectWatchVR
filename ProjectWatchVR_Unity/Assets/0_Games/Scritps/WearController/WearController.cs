@@ -18,7 +18,6 @@ public class WearController : MonoBehaviour
     public GameObject[] Hands;
     private Transform transformCache;
     public Material screenMaterial;
-    [SerializeField]
     Quaternion initRot;
     void Awake()
     {
@@ -290,7 +289,7 @@ public class WearController : MonoBehaviour
     [SerializeField]
     private Transform flashlight;
     private Vector3 flashlightPosition = new Vector3(0, 0, 1.5f);
-    private Vector3 flashlightOpensize = new Vector3(0.5f, 0.5f, 0.5f);
+    private Vector3 flashlightOpensize = new Vector3(1.5f, 1.5f, 1.5f);
     private Vector3 flashlightTargetSize = new Vector3(0, 0, 0);
     void FlashLight()
     {
@@ -302,11 +301,13 @@ public class WearController : MonoBehaviour
         {
             flashlightTargetSize = Vector3.zero;
         }
-        flashlightPosition = new Vector3(0, 0, Mathf.Clamp(flashlightPosition.z + getScreenMoven() * 0.2f, 0.5f, 2f));
-        flashlight.localPosition = Vector3.Lerp(
-            flashlight.localPosition,
-            flashlightPosition,
-            lerpSpeed * Time.deltaTime);
+        // flashlightPosition = new Vector3(0, 0, Mathf.Clamp(flashlightPosition.z + getScreenMoven() * 0.2f, 0.5f, 2f));
+        // flashlight.localPosition = Vector3.Lerp(
+        //     flashlight.localPosition,
+        //     flashlightPosition,
+        //     lerpSpeed * Time.deltaTime);
+        flashlightPosition = new Vector3(0, 0, 1.5f);
+
         flashlight.localScale = Vector3.Lerp(flashlight.localScale, flashlightTargetSize, lerpSpeed * Time.deltaTime);
     }
 

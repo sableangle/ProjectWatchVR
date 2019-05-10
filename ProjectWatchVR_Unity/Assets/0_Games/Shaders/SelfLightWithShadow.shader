@@ -43,6 +43,7 @@
 			half4 c;
 			c.rgb = s.Albedo * (NdotL * atten * 2);
 			c.a = s.Alpha;
+			// float3 lambert = float(max(0.0, dot(i.normal,lightDirection))) * atten;
 
 			return c;
         }

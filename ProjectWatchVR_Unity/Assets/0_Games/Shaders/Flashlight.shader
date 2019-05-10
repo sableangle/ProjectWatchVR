@@ -12,8 +12,8 @@
 			        #pragma target 3.0
 
       struct Input {
-				float2 uv_MainTex;
-				float2 uv_Mask;
+				float2 uv_MainTex: TEXCOORD0;
+				float2 uv2_Mask: TEXCOORD1;
 		   	float4 screenPos;
       };
 
@@ -29,8 +29,14 @@
 	sampler2D _Mask;
 	void surf (Input IN, inout SurfaceOutput o) {
 			float2 coords = IN.screenPos.xy / IN.screenPos.w;
-			o.Albedo = tex2D (_MainTex, coords).rgb;
-			float3 mask = tex2D (_Mask, IN.uv_Mask).rgb;
+			#if UNITY_SINGLE_PASS_STEREO
+					// If Single-Pass Stereo mode is active, transform the
+					// coordinates to get the correct output UV for the current eye.
+					float4 scaleOffset = unity_StereoScaleOffset[unity_StereoEyeIndex];
+					coords = (coords - scaleOffset.zw) / scaleOffset.xy;
+			#endif
+			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+			float3 mask = tex2D (_Mask, IN.uv2_Mask).rgb;
 			o.Alpha = mask;
 
 	}
