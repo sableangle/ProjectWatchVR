@@ -54,6 +54,7 @@ public class VRInputReciver : MonoBehaviour
     static bool isHold = false;
     public class WatchInput : WebSocketBehavior
     {
+        
         protected override void OnMessage(MessageEventArgs e)
         {
             var msg = e.Data.Split(',');

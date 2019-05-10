@@ -9,13 +9,13 @@ public class BodyTracker : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        oriPosition = transform.position;
+        oriPosition = transform.localPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
         transform.eulerAngles = new Vector3(0, targetObject.eulerAngles.y, 0);
-        transform.position = oriPosition + targetObject.localPosition;
+        transform.localPosition = oriPosition + targetObject.localPosition;
     }
 }

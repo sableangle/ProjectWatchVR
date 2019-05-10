@@ -21,10 +21,23 @@ public class SommonObject : MonoBehaviour, IPickable
         {
             _materials.AddRange(renderer.materials);
         }
+        InitOutline();
+    }
+
+    cakeslice.Outline outline;
+    void InitOutline()
+    {
+        outline = GetComponent<cakeslice.Outline>();
+        if (outline == null)
+        {
+            outline = gameObject.AddComponent<cakeslice.Outline>();
+        }
+
+        outline.enabled = false;
     }
     void Update()
     {
-        ApplyGlow();
+        //ApplyGlow();
     }
     float dragDamper = 15.0f;
 
@@ -38,12 +51,15 @@ public class SommonObject : MonoBehaviour, IPickable
     }
     public void OnPointEnter()
     {
-        _targetColor = GlowColor;
+        outline.enabled = true;
+        // _targetColor = GlowColor;
     }
 
     public void OnPointOut()
     {
-        _targetColor = Color.black;
+        outline.enabled = false;
+
+        //_targetColor = Color.black;
     }
 
     bool isPicked

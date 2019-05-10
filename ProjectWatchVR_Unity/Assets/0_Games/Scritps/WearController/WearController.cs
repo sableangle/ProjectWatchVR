@@ -18,7 +18,7 @@ public class WearController : MonoBehaviour
     public GameObject[] Hands;
     private Transform transformCache;
     public Material screenMaterial;
-
+    Quaternion initRot;
     void Awake()
     {
         Instance = this;
@@ -36,9 +36,14 @@ public class WearController : MonoBehaviour
         {
             Hands[1].SetActive(true);
         }
+        initRot = transformCache.localRotation;
+
     }
     void Start()
     {
+#if !UNITY_EDITOR
+        editorSimlator = false;
+#endif
         if (editorSimlator)
         {
             Observable.EveryUpdate()
@@ -193,9 +198,12 @@ public class WearController : MonoBehaviour
         {
             // transformCache.rotation = VRInputReciver.rotation;
             // transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
-            transformCache.rotation = Quaternion.Lerp(
+            //VRInputReciver.accelerometer.x * 9.8f
+            transformCache.rotation = initRot * Quaternion.Slerp(
                 transformCache.rotation,
-                Quaternion.Euler(VRInputReciver.rotation.eulerAngles.x, VRInputReciver.rotation.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10),
+                Quaternion.Euler(-VRInputReciver.accelerometer.y * 9.8f,
+                VRInputReciver.rotation.eulerAngles.y,
+                0),
                 lerpSpeedForRotation * Time.deltaTime);
 
             SetTouchPosition(VRInputReciver.screenPosition);
@@ -217,7 +225,7 @@ public class WearController : MonoBehaviour
                 mouseY -= Input.GetAxis(AXIS_MOUSE_Y) * 6f;
                 mouseY = Mathf.Clamp(mouseY, -85, 85);
 
-                WearRotation = Quaternion.Euler(mouseY, mouseX - transformCache.parent.eulerAngles.y, mouseZ);
+                WearRotation = Quaternion.Euler(mouseY, mouseX, mouseZ);
 
                 // Update all VR cameras using Head position and rotation information.
                 transformCache.localRotation = WearRotation;

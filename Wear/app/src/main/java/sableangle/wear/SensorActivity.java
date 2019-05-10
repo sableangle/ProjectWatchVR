@@ -147,6 +147,9 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     }
 
     void ConnectWebSocket() {
+        if(ipAddress.equals("") || ipAddress.equals(null)){
+            return;
+        }
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
         //建立 WebSocketRequest
