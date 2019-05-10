@@ -18,6 +18,7 @@ public class WearController : MonoBehaviour
     public GameObject[] Hands;
     private Transform transformCache;
     public Material screenMaterial;
+    [SerializeField]
     Quaternion initRot;
     void Awake()
     {
@@ -202,9 +203,9 @@ public class WearController : MonoBehaviour
             // transformCache.rotation = VRInputReciver.rotation;
             // transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
             //VRInputReciver.accelerometer.x * 9.8f
-            transformCache.rotation = initRot * Quaternion.Slerp(
+            transformCache.rotation = Quaternion.Slerp(
                 transformCache.rotation,
-                Quaternion.Euler(-VRInputReciver.accelerometer.y * 9.8f,
+                initRot * Quaternion.Euler(-VRInputReciver.accelerometer.y * 9.8f,
                 VRInputReciver.rotation.eulerAngles.y,
                 0),
                 lerpSpeedForRotation * Time.deltaTime);
@@ -248,6 +249,7 @@ public class WearController : MonoBehaviour
             _resetTimer += Time.deltaTime;
             if (_resetTimer > GlobalDefine.resetNeedTime)
             {
+                initRot = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0);
                 WebScoketServer.Instance.SendMsg("Reset Sensor");
                 _resetTimerSwitch = false;
             }
