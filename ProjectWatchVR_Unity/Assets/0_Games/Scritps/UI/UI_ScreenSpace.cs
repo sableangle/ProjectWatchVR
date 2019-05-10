@@ -6,15 +6,28 @@ using UnityEngine.UI;
 public class UI_ScreenSpace : MonoBehaviour
 {
     public static UI_ScreenSpace Instance;
+    public Camera camera;
+    private Canvas canvas;
     void Awake()
     {
         Instance = this;
+        canvas = GetComponent<Canvas>();
+        canvas.worldCamera = camera;
     }
 
     void Start()
     {
         Hint_Reset.gameObject.SetActive(false);
         Hint_Setting.gameObject.SetActive(false);
+        canvas = GetComponent<Canvas>();
+        canvas.worldCamera = camera;
+    }
+    void Update()
+    {
+        if (canvas.worldCamera != camera)
+        {
+            canvas.worldCamera = camera;
+        }
     }
     [Header("Reset Panel")]
     [SerializeField]

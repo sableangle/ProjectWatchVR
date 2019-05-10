@@ -43,6 +43,9 @@ public class WearController : MonoBehaviour
     {
 #if !UNITY_EDITOR
         editorSimlator = false;
+        transform.localPosition = new Vector3(0, 0, 0);
+#else
+        transform.localPosition = new Vector3(0, 0, 0.5f);
 #endif
         if (editorSimlator)
         {
