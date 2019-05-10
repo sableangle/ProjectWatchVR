@@ -4,9 +4,10 @@
       _Mask ("Texture", 2D) = "white" {}
     }
     SubShader {
-      Tags { "RenderType" = "Transparent" "Queue"="Transparent" }
+      Tags { "RenderType" = "Opaque" "Queue"="Overlay" }
 					Blend SrcAlpha OneMinusSrcAlpha
-
+			zWrite off
+			 ZTest Always
       CGPROGRAM
       #pragma surface surf UnlitShading alpha
 			        #pragma target 3.0

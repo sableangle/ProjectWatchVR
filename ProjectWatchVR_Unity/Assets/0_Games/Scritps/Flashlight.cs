@@ -74,7 +74,7 @@ public class Flashlight : MonoBehaviour
 
         var p = mCamera.WorldToScreenPoint(transformCache.position);
         var screenUV = new Vector2(p.x / screen.x, (p.y) / screen.y);
-        Debug.LogFormat("u: {0} , v: {1}", screenUV.x, screenUV.y);
+       // Debug.LogFormat("u: {0} , v: {1}", screenUV.x, screenUV.y);
         Vector2[] uv = new Vector2[4];
         uv[0] = new Vector2(Mathf.Clamp01(screenUV.x - uvSize), Mathf.Clamp01(screenUV.y - uvSize));
         uv[1] = new Vector2(Mathf.Clamp01(screenUV.x + uvSize), Mathf.Clamp01(screenUV.y - uvSize));
