@@ -23,6 +23,7 @@ public class PrespectiveObjectController : MonoBehaviour
             {
                 grabbed_object_rigibody = grabbed_object.GetComponent<Rigidbody>();
                 grabbed_object_rigibody.isKinematic = true;
+                grabbed_object_rigibody.mass = 0.001f;
                 // scale = grabbed_object.transform.localScale;
                 startScale = grabbed_object.transform.localScale.x / ((Camera.main.transform.position - grabbed_object.transform.position).magnitude);
                 isGrabing = true;
@@ -42,7 +43,7 @@ public class PrespectiveObjectController : MonoBehaviour
             if (isGrabing == true)
             {
                 grabbed_object_rigibody = grabbed_object.GetComponent<Rigidbody>();
-
+                grabbed_object_rigibody.mass = 1f;
                 grabbed_object_rigibody.isKinematic = false;
                 isGrabing = false;
                 return;
@@ -101,7 +102,7 @@ public class PrespectiveObjectController : MonoBehaviour
         RaycastHit hitInfo = default(RaycastHit);
         if (Physics.Raycast(transform.position, transform.forward, out hitInfo, float.PositiveInfinity, layerMaskForWallDetect))
         {
-            lastPosition = hitInfo.point;
+            lastPosition = Vector3.Lerp(transform.position, hitInfo.point, 0.7f);
         }
         return lastPosition;
     }

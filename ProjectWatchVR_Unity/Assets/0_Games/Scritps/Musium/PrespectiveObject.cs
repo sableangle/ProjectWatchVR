@@ -36,10 +36,10 @@ public class PrespectiveObject : MonoBehaviour, IPickable
     {
         renderer = GetComponent<Renderer>();
         renderer.material.SetColor("_OutlineColor", outlineColor);
-                renderer.material.SetFloat(_OutlineWidth, 0.0f);
+        renderer.material.SetFloat(_OutlineWidth, 0.0f);
 
     }
 
-  
+
 
 }
