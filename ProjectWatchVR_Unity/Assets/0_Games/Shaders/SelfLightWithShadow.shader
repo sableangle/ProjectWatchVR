@@ -1,18 +1,98 @@
-﻿Shader "Custom/SelfLightWithShadow" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/SelfLightWithShadow" {
 	Properties
 	{
 		_Color("Color", Color) = (1, 1, 1, 1)
 		_MainTex("Albedo (RGB)", 2D) = "white" {}
-		_SecTex("UV2 Map (RGB)", 2D) = "white" {}
+		 _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
+		 _OutlineZ ("_OutlineZ", Range (0.0, 1.0)) = .00
+        _OutlineWidth ("Outline width", Range (0.0, 1.0)) = .000
+  
 	}
 
 	SubShader
 	{
+		Pass
+        {
+			// Cull Front
+
+            // CGPROGRAM
+
+            // #pragma vertex VertexProgram
+            // #pragma fragment FragmentProgram
+
+            // half _OutlineWidth;
+
+            // float4 VertexProgram(
+            //         float4 position : POSITION,
+            //         float3 normal : NORMAL) : SV_POSITION {
+
+            //      float4 clipPosition = UnityObjectToClipPos(position);
+			// 	float3 clipNormal = mul((float3x3) UNITY_MATRIX_VP, mul((float3x3) UNITY_MATRIX_M, normal));
+
+			// 	clipPosition.xyz += normalize(clipNormal) * _OutlineWidth;
+
+			// 	return clipPosition;
+
+
+            // }
+
+            // half4 _OutlineColor;
+
+            // half4 FragmentProgram() : SV_TARGET {
+            //     return _OutlineColor;
+            // }
+
+            // ENDCG
+            Cull front
+             
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+             
+            #include "UnityCG.cginc"
+             
+            struct appdata 
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+             
+            struct v2f
+            {
+                float4 pos : POSITION;
+				float3 viewDir : TEXCOORD1;
+        		float3 normalDir : TEXCOORD2;
+            };
+             
+            uniform float _OutlineWidth;
+            uniform float4 _OutlineColor;
+            uniform float _OutlineZ;
+             
+            v2f vert(appdata v)
+            {
+                v2f o;
+                 
+                float3 norm = normalize(v.normal);
+                v.vertex.xyz += v.normal * _OutlineWidth;
+                o.pos = UnityObjectToClipPos(v.vertex);
+  				o.normalDir = normalize(mul(float4(v.normal, 0), unity_WorldToObject).xyz); // normal direction
+        		o.viewDir = normalize(WorldSpaceViewDir(v.vertex)); // view direction
+                return o;
+            }
+             
+            half4 frag(v2f i) : COLOR
+            {
+                return _OutlineColor;
+            }
+            ENDCG
+        }
+         
 		Tags
         {
 			"Queue"="Geometry"
         	"RenderType" = "Opaque"
-			"Glowable"="True"
         }
         LOD 200
 		pass{
@@ -41,23 +121,21 @@
 			NdotL = 1;
 
 			half4 c;
-			c.rgb = s.Albedo * (NdotL * atten * 2);
+			
+			float3 lambert = float(max(0.0, dot(s.Normal,lightDir))) * atten;
+			c.rgb = s.Albedo * lambert;
 			c.a = s.Alpha;
-			// float3 lambert = float(max(0.0, dot(i.normal,lightDirection))) * atten;
-
 			return c;
         }
 
 
         sampler2D _MainTex;
-		sampler2D _SecTex;
         fixed4 _Color;
 
 
         struct Input
         {
         	float2 uv_MainTex;
-			float2 uv2_SecTex : TEXCOORD1;
         };
 
 
@@ -66,9 +144,8 @@
 			
 			
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex);
-			fixed4 c2 = tex2D(_SecTex, IN.uv2_SecTex);
 			
-			fixed4 finalColor = c * c2 * _Color;
+			fixed4 finalColor = c * _Color;
 			o.Albedo = finalColor.rgb;
 			o.Alpha = finalColor.a;
         }

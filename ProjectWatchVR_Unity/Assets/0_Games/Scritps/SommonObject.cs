@@ -25,15 +25,20 @@ public class SommonObject : MonoBehaviour, IPickable
     }
 
     cakeslice.Outline outline;
+    Renderer renderer;
+    static string _OutlineWidth = "_OutlineWidth";
     void InitOutline()
     {
-        outline = GetComponent<cakeslice.Outline>();
-        if (outline == null)
-        {
-            outline = gameObject.AddComponent<cakeslice.Outline>();
-        }
+        renderer = GetComponent<Renderer>();
+        // outline = GetComponent<cakeslice.Outline>();
+        // if (outline == null)
+        // {
+        //     outline = gameObject.AddComponent<cakeslice.Outline>();
+        // }
 
-        outline.enabled = false;
+        // outline.enabled = false;
+        renderer.material.SetFloat(_OutlineWidth, 0.0f);
+
     }
     void Update()
     {
@@ -51,13 +56,16 @@ public class SommonObject : MonoBehaviour, IPickable
     }
     public void OnPointEnter()
     {
-        outline.enabled = true;
+        renderer.material.SetFloat(_OutlineWidth, 0.02f);
+        //outline.enabled = true;
         // _targetColor = GlowColor;
     }
 
     public void OnPointOut()
     {
-        outline.enabled = false;
+        renderer.material.SetFloat(_OutlineWidth, 0.0f);
+
+        //outline.enabled = false;
 
         //_targetColor = Color.black;
     }
