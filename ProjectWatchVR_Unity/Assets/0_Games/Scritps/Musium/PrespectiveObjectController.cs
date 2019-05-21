@@ -15,40 +15,63 @@ public class PrespectiveObjectController : MonoBehaviour
         Observable.EveryUpdate()
         .Where(_ => Input.GetMouseButtonDown(0)).Subscribe(_ =>
         {
-            if (grabbed_object == null)
-            {
-                return;
-            }
-            if (isGrabing == false)
-            {
-                grabbed_object_rigibody = grabbed_object.GetComponent<Rigidbody>();
-                grabbed_object_rigibody.isKinematic = true;
-                grabbed_object_rigibody.mass = 0.001f;
-                // scale = grabbed_object.transform.localScale;
-                startScale = grabbed_object.transform.localScale.x / ((Camera.main.transform.position - grabbed_object.transform.position).magnitude);
-                isGrabing = true;
-                return;
-            }
-
-
+            StartPick();
         });
 
         Observable.EveryUpdate()
         .Where(_ => Input.GetMouseButtonUp(0)).Subscribe(_ =>
         {
-            if (grabbed_object == null)
-            {
-                return;
-            }
-            if (isGrabing == true)
-            {
-                grabbed_object_rigibody = grabbed_object.GetComponent<Rigidbody>();
-                grabbed_object_rigibody.mass = 1f;
-                grabbed_object_rigibody.isKinematic = false;
-                isGrabing = false;
-                return;
-            }
+            EndPick();
         });
+
+        VRInputReciver.OnWatchButtonDown += delegate (VRInputReciver.Buttons btn)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                StartPick();
+            });
+        };
+
+        VRInputReciver.OnWatchButtonUp += delegate (VRInputReciver.Buttons btn)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                EndPick();
+            });
+        };
+    }
+    void EndPick()
+    {
+        if (grabbed_object == null)
+        {
+            return;
+        }
+        if (isGrabing == true)
+        {
+            grabbed_object_rigibody = grabbed_object.GetComponent<Rigidbody>();
+            grabbed_object_rigibody.mass = 1f;
+            grabbed_object_rigibody.isKinematic = false;
+            isGrabing = false;
+            return;
+        }
+    }
+    void StartPick()
+    {
+        if (grabbed_object == null)
+        {
+            return;
+        }
+        if (isGrabing == false)
+        {
+            grabbed_object_rigibody = grabbed_object.GetComponent<Rigidbody>();
+            grabbed_object_rigibody.isKinematic = true;
+            grabbed_object_rigibody.mass = 0.001f;
+            // scale = grabbed_object.transform.localScale;
+            startScale = grabbed_object.transform.localScale.x / ((Camera.main.transform.position - grabbed_object.transform.position).magnitude);
+            isGrabing = true;
+            return;
+        }
+
     }
     void Update()
     {
