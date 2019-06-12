@@ -46,6 +46,36 @@ public class AI_PrespectiveLevel : MonoBehaviour
         );
     }
 
+    void ExitPrespectiveLevel()
+    {
+        var table_Renderer = Table.GetComponent<Renderer>();
+        Sequence tableIn = DOTween.Sequence();
+        hint.alpha = 0;
+       
+        foreach (var item in table_Renderer.materials)
+        {
+            item.SetFloat("_DissolveAmount", 0);
+            tableIn.Join(item.DOFloat(1, "_DissolveAmount", durationTime));
+        }
+        foreach (var item in mark)
+        {
+            var r = item.GetComponent<Renderer>();
+            r.material.SetColor("_TintColor", new Color(0, 1, 0, 1));
+        }
+
+        tableIn.OnComplete(
+            () =>
+            {
+                foreach (var item in mark)
+                {
+                    var r = item.GetComponent<Renderer>();
+                    r.material.DOColor(new Color(0, 1, 0, 0), "_TintColor", durationTime);
+                }
+                hint.DOFade(0,durationTime);
+            }
+        );
+    }
+
     // Update is called once per frame
     void OnEnable()
     {
