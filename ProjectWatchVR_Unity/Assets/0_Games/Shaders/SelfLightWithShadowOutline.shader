@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Custom/SelfLightWithShadow" {
+Shader "Custom/SelfLightWithShadowOutline" {
 	Properties
 	{
 		_Color("Color", Color) = (1, 1, 1, 1)
@@ -8,43 +8,14 @@ Shader "Custom/SelfLightWithShadow" {
 		 _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
 		 _OutlineZ ("_OutlineZ", Range (0.0, 1.0)) = .00
         _OutlineWidth ("Outline width", Range (0.0, 1.0)) = .000
-  
+
+        
 	}
 
 	SubShader
 	{
 		Pass
         {
-			// Cull Front
-
-            // CGPROGRAM
-
-            // #pragma vertex VertexProgram
-            // #pragma fragment FragmentProgram
-
-            // half _OutlineWidth;
-
-            // float4 VertexProgram(
-            //         float4 position : POSITION,
-            //         float3 normal : NORMAL) : SV_POSITION {
-
-            //      float4 clipPosition = UnityObjectToClipPos(position);
-			// 	float3 clipNormal = mul((float3x3) UNITY_MATRIX_VP, mul((float3x3) UNITY_MATRIX_M, normal));
-
-			// 	clipPosition.xyz += normalize(clipNormal) * _OutlineWidth;
-
-			// 	return clipPosition;
-
-
-            // }
-
-            // half4 _OutlineColor;
-
-            // half4 FragmentProgram() : SV_TARGET {
-            //     return _OutlineColor;
-            // }
-
-            // ENDCG
             Cull front
              
             CGPROGRAM
@@ -69,7 +40,8 @@ Shader "Custom/SelfLightWithShadow" {
             uniform float _OutlineWidth;
             uniform float4 _OutlineColor;
             uniform float _OutlineZ;
-             
+            half _Amount;
+
             v2f vert(appdata v)
             {
                 v2f o;
@@ -107,18 +79,18 @@ Shader "Custom/SelfLightWithShadow" {
 
         half4 LightingCelShadingForward(SurfaceOutput s, half3 lightDir, half atten)
         {
-			half NdotL = dot(s.Normal, lightDir);
+			// half NdotL = dot(s.Normal, lightDir);
 
-			if (NdotL <= 0.0)
-			NdotL = 0;
-			else if(NdotL >= 0.6 && NdotL < 1)
-			NdotL = 0.3;
-			else if(NdotL >= 0.3 && NdotL < 0.6)
-			NdotL = 0.2;
-			else if(NdotL >= 0 && NdotL < 0.3)
-			NdotL = 0.1;
-			else
-			NdotL = 1;
+			// if (NdotL <= 0.0)
+			// NdotL = 0;
+			// else if(NdotL >= 0.6 && NdotL < 1)
+			// NdotL = 0.3;
+			// else if(NdotL >= 0.3 && NdotL < 0.6)
+			// NdotL = 0.2;
+			// else if(NdotL >= 0 && NdotL < 0.3)
+			// NdotL = 0.1;
+			// else
+			// NdotL = 1;
 
 			half4 c;
 			
@@ -131,7 +103,7 @@ Shader "Custom/SelfLightWithShadow" {
 
         sampler2D _MainTex;
         fixed4 _Color;
-
+      
 
         struct Input
         {
@@ -141,7 +113,6 @@ Shader "Custom/SelfLightWithShadow" {
 
         void surf(Input IN, inout SurfaceOutput o)
         {
-			
 			
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex);
 			

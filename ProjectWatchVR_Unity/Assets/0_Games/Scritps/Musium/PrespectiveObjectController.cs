@@ -125,7 +125,7 @@ public class PrespectiveObjectController : MonoBehaviour
         RaycastHit hitInfo = default(RaycastHit);
         if (Physics.Raycast(transform.position, transform.forward, out hitInfo, float.PositiveInfinity, layerMaskForWallDetect))
         {
-            lastPosition = Vector3.Lerp(transform.position, hitInfo.point, 0.7f);
+            lastPosition = Vector3.Lerp(transform.position, hitInfo.point, 0.85f);
         }
         return lastPosition;
     }
