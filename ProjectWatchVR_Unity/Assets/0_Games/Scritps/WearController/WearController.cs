@@ -195,6 +195,8 @@ public class WearController : MonoBehaviour
     private const string AXIS_MOUSE_X = "Mouse X";
     private const string AXIS_MOUSE_Y = "Mouse Y";
     public Quaternion WearRotation { get; private set; }
+[SerializeField,Range(0.01f,1f)]
+float lerpParam = 0.5f;
     void Update()
     {
 
@@ -203,12 +205,43 @@ public class WearController : MonoBehaviour
             // transformCache.rotation = VRInputReciver.rotation;
             // transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
             //VRInputReciver.accelerometer.x * 9.8f
+
+
             transformCache.rotation = Quaternion.Slerp(
                 transformCache.rotation,
                 initRot * Quaternion.Euler(-VRInputReciver.accelerometer.y * 9.8f,
                 VRInputReciver.rotation.eulerAngles.y,
                 0),
-                lerpSpeedForRotation * Time.deltaTime);
+                // lerpSpeedForRotation * Time.deltaTime);
+                1-Mathf.Pow(lerpParam,Time.deltaTime*60));
+
+             //float targetY =  -VRInputReciver.accelerometer.y * 9.8f;
+            // transformCache.rotation = initRot * Quaternion.Euler(
+            //     targetY,
+            //     VRInputReciver.rotation.eulerAngles.y,
+            //     0);
+
+            //float targetY = -VRInputReciver.accelerometer.y * 9.8f;
+            // transformCache.rotation = initRot * Quaternion.Euler(
+            //     transformCache.rotation.x,
+            //     VRInputReciver.rotation.eulerAngles.y,
+            //     0);
+            // float targetY = Mathf.Lerp(transformCache.eulerAngles.x, -VRInputReciver.accelerometer.y * 9.8f, lerpSpeedForRotation * Time.deltaTime);
+
+            // transformCache.rotation = Quaternion.Euler(
+            //     targetY,
+            //     transformCache.rotation.eulerAngles.y,
+            //     transformCache.rotation.eulerAngles.z);
+            
+            // Quaternion current = transformCache.rotation;
+            // Quaternion target = initRot * Quaternion.Euler(targetY,VRInputReciver.rotation.eulerAngles.y,0);
+            // Vector3 currentEuler = current.eulerAngles;
+            // Vector3 targetEuler = target.eulerAngles;
+            // Vector3 currentFixEurler = new Vector3(current.x,targetEuler.y,targetEuler.z);
+            // Quaternion fromRot = Quaternion.Euler(currentFixEurler);
+            // Quaternion result = Quaternion.Slerp(fromRot,target,
+            //     1-Mathf.Pow(0.8f,Time.deltaTime*60) );
+            // transformCache.rotation = result;
 
             SetTouchPosition(VRInputReciver.screenPosition);
         }
