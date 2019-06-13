@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
+public class AI_PrespectiveLevel : MonoBehaviour
 {
     [SerializeField]
     CanvasGroup hint;
@@ -16,6 +16,21 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
     [SerializeField]
     GameObject[] cube;
     public float durationTime = 1;
+
+    Shader dissolveShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadowDissolve");
+        }
+    }
+    Shader normalShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadow");
+        }
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.O))
@@ -37,18 +52,20 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
     void StartPrespectiveLevel()
     {
         var table_Renderer = Table.GetComponent<Renderer>();
+
         Sequence tableIn = DOTween.Sequence();
         hint.alpha = 0;
 
         foreach (var item in table_Renderer.materials)
         {
+            item.shader = dissolveShader;
             item.SetFloat("_DissolveAmount", 1);
             tableIn.Join(item.DOFloat(0, "_DissolveAmount", durationTime));
         }
         foreach (var item in mark)
         {
             var r = item.GetComponent<Renderer>();
-            r.material.SetColor("_TintColor", new Color(0, 1, 0, 0));
+            r.material.SetFloat("_Alpha", 0);
         }
 
         tableIn.OnComplete(
@@ -57,12 +74,16 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
                 foreach (var item in mark)
                 {
                     var r = item.GetComponent<Renderer>();
-                    r.material.DOColor(new Color(0, 1, 0, 1), "_TintColor", durationTime);
+                    r.material.DOFloat(1, "_Alpha", durationTime);
                 }
                 hint.DOFade(1, durationTime);
                 foreach (var item in cube)
                 {
                     item.SetActive(true);
+                }
+                foreach (var item in table_Renderer.materials)
+                {
+                    item.shader = normalShader;
                 }
             }
         );
@@ -76,18 +97,19 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
 
         foreach (var item in table_Renderer.materials)
         {
+            item.shader = dissolveShader;
             item.SetFloat("_DissolveAmount", 0);
             tableIn.Join(item.DOFloat(1, "_DissolveAmount", durationTime));
         }
         foreach (var item in mark)
         {
             var r = item.GetComponent<Renderer>();
-            r.material.SetColor("_TintColor", new Color(0, 1, 0, 1));
+            r.material.SetFloat("_Alpha", 1);
         }
         foreach (var item in mark)
         {
             var r = item.GetComponent<Renderer>();
-            r.material.DOColor(new Color(0, 1, 0, 0), "_TintColor", durationTime);
+            r.material.DOFloat(0, "_Alpha", durationTime);
         }
         hint.DOFade(0, durationTime);
         tableIn.OnComplete(
@@ -97,26 +119,13 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
                 {
                     item.SetActive(false);
                 }
+                // foreach (var item in table_Renderer.materials)
+                // {
+                //     item.shader = normalShader;
+                // }
             }
         );
     }
-    void OnTriggerEnter(Collider other)
-    {
-        Debug.Log(other.name);
-    }
 
-    public void OnWrapperTriggerEnter(GameObject whoGotHit, Collider other)
-    {
-        Debug.Log("OnTriggerEnter" + other.name + "\n" + whoGotHit.name);
-    }
 
-    public void OnWrapperTriggerStay(GameObject whoGotHit, Collider other)
-    {
-        //Debug.Log("OnTriggerStay" + other.name + "\n" + whoGotHit.name);
-    }
-
-    public void OnWrapperTriggerExit(GameObject whoGotHit, Collider other)
-    {
-        Debug.Log("OnTriggerExit" + other.name + "\n" + whoGotHit.name);
-    }
 }
