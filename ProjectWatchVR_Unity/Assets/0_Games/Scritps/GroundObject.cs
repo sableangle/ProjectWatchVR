@@ -11,6 +11,10 @@ public class GroundObject : MonoBehaviour, IPickable
     {
         return transform;
     }
+    public MonoBehaviour GetBehaviour()
+    {
+        return this;
+    }
 
     public void OnPickFinish()
     {
@@ -95,4 +99,6 @@ public class GroundObject : MonoBehaviour, IPickable
         }
 
     }
+
+    
 }

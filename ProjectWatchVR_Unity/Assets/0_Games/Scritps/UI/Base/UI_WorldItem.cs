@@ -109,7 +109,7 @@ public class UI_WorldItem : MonoBehaviour, IPickable
     }
     #region  Pickable
     bool isPick = false;
-        private Transform picker;
+    private Transform picker;
 
     public void OnPickStart(Transform pickPointer)
     {
@@ -135,6 +135,10 @@ public class UI_WorldItem : MonoBehaviour, IPickable
     public Transform GetTransform()
     {
         return transfromCache;
+    }
+    public MonoBehaviour GetBehaviour()
+    {
+        return this;
     }
     #endregion
 }

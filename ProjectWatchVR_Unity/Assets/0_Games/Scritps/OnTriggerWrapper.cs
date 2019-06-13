@@ -34,16 +34,16 @@ public class OnTriggerWrapper : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        trigger.OnTriggerEnter(mGameObject, other);
+        trigger.OnWrapperTriggerEnter(mGameObject, other);
     }
 
     void OnTriggerExit(Collider other)
     {
-        trigger.OnTriggerExit(mGameObject, other);
+        trigger.OnWrapperTriggerExit(mGameObject, other);
     }
 
     void OnTriggerStay(Collider other)
     {
-        trigger.OnTriggerStay(mGameObject, other);
+        trigger.OnWrapperTriggerStay(mGameObject, other);
     }
 }

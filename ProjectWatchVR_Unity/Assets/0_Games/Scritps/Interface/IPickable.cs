@@ -9,4 +9,5 @@ public interface IPickable
     void OnPointEnter();
     void OnPointOut();
     Transform GetTransform();
+    MonoBehaviour GetBehaviour();
 }

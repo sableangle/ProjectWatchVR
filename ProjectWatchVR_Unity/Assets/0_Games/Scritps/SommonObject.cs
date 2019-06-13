@@ -12,40 +12,27 @@ public class SommonObject : MonoBehaviour, IPickable
     {
         rigibody = GetComponent<Rigidbody>();
         _transform = transform;
+        renderer.material.SetFloat(_OutlineWidth, 0.0f);
     }
     void Start()
     {
-        Renderers = GetComponentsInChildren<Renderer>();
-
-        foreach (var renderer in Renderers)
-        {
-            _materials.AddRange(renderer.materials);
-        }
-        InitOutline();
+        renderer.material.SetColor("_OutlineColor", outlineColor);
     }
 
     cakeslice.Outline outline;
-    Renderer renderer;
+    Renderer _renderer;
+
+    Renderer renderer
+    {
+        get
+        {
+            if (_renderer == null) _renderer = GetComponent<Renderer>();
+            return _renderer;
+        }
+    }
     static string _OutlineWidth = "_OutlineWidth";
-    void InitOutline()
-    {
-        renderer = GetComponent<Renderer>();
-        // outline = GetComponent<cakeslice.Outline>();
-        // if (outline == null)
-        // {
-        //     outline = gameObject.AddComponent<cakeslice.Outline>();
-        // }
 
-        // outline.enabled = false;
-        renderer.material.SetFloat(_OutlineWidth, 0.0f);
-
-    }
-    void Update()
-    {
-        //ApplyGlow();
-    }
     float dragDamper = 15.0f;
-
     void FixedUpdate()
     {
         if (isPicked)
@@ -57,17 +44,11 @@ public class SommonObject : MonoBehaviour, IPickable
     public void OnPointEnter()
     {
         renderer.material.SetFloat(_OutlineWidth, 0.02f);
-        //outline.enabled = true;
-        // _targetColor = GlowColor;
     }
 
     public void OnPointOut()
     {
         renderer.material.SetFloat(_OutlineWidth, 0.0f);
-
-        //outline.enabled = false;
-
-        //_targetColor = Color.black;
     }
 
     bool isPicked
@@ -92,42 +73,16 @@ public class SommonObject : MonoBehaviour, IPickable
         rigibody.constraints = RigidbodyConstraints.None;
     }
 
-    //Glow Effect
     [SerializeField]
-    private Color GlowColor = Color.yellow;
+    private Color outlineColor = Color.yellow;
     public float LerpFactor = 10;
-
-    public Renderer[] Renderers
-    {
-        get;
-        private set;
-    }
-
-    public Color CurrentColor
-    {
-        get { return _currentColor; }
-    }
-
-    private List<Material> _materials = new List<Material>();
-    private Color _currentColor;
-    private Color _targetColor;
-    private void ApplyGlow()
-    {
-        _currentColor = Color.Lerp(_currentColor, _targetColor, Time.deltaTime * LerpFactor);
-
-        for (int i = 0; i < _materials.Count; i++)
-        {
-            _materials[i].SetColor("_GlowColor", _currentColor);
-        }
-
-        if (_currentColor.Equals(_targetColor))
-        {
-            return;
-        }
-    }
 
     public Transform GetTransform()
     {
         return transform;
+    }
+    public MonoBehaviour GetBehaviour()
+    {
+        return this;
     }
 }

@@ -9,6 +9,10 @@ public class PrespectiveObject : MonoBehaviour, IPickable
     {
         return transform;
     }
+    public MonoBehaviour GetBehaviour()
+    {
+        return this;
+    }
 
     public void OnPickFinish()
     {
@@ -30,14 +34,26 @@ public class PrespectiveObject : MonoBehaviour, IPickable
     }
 
 
-    Renderer renderer;
+    Renderer _renderer;
+
+    Renderer renderer
+    {
+        get
+        {
+            if (_renderer == null) _renderer = GetComponent<Renderer>();
+            return _renderer;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
-        renderer = GetComponent<Renderer>();
         renderer.material.SetColor("_OutlineColor", outlineColor);
-        renderer.material.SetFloat(_OutlineWidth, 0.0f);
 
+    }
+
+    void Awake()
+    {
+        renderer.material.SetFloat(_OutlineWidth, 0.0f);
     }
 
 

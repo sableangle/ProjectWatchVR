@@ -13,6 +13,8 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
     [SerializeField]
     GameObject[] mark;
 
+    [SerializeField]
+    GameObject[] cube;
     public float durationTime = 1;
     void Update()
     {
@@ -25,7 +27,13 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
             ExitPrespectiveLevel();
         }
     }
-    // Start is called before the first frame update
+    void Start()
+    {
+        foreach (var item in cube)
+        {
+            item.SetActive(false);
+        }
+    }
     void StartPrespectiveLevel()
     {
         var table_Renderer = Table.GetComponent<Renderer>();
@@ -52,6 +60,10 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
                     r.material.DOColor(new Color(0, 1, 0, 1), "_TintColor", durationTime);
                 }
                 hint.DOFade(1, durationTime);
+                foreach (var item in cube)
+                {
+                    item.SetActive(true);
+                }
             }
         );
     }
@@ -78,24 +90,32 @@ public class AI_PrespectiveLevel : MonoBehaviour, ITrigger
             r.material.DOColor(new Color(0, 1, 0, 0), "_TintColor", durationTime);
         }
         hint.DOFade(0, durationTime);
-
+        tableIn.OnComplete(
+            () =>
+            {
+                foreach (var item in cube)
+                {
+                    item.SetActive(false);
+                }
+            }
+        );
     }
     void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.name);
     }
 
-    public void OnTriggerEnter(GameObject whoGotHit, Collider other)
+    public void OnWrapperTriggerEnter(GameObject whoGotHit, Collider other)
     {
         Debug.Log("OnTriggerEnter" + other.name + "\n" + whoGotHit.name);
     }
 
-    public void OnTriggerStay(GameObject whoGotHit, Collider other)
+    public void OnWrapperTriggerStay(GameObject whoGotHit, Collider other)
     {
         //Debug.Log("OnTriggerStay" + other.name + "\n" + whoGotHit.name);
     }
 
-    public void OnTriggerExit(GameObject whoGotHit, Collider other)
+    public void OnWrapperTriggerExit(GameObject whoGotHit, Collider other)
     {
         Debug.Log("OnTriggerExit" + other.name + "\n" + whoGotHit.name);
     }

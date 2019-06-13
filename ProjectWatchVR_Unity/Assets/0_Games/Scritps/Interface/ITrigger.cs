@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ITrigger
 {
-    void OnTriggerEnter(GameObject whoGotHit,Collider other);
-    void OnTriggerStay(GameObject whoGotHit,Collider other);
-    void OnTriggerExit(GameObject whoGotHit,Collider other);
+    void OnWrapperTriggerEnter(GameObject whoGotHit,Collider other);
+    void OnWrapperTriggerStay(GameObject whoGotHit,Collider other);
+    void OnWrapperTriggerExit(GameObject whoGotHit,Collider other);
 }
