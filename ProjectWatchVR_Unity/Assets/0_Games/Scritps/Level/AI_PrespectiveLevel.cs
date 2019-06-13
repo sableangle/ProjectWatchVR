@@ -17,6 +17,10 @@ public class AI_PrespectiveLevel : MonoBehaviour
     GameObject[] cube;
     public float durationTime = 1;
 
+    [SerializeField]
+    BoxCheck boxCheckBig;
+    [SerializeField]
+    BoxCheck boxCheckSmall;
     Shader dissolveShader
     {
         get
@@ -31,6 +35,8 @@ public class AI_PrespectiveLevel : MonoBehaviour
             return Shader.Find("Custom/SelfLightWithShadow");
         }
     }
+
+    bool finishHint = false;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.O))
@@ -41,7 +47,19 @@ public class AI_PrespectiveLevel : MonoBehaviour
         {
             ExitPrespectiveLevel();
         }
+
+        if (boxCheckSmall.isPass && boxCheckBig.isPass && finishHint == false)
+        {
+            finishHint = true;
+            hint.GetComponentInChildren<UnityEngine.UI.Text>().text = "酷喔！";
+            Invoke("ExitPrespectiveLevel", 2.5f);
+            foreach(var item in cube){
+                item.GetComponent<MutilFunctionObject>().StopAllInteractive();
+            }
+        }
     }
+
+
     void Start()
     {
         foreach (var item in cube)

@@ -1569,6 +1569,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxType: 0
+  isPass: 0
 --- !u!54 &573790074
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4794,6 +4795,8 @@ MonoBehaviour:
   - {fileID: 58430615}
   - {fileID: 1265757547}
   durationTime: 1
+  boxCheckBig: {fileID: 573790073}
+  boxCheckSmall: {fileID: 2135452729}
 --- !u!1001 &2000457232
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5554,6 +5557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxType: 1
+  isPass: 0
 --- !u!4 &607623910334529029 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 607623910334529029, guid: c606f24fa55054bf682c263ed43c0e3e,

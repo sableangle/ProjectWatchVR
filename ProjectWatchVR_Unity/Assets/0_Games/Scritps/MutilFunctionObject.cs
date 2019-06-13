@@ -11,6 +11,13 @@ public class MutilFunctionObject : MonoBehaviour, IPickable
     }
     public CurrentType currentType = CurrentType.Sommon;
 
+    public void StopAllInteractive()
+    {
+        currentPickable.OnPickFinish();
+        Destroy(currentPickable.GetBehaviour());
+        Destroy(this);
+    }
+
     void Start()
     {
         this.ObserveEveryValueChanged(m => m.currentType).Subscribe(OnCurrentTypeChange);
@@ -43,7 +50,8 @@ public class MutilFunctionObject : MonoBehaviour, IPickable
     {
         if (isHover)
         {
-            if(isPick){
+            if (isPick)
+            {
                 return;
             }
             if (Input.GetKeyDown(KeyCode.U))

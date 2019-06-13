@@ -16,7 +16,7 @@ public class BoxCheck : MonoBehaviour
             return GetComponent<Renderer>();
         }
     }
-    bool isPass = false;
+    public bool isPass = false;
     const string colorKey = "_Color";
     // Start is called before the first frame update
     void Start()
@@ -58,10 +58,24 @@ public class BoxCheck : MonoBehaviour
 
         var dis = (new Vector2(t.position.x, t.position.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude;
         Debug.Log(dis);
-        if (dis > 0.0002f)
+
+
+
+        if (boxType == Box_Pos_Type.Big)
         {
-            isPass = false;
-            return;
+            if (dis > 0.0003f)
+            {
+                isPass = false;
+                return;
+            }
+        }
+        else if (boxType == Box_Pos_Type.Small)
+        {
+            if (dis > 0.0002f)
+            {
+                isPass = false;
+                return;
+            }
         }
 
         if (isPass)
@@ -71,7 +85,7 @@ public class BoxCheck : MonoBehaviour
 
         if (boxType == Box_Pos_Type.Big)
         {
-            if (t.localScale.x < 0.49f || t.localScale.x > 0.52f)
+            if (t.localScale.x < 0.465f || t.localScale.x > 0.52f)
             {
                 return;
             }
