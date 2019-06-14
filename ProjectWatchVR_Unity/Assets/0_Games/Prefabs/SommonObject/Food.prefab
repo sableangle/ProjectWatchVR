@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60889da6bddf5436da7aec9e7f1b2310, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  outlineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   LerpFactor: 10
 --- !u!135 &2902993397925247116
 SphereCollider:
@@ -117,7 +117,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4128397391569744499}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: dfaab358b815541f38b2e80003d451be, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
