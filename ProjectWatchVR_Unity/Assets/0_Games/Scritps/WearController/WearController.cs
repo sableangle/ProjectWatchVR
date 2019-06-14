@@ -195,53 +195,20 @@ public class WearController : MonoBehaviour
     private const string AXIS_MOUSE_X = "Mouse X";
     private const string AXIS_MOUSE_Y = "Mouse Y";
     public Quaternion WearRotation { get; private set; }
-[SerializeField,Range(0.01f,1f)]
-float lerpParam = 0.5f;
+    [SerializeField, Range(0.01f, 1f)]
+    float lerpParam = 0.5f;
     void Update()
     {
 
         if (!editorSimlator)
         {
-            // transformCache.rotation = VRInputReciver.rotation;
-            // transformCache.eulerAngles = new Vector3(transformCache.eulerAngles.x, transformCache.eulerAngles.y - transformCache.parent.eulerAngles.y, VRInputReciver.accelerometer.x * 10);
-            //VRInputReciver.accelerometer.x * 9.8f
-
-
             transformCache.rotation = Quaternion.Slerp(
                 transformCache.rotation,
                 initRot * Quaternion.Euler(-VRInputReciver.accelerometer.y * 9.8f,
                 VRInputReciver.rotation.eulerAngles.y,
                 0),
                 // lerpSpeedForRotation * Time.deltaTime);
-                1-Mathf.Pow(lerpParam,Time.deltaTime*60));
-
-             //float targetY =  -VRInputReciver.accelerometer.y * 9.8f;
-            // transformCache.rotation = initRot * Quaternion.Euler(
-            //     targetY,
-            //     VRInputReciver.rotation.eulerAngles.y,
-            //     0);
-
-            //float targetY = -VRInputReciver.accelerometer.y * 9.8f;
-            // transformCache.rotation = initRot * Quaternion.Euler(
-            //     transformCache.rotation.x,
-            //     VRInputReciver.rotation.eulerAngles.y,
-            //     0);
-            // float targetY = Mathf.Lerp(transformCache.eulerAngles.x, -VRInputReciver.accelerometer.y * 9.8f, lerpSpeedForRotation * Time.deltaTime);
-
-            // transformCache.rotation = Quaternion.Euler(
-            //     targetY,
-            //     transformCache.rotation.eulerAngles.y,
-            //     transformCache.rotation.eulerAngles.z);
-            
-            // Quaternion current = transformCache.rotation;
-            // Quaternion target = initRot * Quaternion.Euler(targetY,VRInputReciver.rotation.eulerAngles.y,0);
-            // Vector3 currentEuler = current.eulerAngles;
-            // Vector3 targetEuler = target.eulerAngles;
-            // Vector3 currentFixEurler = new Vector3(current.x,targetEuler.y,targetEuler.z);
-            // Quaternion fromRot = Quaternion.Euler(currentFixEurler);
-            // Quaternion result = Quaternion.Slerp(fromRot,target,
-            //     1-Mathf.Pow(0.8f,Time.deltaTime*60) );
-            // transformCache.rotation = result;
+                1 - Mathf.Pow(lerpParam, Time.deltaTime * 60));
 
             SetTouchPosition(VRInputReciver.screenPosition);
         }
@@ -270,6 +237,7 @@ float lerpParam = 0.5f;
         }
 
         RayCast();
+        PaintRayCast();
         ProcessPick();
         FlashLight();
         ResetSensor();
@@ -311,12 +279,6 @@ float lerpParam = 0.5f;
     // void OnGUI()
     // {
     //     GUILayout.BeginVertical();
-    //     foreach (VRInput.Buttons suit in (VRInput.Buttons[])System.Enum.GetValues(typeof(VRInput.Buttons)))
-    //     {
-    //         GUILayout.Label(suit.ToString() + " Down : " + VRInput.GetWatchButtonDown(suit));
-    //         GUILayout.Label(suit.ToString() + " Up : " + VRInput.GetWatchButtonUp(suit));
-    //         GUILayout.Label(suit.ToString() + " Hold : " + VRInput.GetWatchButton(suit));
-    //     }
     //     GUILayout.EndVertical();
     // }
 
@@ -335,11 +297,6 @@ float lerpParam = 0.5f;
         {
             flashlightTargetSize = Vector3.zero;
         }
-        // flashlightPosition = new Vector3(0, 0, Mathf.Clamp(flashlightPosition.z + getScreenMoven() * 0.2f, 0.5f, 2f));
-        // flashlight.localPosition = Vector3.Lerp(
-        //     flashlight.localPosition,
-        //     flashlightPosition,
-        //     lerpSpeed * Time.deltaTime);
         flashlightPosition = new Vector3(0, 0, 1.5f);
 
         flashlight.localScale = Vector3.Lerp(flashlight.localScale, flashlightTargetSize, lerpSpeed * Time.deltaTime);
@@ -349,13 +306,6 @@ float lerpParam = 0.5f;
     Vector3 targetPointerPosition;
     public static bool isPicking = false;
 
-    // bool isPicking
-    // {
-    //     get
-    //     {
-    //         return pointer.childCount > 0;
-    //     }
-    // }
     public void PickStart()
     {
         if (lastPickable == null)
@@ -434,7 +384,6 @@ float lerpParam = 0.5f;
         {
             var p = Vector3.Lerp(transformCache.position, hit.point, 0.85f);
             pointer.position = Vector3.Lerp(pointer.position, p, lerpSpeed * Time.deltaTime);
-            //pointer.localScale = Vector3.Lerp(pointer.localScale, pointerTargetScale, lerpSpeed * Time.deltaTime);
             var g = hit.collider.gameObject;
             if (!g.CompareTag("Pickable"))
             {
@@ -450,12 +399,71 @@ float lerpParam = 0.5f;
             lastPickable = pickable;
             lastPickable.OnPointEnter();
         }
-        // else
-        // {
-        //     ResetCurrentPickable();
-        //     pointer.localScale = Vector3.Lerp(pointer.localScale, Vector3.zero, lerpSpeed * Time.deltaTime);
-        //     pointer.localPosition = Vector3.Lerp(pointer.localPosition, oriPointerPosition, lerpSpeed * Time.deltaTime);
-        // }
+    }
+
+    Renderer hitRenderer;
+    Ray mRay;
+    void PaintRayCast()
+    {
+        if (AI_FrameLevel.Instance == null)
+        {
+            Debug.Log("AI_FrameLevel.Instance == null");
+            return;
+        }
+
+        RaycastHit hitInfo;
+        Vector3 fwd = transformCache.TransformDirection(Vector3.forward);
+        isHit = Physics.Raycast(transformCache.position, fwd, out hitInfo, 100);
+
+        if (!isHit)
+        {
+            //Debug.Log("!isHit");
+            return;
+        }
+
+        if (hitInfo.collider.name != "painting")
+        {
+            //Debug.Log("hitInfo.collider.name != painting");
+            return;
+        }
+
+        // var hieight = AI_FrameLevel.Instance.oldRoomC.pixelHeight * hitInfo.textureCoord.y;
+        // var width = AI_FrameLevel.Instance.oldRoomC.pixelWidth * hitInfo.textureCoord.x;
+
+        mRay = AI_FrameLevel.Instance.oldRoomC.ViewportPointToRay(new Vector3(hitInfo.textureCoord.x, hitInfo.textureCoord.y, 0));
+        var localPoint = hitInfo.textureCoord;
+        //mRay = AI_FrameLevel.Instance.oldRoomC.ScreenPointToRay(new Vector2(localPoint.x * AI_FrameLevel.Instance.oldRoomC.pixelWidth, localPoint.y * AI_FrameLevel.Instance.oldRoomC.pixelHeight));
+        RaycastHit hitInfoSec;
+        if (Physics.Raycast(mRay, out hitInfoSec))
+        {
+            // hit should now contain information about what was hit through secondCamera
+
+            if (!hitInfoSec.collider.CompareTag("FrameTarget"))
+            {
+                //Debug.Log("hitInfo.collider.name != FrameTarget");
+                return;
+            }
+
+            hitRenderer = hitInfoSec.collider.GetComponent<Renderer>();
+
+            hitRenderer.material.SetFloat("_OutlineWidth", 0.045f);
+        }
+        else
+        {
+            if (hitRenderer == null)
+            {
+                return;
+            }
+
+            hitRenderer.material.SetFloat("_OutlineWidth", 0);
+        }
+
+
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(mRay);
     }
     void ResetCurrentPickable()
     {
@@ -467,7 +475,6 @@ float lerpParam = 0.5f;
     }
     void SetTouchPosition(Vector2 screenPosition)
     {
-        // touchPosition.localPosition = new Vector3(screenPosition.x * lineUnit, screenPosition.y * lineUnit, 0.00378f);
         screenMaterial.SetTextureOffset("_TouchDotTex", new Vector2(screenPosition.x * -10 + 0.5f, (1 - screenPosition.y) * -10 + 0.5f));
     }
 

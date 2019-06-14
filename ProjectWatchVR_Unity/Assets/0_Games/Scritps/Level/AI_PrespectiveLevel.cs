@@ -39,14 +39,7 @@ public class AI_PrespectiveLevel : MonoBehaviour
     bool finishHint = false;
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            StartPrespectiveLevel();
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            ExitPrespectiveLevel();
-        }
+        
 
         if (boxCheckSmall.isPass && boxCheckBig.isPass && finishHint == false)
         {

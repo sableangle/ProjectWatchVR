@@ -21,6 +21,7 @@ TagManager:
   - VRUIToggle
   - Pointer
   - Floor
+  - FrameTarget
   layers:
   - Default
   - TransparentFX
