@@ -16,7 +16,7 @@ public class WearController : MonoBehaviour
     }
     public HandType CurrentHand;
     public GameObject[] Hands;
-    private Transform transformCache;
+    public Transform transformCache;
     public Material screenMaterial;
     Quaternion initRot;
     void Awake()
@@ -237,7 +237,6 @@ public class WearController : MonoBehaviour
         }
 
         RayCast();
-        PaintRayCast();
         ProcessPick();
         FlashLight();
         ResetSensor();
@@ -401,70 +400,6 @@ public class WearController : MonoBehaviour
         }
     }
 
-    Renderer hitRenderer;
-    Ray mRay;
-    void PaintRayCast()
-    {
-        if (AI_FrameLevel.Instance == null)
-        {
-            Debug.Log("AI_FrameLevel.Instance == null");
-            return;
-        }
-
-        RaycastHit hitInfo;
-        Vector3 fwd = transformCache.TransformDirection(Vector3.forward);
-        isHit = Physics.Raycast(transformCache.position, fwd, out hitInfo, 100);
-
-        if (!isHit)
-        {
-            //Debug.Log("!isHit");
-            return;
-        }
-
-        if (hitInfo.collider.name != "painting")
-        {
-            //Debug.Log("hitInfo.collider.name != painting");
-            return;
-        }
-
-        // var hieight = AI_FrameLevel.Instance.oldRoomC.pixelHeight * hitInfo.textureCoord.y;
-        // var width = AI_FrameLevel.Instance.oldRoomC.pixelWidth * hitInfo.textureCoord.x;
-
-        mRay = AI_FrameLevel.Instance.oldRoomC.ViewportPointToRay(new Vector3(hitInfo.textureCoord.x, hitInfo.textureCoord.y, 0));
-        var localPoint = hitInfo.textureCoord;
-        //mRay = AI_FrameLevel.Instance.oldRoomC.ScreenPointToRay(new Vector2(localPoint.x * AI_FrameLevel.Instance.oldRoomC.pixelWidth, localPoint.y * AI_FrameLevel.Instance.oldRoomC.pixelHeight));
-        RaycastHit hitInfoSec;
-        if (Physics.Raycast(mRay, out hitInfoSec))
-        {
-            // hit should now contain information about what was hit through secondCamera
-
-            if (!hitInfoSec.collider.CompareTag("FrameTarget"))
-            {
-                //Debug.Log("hitInfo.collider.name != FrameTarget");
-                return;
-            }
-
-            hitRenderer = hitInfoSec.collider.GetComponent<Renderer>();
-
-            hitRenderer.material.SetFloat("_OutlineWidth", 0.045f);
-        }
-        else
-        {
-            if (hitRenderer == null)
-            {
-                return;
-            }
-
-            hitRenderer.material.SetFloat("_OutlineWidth", 0);
-        }
-
-
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.DrawRay(mRay);
-    }
     void ResetCurrentPickable()
     {
         if (lastPickable != null)

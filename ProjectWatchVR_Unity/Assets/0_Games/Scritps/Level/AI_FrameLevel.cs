@@ -11,9 +11,12 @@ public class AI_FrameLevel : MonoBehaviour
     Transform oldRoomCamera;
 
     Camera _oldRoomCamera;
-    public Camera oldRoomC{
-        get{
-            if(_oldRoomCamera == null){
+    public Camera oldRoomC
+    {
+        get
+        {
+            if (_oldRoomCamera == null)
+            {
                 _oldRoomCamera = oldRoomCamera.GetComponent<Camera>();
             }
             return _oldRoomCamera;
@@ -21,7 +24,8 @@ public class AI_FrameLevel : MonoBehaviour
     }
 
     Collider trigger;
-    void Awake(){
+    void Awake()
+    {
         Instance = this;
     }
     void Start()
@@ -40,8 +44,8 @@ public class AI_FrameLevel : MonoBehaviour
     void StartFrameLevel()
     {
         Sequence inSeq = DOTween.Sequence();
-        frameRoot.localPosition = new Vector3(0, -5, 0);
-        frameRoot.DOLocalMoveY(0, durationTime);
+        frameRoot.localPosition = new Vector3(0, -3, 0);
+        frameRoot.DOLocalMoveY(2, durationTime);
         foreach (var item in frameRenderer)
         {
             item.material.SetFloat("_DissolveAmount", 1);
@@ -59,8 +63,8 @@ public class AI_FrameLevel : MonoBehaviour
     void EndFrameLevel()
     {
         Sequence inSeq = DOTween.Sequence();
-        frameRoot.localPosition = new Vector3(0, 0, 0);
-        frameRoot.DOLocalMoveY(-5, durationTime);
+        frameRoot.localPosition = new Vector3(0, 2, 0);
+        frameRoot.DOLocalMoveY(-3, durationTime);
         foreach (var item in frameRenderer)
         {
             item.material.SetFloat("_DissolveAmount", 0);
@@ -75,6 +79,8 @@ public class AI_FrameLevel : MonoBehaviour
     Transform frameOriTransform;
     void Update()
     {
+        PaintRayCast();
+        UpdatePick();
         if (Input.GetKeyDown(KeyCode.O))
         {
             StartFrameLevel();
@@ -115,4 +121,142 @@ public class AI_FrameLevel : MonoBehaviour
         }
         isPlayerIn = false;
     }
+
+
+    Renderer hitRenderer;
+    Transform hitTransform;
+    Ray mRay;
+    float length = 0;
+
+    bool isPick = false;
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(mRay);
+    }
+
+    float clearDis
+    {
+        get
+        {
+            if (hitTransform == null)
+            {
+                return 0;
+            }
+            return hitTransform.localScale.x *0.5f - oldRoomC.nearClipPlane + 0.05f;
+        }
+    }
+    GameObject Templete;
+    void UpdatePick()
+    {
+        if (isPick == false)
+        {
+            return;
+        }
+
+        length += Input.GetAxis("Mouse ScrollWheel") * 0.5f;
+        length = Mathf.Clamp(length, 0, length);
+
+        if (length < clearDis)
+        {
+            hitTransform.localScale *= 0.9f;
+        }
+        else{
+            hitTransform.localScale = Vector3.one;
+        }
+
+
+        var tPoint = oldRoomC.transform.position + mRay.direction * length;
+        if (hitTransform == null)
+        {
+            return;
+        }
+
+        hitTransform.position = Vector3.Lerp(hitTransform.position, tPoint, 10 * Time.deltaTime);
+        var tPoint2 = mainCameraTransform.transform.position + mRay.direction * length;
+        Templete.transform.position = Vector3.Lerp(Templete.transform.position, tPoint2, 10 * Time.deltaTime);
+
+    }
+
+
+    public float perfixScale = 0.85f;
+    void PaintRayCast()
+    {
+        if (AI_FrameLevel.Instance == null)
+        {
+            Debug.Log("AI_FrameLevel.Instance == null");
+            return;
+        }
+
+        RaycastHit hitInfo;
+        Vector3 fwd = WearController.Instance.transformCache.TransformDirection(Vector3.forward);
+        bool isHit = Physics.Raycast(WearController.Instance.transformCache.position, fwd, out hitInfo, 100);
+
+        if (!isHit)
+        {
+            //Debug.Log("!isHit");
+            return;
+        }
+
+        if (hitInfo.collider.name != "painting")
+        {
+            //Debug.Log("hitInfo.collider.name != painting");
+            return;
+        }
+        mRay = oldRoomC.ViewportPointToRay(new Vector3(hitInfo.textureCoord.x, hitInfo.textureCoord.y, 0));
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (hitRenderer == null) { return; }
+            length = (oldRoomCamera.position - hitRenderer.transform.position).magnitude;
+            isPick = true;
+            hitTransform = hitRenderer.transform;
+            hitTransform.GetComponent<Rigidbody>().isKinematic = true;
+            Templete = Instantiate(hitTransform.gameObject);
+            Templete.transform.position = mainCameraTransform.position + mRay.direction * length;
+            Templete.transform.localScale *= perfixScale;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isPick = false;
+            hitTransform.GetComponent<Rigidbody>().isKinematic = false;
+            hitTransform = null;
+            if (Templete)
+            {
+                Destroy(Templete);
+                Templete = null;
+            }
+        }
+
+
+        var localPoint = hitInfo.textureCoord;
+        RaycastHit hitInfoSec;
+        if (Physics.Raycast(mRay, out hitInfoSec))
+        {
+            // hit should now contain information about what was hit through secondCamera
+            if (!hitInfoSec.collider.CompareTag("FrameTarget"))
+            {
+                //Debug.Log("hitInfo.collider.name != FrameTarget");
+                return;
+            }
+
+            hitRenderer = hitInfoSec.collider.GetComponent<Renderer>();
+
+            hitRenderer.material.SetFloat("_OutlineWidth", 0.045f);
+        }
+        else
+        {
+            if (hitRenderer == null)
+            {
+                return;
+            }
+
+            hitRenderer.material.SetFloat("_OutlineWidth", 0);
+            hitRenderer = null;
+        }
+
+
+    }
+
 }
