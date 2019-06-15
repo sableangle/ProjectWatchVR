@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.Linq;
 
-public class AI_FrameLevel : MonoBehaviour
+public class AI_FrameLevel : MonoBehaviour, ITrigger
 {
     public static AI_FrameLevel Instance;
     Transform mainCameraTransform;
@@ -28,11 +29,24 @@ public class AI_FrameLevel : MonoBehaviour
     {
         Instance = this;
     }
+
+    [SerializeField]
+    MeshFilter mesh;
+
+    List<Vector3> meshVertexWorldPosition = new List<Vector3>();
+
+
+
     void Start()
     {
         mainCameraTransform = Camera.main.transform;
         trigger = GetComponent<Collider>();
         trigger.enabled = false;
+
+        foreach (var pos in mesh.mesh.vertices)
+        {
+            meshVertexWorldPosition.Add(mesh.transform.TransformPoint(pos));
+        }
     }
 
     [SerializeField]
@@ -143,7 +157,7 @@ public class AI_FrameLevel : MonoBehaviour
             {
                 return 0;
             }
-            return hitTransform.localScale.x *0.5f - oldRoomC.nearClipPlane + 0.05f;
+            return hitTransform.localScale.x * 0.5f - oldRoomC.nearClipPlane + 0.05f;
         }
     }
     GameObject Templete;
@@ -161,7 +175,8 @@ public class AI_FrameLevel : MonoBehaviour
         {
             hitTransform.localScale *= 0.9f;
         }
-        else{
+        else
+        {
             hitTransform.localScale = Vector3.one;
         }
 
@@ -174,12 +189,32 @@ public class AI_FrameLevel : MonoBehaviour
 
         hitTransform.position = Vector3.Lerp(hitTransform.position, tPoint, 10 * Time.deltaTime);
         var tPoint2 = mainCameraTransform.transform.position + mRay.direction * length;
-        Templete.transform.position = Vector3.Lerp(Templete.transform.position, tPoint2, 10 * Time.deltaTime);
 
     }
 
 
     public float perfixScale = 0.85f;
+    Shader outlineShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadowOutline");
+        }
+    }
+    Shader normalShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadow");
+        }
+    }
+    Shader stencilShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadowStencil");
+        }
+    }
     void PaintRayCast()
     {
         if (AI_FrameLevel.Instance == null)
@@ -212,9 +247,7 @@ public class AI_FrameLevel : MonoBehaviour
             isPick = true;
             hitTransform = hitRenderer.transform;
             hitTransform.GetComponent<Rigidbody>().isKinematic = true;
-            Templete = Instantiate(hitTransform.gameObject);
-            Templete.transform.position = mainCameraTransform.position + mRay.direction * length;
-            Templete.transform.localScale *= perfixScale;
+            hitRenderer.material.shader = normalShader;
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -222,11 +255,7 @@ public class AI_FrameLevel : MonoBehaviour
             isPick = false;
             hitTransform.GetComponent<Rigidbody>().isKinematic = false;
             hitTransform = null;
-            if (Templete)
-            {
-                Destroy(Templete);
-                Templete = null;
-            }
+            hitRenderer.material.shader = outlineShader;
         }
 
 
@@ -256,7 +285,52 @@ public class AI_FrameLevel : MonoBehaviour
             hitRenderer = null;
         }
 
-
     }
 
+
+
+    public void OnWrapperTriggerEnter(GameObject whoGotHit, Collider other)
+    {
+        if (!other.CompareTag("FrameTarget"))
+        {
+            return;
+        }
+        var objectViewPortPosition = oldRoomC.WorldToViewportPoint(hitTransform.position);
+
+        Templete = Instantiate(hitTransform.gameObject);
+        Templete.transform.localScale = Vector3.one * perfixScale;
+        Templete.layer = LayerMask.NameToLayer("Ignore Raycast");
+        //get the min z position
+        mf = Templete.GetComponent<MeshFilter>();
+        List<Vector3> instantiateMeshVertexWorldPosition = new List<Vector3>();
+        foreach (var p in mf.mesh.vertices) { instantiateMeshVertexWorldPosition.Add(Templete.transform.TransformPoint(p)); }
+        objectZoffect = Templete.transform.position.z - instantiateMeshVertexWorldPosition.Min(m => m.z);
+
+        Templete.transform.rotation = hitTransform.rotation;
+        //Templete.GetComponent<Renderer>().material.shader = stencilShader;
+    }
+    MeshFilter mf;
+    float objectZoffect;
+    public void OnWrapperTriggerStay(GameObject whoGotHit, Collider other)
+    {
+        if (Templete == null || hitTransform == null)
+        {
+            return;
+        }
+        var startPosition = new Vector3(WearController.Instance.pointer.position.x, WearController.Instance.pointer.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
+        var dir = (Templete.transform.position - mainCameraTransform.position).normalized;
+        var offect = (hitTransform.position - oldRoomCamera.position).magnitude - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
+        Debug.Log(dir);
+        //offect = Mathf.Clamp(offect, 0.1f, offect);
+        Templete.transform.position = startPosition + dir * offect;
+    }
+
+    public void OnWrapperTriggerExit(GameObject whoGotHit, Collider other)
+    {
+        if (Templete)
+        {
+            Destroy(Templete);
+            Templete = null;
+        }
+    }
 }
