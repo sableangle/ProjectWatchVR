@@ -219,6 +219,19 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
 
         hitTransform.position = Vector3.Lerp(hitTransform.position, tPoint, 10 * Time.deltaTime);
         var tPoint2 = mainCameraTransform.transform.position + mRay.direction * length;
+
+
+        if (Templete == null && !startTeleport)
+        {
+            return;
+        }
+        var dir = (WatchLaserPointer.Instance.hitPoint.transform.position - mainCameraTransform.position).normalized;
+        //var startPosition = WearController.Instance.pointer.position - (oldRoomCamera.position - hitTransform.position).normalized * objectZoffect * 1 / perfixScale;
+        var startPosition = new Vector3(WatchLaserPointer.Instance.hitPoint.transform.position.x, WatchLaserPointer.Instance.hitPoint.transform.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
+        var a = (hitTransform.position - oldRoomCamera.position).magnitude;
+        var offect = a - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
+
+        Templete.transform.position = startPosition + dir * offect;
     }
 
 
@@ -240,12 +253,20 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         if (!isHit)
         {
             //Debug.Log("!isHit");
+            if (isPick)
+            {
+                PickEnd();
+            }
             return;
         }
 
         if (hitInfo.collider.name != "painting")
         {
             //Debug.Log("hitInfo.collider.name != painting");
+            if (isPick)
+            {
+                PickEnd();
+            }
             return;
         }
         mRay = oldRoomC.ViewportPointToRay(new Vector3(hitInfo.textureCoord.x, hitInfo.textureCoord.y, 0));
@@ -288,46 +309,68 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         }
     }
 
+    bool startTeleport = false;
     public void OnWrapperTriggerEnter(GameObject whoGotHit, Collider other)
     {
-        if (!other.CompareTag("FrameTarget"))
+        if (whoGotHit.name == "Trigger")
         {
-            return;
+            if (!other.CompareTag("FrameTarget"))
+            {
+                return;
+            }
+
+            if (!isPick)
+            {
+                return;
+            }
+            Templete.SetActive(false);
+            var go = Instantiate(Templete, Templete.transform.position, Templete.transform.rotation);
+            go.SetActive(true);
+            go.transform.localScale = Templete.transform.localScale;
+            go.tag = "Pickable";
+            go.GetComponent<Rigidbody>().isKinematic = false;
+            var mutil = go.AddComponent<MutilFunctionObject>();
+            Destroy(hitTransform.gameObject);
+
+            PickEnd();
+
         }
-        var objectViewPortPosition = oldRoomC.WorldToViewportPoint(hitTransform.position);
 
-        Templete = Instantiate(hitTransform.gameObject);
-        Templete.transform.localScale = Vector3.one * perfixScale;
-        Templete.layer = LayerMask.NameToLayer("Ignore Raycast");
-        //get the min z position
-        mf = Templete.GetComponent<MeshFilter>();
-        List<Vector3> instantiateMeshVertexWorldPosition = new List<Vector3>();
-        foreach (var p in mf.mesh.vertices) { instantiateMeshVertexWorldPosition.Add(Templete.transform.TransformPoint(p)); }
-        objectZoffect = Templete.transform.position.z - instantiateMeshVertexWorldPosition.Min(m => m.z);
+        if (whoGotHit.name == "OldRoomCamera")
+        {
+            if (!other.CompareTag("FrameTarget"))
+            {
+                return;
+            }
+            var objectViewPortPosition = oldRoomC.WorldToViewportPoint(hitTransform.position);
 
-        Templete.transform.rotation = hitTransform.rotation;
-        //Templete.GetComponent<Renderer>().material.shader = stencilShader;
+            Templete = Instantiate(hitTransform.gameObject);
+            Templete.transform.localScale = Vector3.one * perfixScale;
+            Templete.layer = LayerMask.NameToLayer("Ignore Raycast");
+            //get the min z position
+            mf = Templete.GetComponent<MeshFilter>();
+            List<Vector3> instantiateMeshVertexWorldPosition = new List<Vector3>();
+            foreach (var p in mf.mesh.vertices) { instantiateMeshVertexWorldPosition.Add(Templete.transform.TransformPoint(p)); }
+            objectZoffect = Templete.transform.position.z - instantiateMeshVertexWorldPosition.Min(m => m.z);
+
+            Templete.transform.rotation = hitTransform.rotation;
+            startTeleport = true;
+        }
+
+
     }
 
     MeshFilter mf;
     float objectZoffect;
     public void OnWrapperTriggerStay(GameObject whoGotHit, Collider other)
     {
-        if (Templete == null || hitTransform == null)
-        {
-            return;
-        }
-        var dir = (WatchLaserPointer.Instance.hitPoint.transform.position - mainCameraTransform.position).normalized;
-        //var startPosition = WearController.Instance.pointer.position - (oldRoomCamera.position - hitTransform.position).normalized * objectZoffect * 1 / perfixScale;
-        var startPosition = new Vector3(WatchLaserPointer.Instance.hitPoint.transform.position.x, WatchLaserPointer.Instance.hitPoint.transform.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
-        var a = (hitTransform.position - oldRoomCamera.position).magnitude;
-        var offect = a - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
 
-        Templete.transform.position = startPosition + dir * offect;
     }
 
     public void OnWrapperTriggerExit(GameObject whoGotHit, Collider other)
     {
+        startTeleport = false;
+
         if (Templete)
         {
             Destroy(Templete);
