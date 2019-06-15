@@ -3,10 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System.Linq;
+using UniRx;
 
 public class AI_FrameLevel : MonoBehaviour, ITrigger
 {
     public static AI_FrameLevel Instance;
+    Shader outlineShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadowOutline");
+        }
+    }
+    Shader normalShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadow");
+        }
+    }
+    Shader stencilShader
+    {
+        get
+        {
+            return Shader.Find("Custom/SelfLightWithShadowStencil");
+        }
+    }
     Transform mainCameraTransform;
     [SerializeField]
     Transform oldRoomCamera;
@@ -48,6 +70,34 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             meshVertexWorldPosition.Add(mesh.transform.TransformPoint(pos));
         }
         StartFrameLevel();
+
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(0)).Subscribe(_ =>
+            {
+                PickStart();
+            });
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonUp(0)).Subscribe(_ =>
+            {
+                PickEnd();
+            });
+    }
+    void PickStart()
+    {
+        if (hitTransform == null) { return; }
+        length = (oldRoomCamera.position - hitTransform.position).magnitude;
+        isPick = true;
+        hitTransform.GetComponent<Rigidbody>().isKinematic = true;
+        hitTransform.GetComponent<Renderer>().material.shader = normalShader;
+        //hitRenderer.material.shader = normalShader;
+    }
+    void PickEnd()
+    {
+        isPick = false;
+        if (hitTransform == null) { return; }
+        hitTransform.GetComponent<Rigidbody>().isKinematic = false;
+        hitTransform.GetComponent<Renderer>().material.shader = outlineShader;
+        hitTransform = null;
     }
 
     [SerializeField]
@@ -137,8 +187,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         isPlayerIn = false;
     }
 
-
-    Renderer hitRenderer;
+    [SerializeField]
     Transform hitTransform;
     Ray mRay;
     float length = 0;
@@ -150,17 +199,6 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         Gizmos.DrawRay(mRay);
     }
 
-    float clearDis
-    {
-        get
-        {
-            if (hitTransform == null)
-            {
-                return 0;
-            }
-            return hitTransform.localScale.x * 0.5f - oldRoomC.nearClipPlane + 0.05f;
-        }
-    }
     GameObject Templete;
     void UpdatePick()
     {
@@ -172,15 +210,6 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         length += Input.GetAxis("Mouse ScrollWheel") * 0.5f;
         length = Mathf.Clamp(length, 0, length);
 
-        if (length < clearDis)
-        {
-            hitTransform.localScale *= 0.9f;
-        }
-        else
-        {
-            hitTransform.localScale = Vector3.one;
-        }
-
 
         var tPoint = oldRoomC.transform.position + mRay.direction * length;
         if (hitTransform == null)
@@ -190,32 +219,11 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
 
         hitTransform.position = Vector3.Lerp(hitTransform.position, tPoint, 10 * Time.deltaTime);
         var tPoint2 = mainCameraTransform.transform.position + mRay.direction * length;
-
     }
 
 
     public float perfixScale = 0.85f;
-    Shader outlineShader
-    {
-        get
-        {
-            return Shader.Find("Custom/SelfLightWithShadowOutline");
-        }
-    }
-    Shader normalShader
-    {
-        get
-        {
-            return Shader.Find("Custom/SelfLightWithShadow");
-        }
-    }
-    Shader stencilShader
-    {
-        get
-        {
-            return Shader.Find("Custom/SelfLightWithShadowStencil");
-        }
-    }
+
     void PaintRayCast()
     {
         if (AI_FrameLevel.Instance == null)
@@ -223,6 +231,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             Debug.Log("AI_FrameLevel.Instance == null");
             return;
         }
+
 
         RaycastHit hitInfo;
         Vector3 fwd = WearController.Instance.transformCache.TransformDirection(Vector3.forward);
@@ -241,52 +250,43 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         }
         mRay = oldRoomC.ViewportPointToRay(new Vector3(hitInfo.textureCoord.x, hitInfo.textureCoord.y, 0));
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (hitRenderer == null) { return; }
-            length = (oldRoomCamera.position - hitRenderer.transform.position).magnitude;
-            isPick = true;
-            hitTransform = hitRenderer.transform;
-            hitTransform.GetComponent<Rigidbody>().isKinematic = true;
-            hitRenderer.material.shader = normalShader;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            isPick = false;
-            hitTransform.GetComponent<Rigidbody>().isKinematic = false;
-            hitTransform.GetComponent<Renderer>().material.shader = outlineShader;
-            hitTransform = null;
-        }
-
         var localPoint = hitInfo.textureCoord;
         RaycastHit hitInfoSec;
+        if (isPick)
+        {
+            return;
+        }
         if (Physics.Raycast(mRay, out hitInfoSec))
         {
             // hit should now contain information about what was hit through secondCamera
             if (!hitInfoSec.collider.CompareTag("FrameTarget"))
             {
-                //Debug.Log("hitInfo.collider.name != FrameTarget");
+                TryResetOutline();
+                hitTransform = null;
                 return;
             }
-
-            hitRenderer = hitInfoSec.collider.GetComponent<Renderer>();
-
-            hitRenderer.material.SetFloat("_OutlineWidth", 0.045f);
+            hitTransform = hitInfoSec.collider.transform;
+            hitTransform.GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 0.045f);
         }
         else
         {
-            if (hitRenderer == null)
-            {
-                return;
-            }
-            hitRenderer.material.SetFloat("_OutlineWidth", 0);
-            hitRenderer = null;
+            TryResetOutline();
+            hitTransform = null;
         }
 
     }
 
+    void TryResetOutline()
+    {
+        try
+        {
+            hitTransform.GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 0);
+        }
+        catch
+        {
 
+        }
+    }
 
     public void OnWrapperTriggerEnter(GameObject whoGotHit, Collider other)
     {
@@ -308,6 +308,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         Templete.transform.rotation = hitTransform.rotation;
         //Templete.GetComponent<Renderer>().material.shader = stencilShader;
     }
+
     MeshFilter mf;
     float objectZoffect;
     public void OnWrapperTriggerStay(GameObject whoGotHit, Collider other)
@@ -319,12 +320,8 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         var dir = (WatchLaserPointer.Instance.hitPoint.transform.position - mainCameraTransform.position).normalized;
         //var startPosition = WearController.Instance.pointer.position - (oldRoomCamera.position - hitTransform.position).normalized * objectZoffect * 1 / perfixScale;
         var startPosition = new Vector3(WatchLaserPointer.Instance.hitPoint.transform.position.x, WatchLaserPointer.Instance.hitPoint.transform.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
-
         var a = (hitTransform.position - oldRoomCamera.position).magnitude;
         var offect = a - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
-        // Debug.Log("dir " + dir);
-        // Debug.Log("a " + a);
-        // Debug.Log("offect " + offect);
 
         Templete.transform.position = startPosition + dir * offect;
     }
