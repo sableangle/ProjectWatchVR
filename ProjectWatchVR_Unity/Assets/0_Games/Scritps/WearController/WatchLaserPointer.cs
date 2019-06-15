@@ -1,81 +1,82 @@
 ﻿using System;
 using UnityEngine;
+using Wacki;
 
-namespace Wacki
+
+public class WatchLaserPointer : IUILaserPointer
 {
-
-    public class WatchLaserPointer : IUILaserPointer
+    public static WatchLaserPointer Instance;
+    WearController wearController;
+    public void Awake()
     {
-        WearController wearController;
-        public void Awake()
-        {
-            wearController = GetComponent<WearController>();
-            VRInputReciver.OnWatchButtonDown += OnWatchButtonDown;
-            VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
-        }
+        wearController = GetComponent<WearController>();
+        VRInputReciver.OnWatchButtonDown += OnWatchButtonDown;
+        VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
 
-        private void OnWatchButtonUp(VRInputReciver.Buttons btn)
-        {
-            buttonState = false;
-        }
+        Instance = this;
+    }
 
-        private void OnWatchButtonDown(VRInputReciver.Buttons btn)
-        {
-            if (btn == VRInputReciver.Buttons.Center) buttonState = true;
-        }
+    private void OnWatchButtonUp(VRInputReciver.Buttons btn)
+    {
+        buttonState = false;
+    }
 
-        public bool buttonState = false;
-        bool _prevButtonState = false;
-        bool _buttonChanged = false;
+    private void OnWatchButtonDown(VRInputReciver.Buttons btn)
+    {
+        if (btn == VRInputReciver.Buttons.Center) buttonState = true;
+    }
 
-        protected override void Update()
-        {
-            base.Update();
-            if (buttonState == _prevButtonState)
-            {
-                _buttonChanged = false;
-            }
-            else
-            {
-                _buttonChanged = true;
-                _prevButtonState = buttonState;
-            }
-        }
-        public override bool ButtonDown()
-        {
-            if (wearController.editorSimlator)
-            {
-                return Input.GetMouseButtonDown(0);
-            }
-            else
-            {
-                //return VRInputReciver.GetWatchButtonDown(VRInputReciver.Buttons.Center);
-                return _buttonChanged && buttonState;
-            }
-        }
+    public bool buttonState = false;
+    bool _prevButtonState = false;
+    bool _buttonChanged = false;
 
-        public override bool ButtonUp()
+    protected override void Update()
+    {
+        base.Update();
+        if (buttonState == _prevButtonState)
         {
-            if (wearController.editorSimlator)
-            {
-                return Input.GetMouseButtonUp(0);
-            }
-            else
-            {
-                //return VRInputReciver.GetWatchButtonUp(VRInputReciver.Buttons.Center);
-                return _buttonChanged && !buttonState;
-            }
+            _buttonChanged = false;
         }
-
-        public override void OnEnterControl(GameObject control)
+        else
         {
-            //Debug.Log("OnEnterControl " + control.name);
+            _buttonChanged = true;
+            _prevButtonState = buttonState;
         }
-
-        public override void OnExitControl(GameObject control)
+    }
+    public override bool ButtonDown()
+    {
+        if (wearController.editorSimlator)
         {
-            //Debug.Log("OnExitControl " + control.name);
+            return Input.GetMouseButtonDown(0);
+        }
+        else
+        {
+            //return VRInputReciver.GetWatchButtonDown(VRInputReciver.Buttons.Center);
+            return _buttonChanged && buttonState;
         }
     }
 
+    public override bool ButtonUp()
+    {
+        if (wearController.editorSimlator)
+        {
+            return Input.GetMouseButtonUp(0);
+        }
+        else
+        {
+            //return VRInputReciver.GetWatchButtonUp(VRInputReciver.Buttons.Center);
+            return _buttonChanged && !buttonState;
+        }
+    }
+
+    public override void OnEnterControl(GameObject control)
+    {
+        //Debug.Log("OnEnterControl " + control.name);
+    }
+
+    public override void OnExitControl(GameObject control)
+    {
+        //Debug.Log("OnExitControl " + control.name);
+    }
 }
+

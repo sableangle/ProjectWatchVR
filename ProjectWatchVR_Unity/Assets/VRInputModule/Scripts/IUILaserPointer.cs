@@ -12,8 +12,8 @@ namespace Wacki
         public bool isHit = false;
         public Color color;
 
-        private GameObject hitPoint;
-        private GameObject pointer;
+        public GameObject hitPoint;
+        public GameObject pointer;
 
         private float _distanceLimit;
 

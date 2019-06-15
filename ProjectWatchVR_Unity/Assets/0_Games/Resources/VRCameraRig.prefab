@@ -857,6 +857,8 @@ MonoBehaviour:
   laserAlwaysOn: 0
   isHit: 0
   color: {r: 1, g: 1, b: 1, a: 0}
+  hitPoint: {fileID: 0}
+  pointer: {fileID: 0}
   buttonState: 0
 --- !u!1 &19
 GameObject:

@@ -47,6 +47,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         {
             meshVertexWorldPosition.Add(mesh.transform.TransformPoint(pos));
         }
+        StartFrameLevel();
     }
 
     [SerializeField]
@@ -254,10 +255,9 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         {
             isPick = false;
             hitTransform.GetComponent<Rigidbody>().isKinematic = false;
+            hitTransform.GetComponent<Renderer>().material.shader = outlineShader;
             hitTransform = null;
-            hitRenderer.material.shader = outlineShader;
         }
-
 
         var localPoint = hitInfo.textureCoord;
         RaycastHit hitInfoSec;
@@ -280,7 +280,6 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             {
                 return;
             }
-
             hitRenderer.material.SetFloat("_OutlineWidth", 0);
             hitRenderer = null;
         }
@@ -317,11 +316,16 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         {
             return;
         }
-        var startPosition = new Vector3(WearController.Instance.pointer.position.x, WearController.Instance.pointer.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
-        var dir = (Templete.transform.position - mainCameraTransform.position).normalized;
-        var offect = (hitTransform.position - oldRoomCamera.position).magnitude - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
-        Debug.Log(dir);
-        //offect = Mathf.Clamp(offect, 0.1f, offect);
+        var dir = (WatchLaserPointer.Instance.hitPoint.transform.position - mainCameraTransform.position).normalized;
+        //var startPosition = WearController.Instance.pointer.position - (oldRoomCamera.position - hitTransform.position).normalized * objectZoffect * 1 / perfixScale;
+        var startPosition = new Vector3(WatchLaserPointer.Instance.hitPoint.transform.position.x, WatchLaserPointer.Instance.hitPoint.transform.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
+
+        var a = (hitTransform.position - oldRoomCamera.position).magnitude;
+        var offect = a - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
+        // Debug.Log("dir " + dir);
+        // Debug.Log("a " + a);
+        // Debug.Log("offect " + offect);
+
         Templete.transform.position = startPosition + dir * offect;
     }
 
