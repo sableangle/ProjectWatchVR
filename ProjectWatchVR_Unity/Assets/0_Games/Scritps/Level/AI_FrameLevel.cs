@@ -50,6 +50,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     void Awake()
     {
         Instance = this;
+        gameObject.SetActive(false);
     }
 
     [SerializeField]
@@ -69,7 +70,6 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         {
             meshVertexWorldPosition.Add(mesh.transform.TransformPoint(pos));
         }
-        StartFrameLevel();
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetMouseButtonDown(0)).Subscribe(_ =>
@@ -106,7 +106,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     Transform frameRoot;
 
     float durationTime = 1;
-    void StartFrameLevel()
+    public void StartFrameLevel()
     {
         Sequence inSeq = DOTween.Sequence();
         frameRoot.localPosition = new Vector3(0, -3, 0);
@@ -117,6 +117,12 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             inSeq.Join(item.material.DOFloat(0, "_DissolveAmount", durationTime));
         }
 
+        inSeq.OnStart(
+            () =>
+            {
+                gameObject.SetActive(true);
+            }
+        );
         inSeq.OnComplete(
             () =>
             {
@@ -125,7 +131,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         );
     }
 
-    void EndFrameLevel()
+    public void EndFrameLevel()
     {
         Sequence inSeq = DOTween.Sequence();
         frameRoot.localPosition = new Vector3(0, 2, 0);
@@ -135,6 +141,13 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             item.material.SetFloat("_DissolveAmount", 0);
             inSeq.Join(item.material.DOFloat(1, "_DissolveAmount", durationTime));
         }
+
+        inSeq.OnComplete(
+            () =>
+            {
+                gameObject.SetActive(false);
+            }
+        );
     }
 
     bool isPlayerIn = false;
@@ -146,14 +159,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     {
         PaintRayCast();
         UpdatePick();
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            StartFrameLevel();
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            EndFrameLevel();
-        }
+
 
         if (!isPlayerIn)
         {

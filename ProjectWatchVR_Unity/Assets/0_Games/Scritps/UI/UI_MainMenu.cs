@@ -13,6 +13,8 @@ public class UI_MainMenu : UI_WorldItem
     [SerializeField]
     Button groundObjectItemMenu;
     [SerializeField]
+    Button levelItemMenu;
+    [SerializeField]
     Button settingItemMenu;
 
     public static UI_MainMenu Instance;
@@ -37,6 +39,13 @@ public class UI_MainMenu : UI_WorldItem
             _ =>
             {
                 Hide(UI_GroundObjectListPanel.Instance.Show);
+            }
+        );
+
+        levelItemMenu.OnClickAsObservable().Subscribe(
+            _ =>
+            {
+                Hide(UI_LevelListPanel.Instance.Show);
             }
         );
 

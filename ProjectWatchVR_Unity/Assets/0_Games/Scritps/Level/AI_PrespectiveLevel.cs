@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 public class AI_PrespectiveLevel : MonoBehaviour
 {
+    public static AI_PrespectiveLevel Instance;
     [SerializeField]
     CanvasGroup hint;
 
@@ -35,18 +36,24 @@ public class AI_PrespectiveLevel : MonoBehaviour
             return Shader.Find("Custom/SelfLightWithShadow");
         }
     }
+    void Awake()
+    {
+        Instance = this;
+        gameObject.SetActive(false);
 
+    }
     bool finishHint = false;
     void Update()
     {
-        
+
 
         if (boxCheckSmall.isPass && boxCheckBig.isPass && finishHint == false)
         {
             finishHint = true;
             hint.GetComponentInChildren<UnityEngine.UI.Text>().text = "酷喔！";
             Invoke("ExitPrespectiveLevel", 2.5f);
-            foreach(var item in cube){
+            foreach (var item in cube)
+            {
                 item.GetComponent<MutilFunctionObject>().StopAllInteractive();
             }
         }
@@ -60,7 +67,7 @@ public class AI_PrespectiveLevel : MonoBehaviour
             item.SetActive(false);
         }
     }
-    void StartPrespectiveLevel()
+    public void StartPrespectiveLevel()
     {
         var table_Renderer = Table.GetComponent<Renderer>();
 
@@ -78,7 +85,12 @@ public class AI_PrespectiveLevel : MonoBehaviour
             var r = item.GetComponent<Renderer>();
             r.material.SetFloat("_Alpha", 0);
         }
-
+        tableIn.OnStart(
+            () =>
+            {
+                gameObject.SetActive(true);
+            }
+        );
         tableIn.OnComplete(
             () =>
             {
@@ -100,7 +112,7 @@ public class AI_PrespectiveLevel : MonoBehaviour
         );
     }
 
-    void ExitPrespectiveLevel()
+    public void ExitPrespectiveLevel()
     {
         var table_Renderer = Table.GetComponent<Renderer>();
         Sequence tableIn = DOTween.Sequence();
@@ -134,6 +146,7 @@ public class AI_PrespectiveLevel : MonoBehaviour
                 // {
                 //     item.shader = normalShader;
                 // }
+                gameObject.SetActive(false);
             }
         );
     }
