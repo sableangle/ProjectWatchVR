@@ -39,7 +39,7 @@ public class UI_LevelListPanel : UI_WorldItem
                    return;
                }
                AI_PrespectiveLevel.Instance.StartPrespectiveLevel();
-
+               Hide();
            }
         );
         frameButton.OnClickAsObservable().Subscribe(
@@ -50,6 +50,7 @@ public class UI_LevelListPanel : UI_WorldItem
                     return;
                 }
                 AI_FrameLevel.Instance.StartFrameLevel();
+                Hide();
             }
         );
     }
