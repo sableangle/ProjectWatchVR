@@ -28,6 +28,10 @@ public class UI_ScreenSpace : MonoBehaviour
         {
             canvas.worldCamera = camera;
         }
+
+        if(Input.GetKeyDown(KeyCode.T)){
+            UI_Toast.Instance.ShowToast("asdfasfdsf");
+        }
     }
     [Header("Reset Panel")]
     [SerializeField]
