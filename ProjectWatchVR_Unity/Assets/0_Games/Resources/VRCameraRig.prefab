@@ -837,7 +837,8 @@ MonoBehaviour:
   screenMaterial: {fileID: 2100000, guid: 80de1b37bce15442d822b4f07479434d, type: 2}
   lerpParam: 0.5
   flashlight: {fileID: 4030080249349495}
-  pointer: {fileID: 42}
+  watchLaserPointer: {fileID: 0}
+  pointer: {fileID: 0}
   lerpSpeed: 10
   lerpSpeedForRotation: 15
 --- !u!114 &122
@@ -857,7 +858,6 @@ MonoBehaviour:
   laserAlwaysOn: 0
   isHit: 0
   color: {r: 1, g: 1, b: 1, a: 0}
-  hitPoint: {fileID: 0}
   pointer: {fileID: 0}
   buttonState: 0
 --- !u!1 &19

@@ -231,9 +231,9 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         {
             return;
         }
-        var dir = (WatchLaserPointer.Instance.hitPoint.transform.position - mainCameraTransform.position).normalized;
+        var dir = (WatchLaserPointer.Instance.pointer.position - mainCameraTransform.position).normalized;
         //var startPosition = WearController.Instance.pointer.position - (oldRoomCamera.position - hitTransform.position).normalized * objectZoffect * 1 / perfixScale;
-        var startPosition = new Vector3(WatchLaserPointer.Instance.hitPoint.transform.position.x, WatchLaserPointer.Instance.hitPoint.transform.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
+        var startPosition = new Vector3(WatchLaserPointer.Instance.pointer.position.x, WatchLaserPointer.Instance.pointer.position.y, meshVertexWorldPosition.Max(m => m.z) + objectZoffect);
         var a = (hitTransform.position - oldRoomCamera.position).magnitude;
         var offect = a - objectZoffect * 1 / perfixScale - oldRoomC.nearClipPlane;
 

@@ -238,9 +238,10 @@ public class WearController : MonoBehaviour
 
         RayCast();
         ProcessPick();
-        FlashLight();
+        //FlashLight();
         ResetSensor();
         SettingHint();
+        DrawPointerLine();
     }
     void ResetSensor()
     {
@@ -339,7 +340,29 @@ public class WearController : MonoBehaviour
     {
         lastPickable = pickable;
     }
+    [SerializeField]
+    WatchLaserPointer watchLaserPointer;
+
+    LineRenderer _lineRenderer;
+
+    LineRenderer lineRenderer
+    {
+        get
+        {
+            if (_lineRenderer == null)
+            {
+                _lineRenderer = GetComponent<LineRenderer>();
+            }
+            return _lineRenderer;
+        }
+    }
+    void DrawPointerLine()
+    {
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, watchLaserPointer.pointer.position);
+    }
     public Transform pointer;
+
     private Vector3 pointerTargetScale = new Vector3(4.5f, 4.5f, 0.045f);
 
     private Vector3 oriPointerPosition = new Vector3(0, 0, -0.6f);
