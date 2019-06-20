@@ -62,7 +62,7 @@ public class UI_WorldItem : MonoBehaviour, IPickable
         transfromCache.position = Utilitys.GetCameraFrontPosition(generateHeight, 3);
         DOTween.Kill(canvasGroup);
         isItemOpen = true;
-        canvasGroup.DOFade(0.8f, 0.4f).OnStart(
+        canvasGroup.DOFade(1f, 0.4f).OnStart(
             () =>
             {
                 gameObject.SetActive(true);
@@ -126,12 +126,12 @@ public class UI_WorldItem : MonoBehaviour, IPickable
 
     public void OnPointEnter()
     {
-        canvasGroup.alpha = 1;
+        //canvasGroup.alpha = 1;
     }
 
     public void OnPointOut()
     {
-        canvasGroup.alpha = 0.8f;
+        //canvasGroup.alpha = 0.8f;
     }
 
     public Transform GetTransform()
