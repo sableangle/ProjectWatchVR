@@ -12,8 +12,8 @@ namespace Wacki
         public bool isHit = false;
         public Color color;
 
-        public GameObject hitPoint;
-        public GameObject pointer;
+        public Transform pointer;
+        //public Transform pointer;
 
         private float _distanceLimit;
 
@@ -28,22 +28,22 @@ namespace Wacki
             // pointer.transform.localScale = new Vector3(laserThickness, laserThickness, 100.0f);
             // pointer.transform.localPosition = new Vector3(0.0f, 0.0f, 50.0f);
 
-            hitPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            hitPoint.transform.SetParent(transform, false);
-            hitPoint.transform.localScale = new Vector3(laserHitScale, laserHitScale, laserHitScale);
-            hitPoint.transform.localPosition = new Vector3(0.0f, 0.0f, 100.0f);
+            pointer = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
+            pointer.SetParent(transform, false);
+            pointer.localScale = new Vector3(laserHitScale, laserHitScale, laserHitScale);
+            pointer.localPosition = new Vector3(0.0f, 0.0f, 100.0f);
 
-            hitPoint.SetActive(false);
+            pointer.gameObject.SetActive(false);
 
             // remove the colliders on our primitives
-            Object.DestroyImmediate(hitPoint.GetComponent<SphereCollider>());
+            Object.DestroyImmediate(pointer.GetComponent<SphereCollider>());
             // Object.DestroyImmediate(pointer.GetComponent<BoxCollider>());
 
             Material newMaterial = new Material(Shader.Find("Wacki/LaserPointer"));
 
             newMaterial.SetColor("_Color", color);
             // pointer.GetComponent<MeshRenderer>().material = newMaterial;
-            hitPoint.GetComponent<MeshRenderer>().material = newMaterial;
+            pointer.GetComponent<MeshRenderer>().material = newMaterial;
             // initialize concrete class
             Initialize();
 
@@ -94,12 +94,12 @@ namespace Wacki
 
             if (isHit)
             {
-                hitPoint.SetActive(true);
-                hitPoint.transform.localPosition = new Vector3(0.0f, 0.0f, distance);
+                pointer.gameObject.SetActive(true);
+                pointer.transform.localPosition = new Vector3(0.0f, 0.0f, distance);
             }
             else
             {
-                hitPoint.SetActive(false);
+                pointer.gameObject.SetActive(false);
             }
 
             // reset the previous distance limit

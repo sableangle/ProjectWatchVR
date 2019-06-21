@@ -243,6 +243,10 @@ public class WearController : MonoBehaviour
         SettingHint();
         DrawPointerLine();
     }
+
+
+    public delegate void _OnResetFinish();
+    public event _OnResetFinish OnResetFinish;
     void ResetSensor()
     {
         if (GetResetSensor())
@@ -252,7 +256,9 @@ public class WearController : MonoBehaviour
             {
                 initRot = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0);
                 WebScoketServer.Instance.SendMsg("Reset Sensor");
+                if (OnResetFinish != null) OnResetFinish();
                 _resetTimerSwitch = false;
+                _resetTimer = 0;
             }
         }
         else

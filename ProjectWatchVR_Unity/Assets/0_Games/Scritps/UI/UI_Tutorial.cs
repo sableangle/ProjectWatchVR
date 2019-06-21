@@ -29,6 +29,7 @@ public class UI_Tutorial : MonoBehaviour
 
         VRInputReciver.OnWatchButtonDown += OnWatchButtonDown;
         VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
+        WearController.Instance.OnResetFinish += ResetSensor;
 
         StartCoroutine(StartTutorial());
         hintImage.color = new Color(1, 1, 1, 0);
@@ -44,16 +45,35 @@ public class UI_Tutorial : MonoBehaviour
         if (btn == VRInputReciver.Buttons.Center) UnityMainThreadDispatcher.Instance().Enqueue(GoNext);
     }
 
+
     void GoNext()
     {
-        if (i == 1)
+        if (i == 1 || i == 3 || i == 4 || i == 5)
             next = true;
+
+    }
+    void ResetSensor()
+    {
+        if (i == 2)
+        {
+            next = true;
+            UI_Toast.Instance.ShowToast("很棒！");
+            Debug.Log("ResetSensor");
+        }
+
     }
 
     string[] text = new[]{
         "嗨，歡迎你來\n現在將帶領你進行一些基本操作",
         "按住手錶的下緣可以校正控制器",
-        "123123123123"
+        "接下來是基本操作，試著揮動控制器",
+        "大部分的情況下，控制器的中央代表確認",
+        "指向物品時，可以中央按鈕將其拿起",
+    };
+    string[] hint = new[]{
+        "按中央鍵繼續",
+        "試著完成校正",
+        "試著拿起物品"
     };
 
     bool next = false;
@@ -61,14 +81,26 @@ public class UI_Tutorial : MonoBehaviour
 
     IEnumerator StartTutorial()
     {
+        nextHint.GetComponent<Text>().text = hint[0];
         yield return typeWriter.StartShow(text[i]);
         yield return new WaitUntil(() => next);
 
+        nextHint.GetComponent<Text>().text = hint[1];
         yield return typeWriter.StartShow(text[i]);
         yield return ShowHintImage(0);
         yield return new WaitUntil(() => next);
 
+        nextHint.GetComponent<Text>().text = hint[0];
         yield return typeWriter.StartShow(text[i]);
+        yield return new WaitUntil(() => next);
+
+        yield return typeWriter.StartShow(text[i]);
+        yield return ShowHintImage(1);
+        yield return new WaitUntil(() => next);
+
+        nextHint.GetComponent<Text>().text = hint[0];
+        yield return typeWriter.StartShow(text[i]);
+        yield return new WaitUntil(() => next);
     }
 
     [SerializeField]
@@ -80,8 +112,8 @@ public class UI_Tutorial : MonoBehaviour
         hintImage.sprite = hintImageSprite[index];
         hintImage.color = new Color(1, 1, 1, 0);
         Sequence seq = DOTween.Sequence();
-        seq.Join(hintImage.DOFade(1,0.3f));
-        seq.Join(hintImage.rectTransform.DOAnchorPosY(-23.2f,0.3f));
+        seq.Join(hintImage.DOFade(1, 0.3f));
+        seq.Join(hintImage.rectTransform.DOAnchorPosY(-23.2f, 0.3f));
         return seq.WaitForCompletion();
     }
 

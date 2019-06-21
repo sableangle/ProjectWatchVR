@@ -4898,6 +4898,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeWriter: {fileID: 6415064795199136763}
   nextHint: {fileID: 62945800}
+  hintImageSprite:
+  - {fileID: 21300000, guid: dccc88d6cd7bc41b480c95c96be96061, type: 3}
+  - {fileID: 21300000, guid: 7ba52bc36bfb44536a27120620a1f957, type: 3}
+  hintImage: {fileID: 455817032}
 --- !u!1 &1804212274
 GameObject:
   m_ObjectHideFlags: 0
