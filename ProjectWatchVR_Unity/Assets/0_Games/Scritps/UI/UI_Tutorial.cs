@@ -68,7 +68,7 @@ public class UI_Tutorial : MonoBehaviour
         "按住手錶的下緣可以校正控制器",
         "接下來是基本操作，試著揮動控制器",
         "大部分的情況下，控制器的中央代表確認",
-        "指向物品時，可以中央按鈕將其拿起",
+        "指向物品時，若物體出現外框線時可以中央按鈕將其拿起",
     };
     string[] hint = new[]{
         "按中央鍵繼續",
@@ -81,28 +81,34 @@ public class UI_Tutorial : MonoBehaviour
 
     IEnumerator StartTutorial()
     {
-        nextHint.GetComponent<Text>().text = hint[0];
         yield return typeWriter.StartShow(text[i]);
+        nextHint.GetComponent<Text>().text = hint[0];
         yield return new WaitUntil(() => next);
 
-        nextHint.GetComponent<Text>().text = hint[1];
         yield return typeWriter.StartShow(text[i]);
+        nextHint.GetComponent<Text>().text = hint[1];
         yield return ShowHintImage(0);
         yield return new WaitUntil(() => next);
 
-        nextHint.GetComponent<Text>().text = hint[0];
         yield return typeWriter.StartShow(text[i]);
+        nextHint.GetComponent<Text>().text = hint[0];
         yield return new WaitUntil(() => next);
 
         yield return typeWriter.StartShow(text[i]);
         yield return ShowHintImage(1);
         yield return new WaitUntil(() => next);
 
-        nextHint.GetComponent<Text>().text = hint[0];
         yield return typeWriter.StartShow(text[i]);
+        GenerateInteractiveObject();
+        nextHint.GetComponent<Text>().text = hint[2];
         yield return new WaitUntil(() => next);
     }
 
+    void GenerateInteractiveObject()
+    {
+        GameController.Instance.SommonBall();
+    }
+    
     [SerializeField]
     Sprite[] hintImageSprite;
     [SerializeField]
@@ -122,6 +128,7 @@ public class UI_Tutorial : MonoBehaviour
     {
         isTyping = true;
         next = false;
+        hintImage.color = new Color(1, 1, 1, 0);
     }
     public void OnTypeFinish()
     {
