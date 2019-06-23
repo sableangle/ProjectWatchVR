@@ -227,7 +227,7 @@ public class WearController : MonoBehaviour
     private const string AXIS_MOUSE_Y = "Mouse Y";
     public Quaternion WearRotation { get; private set; }
     [SerializeField, Range(0.01f, 1f)]
-    float lerpParam = 0.5f;
+    public float lerpParam = 0.5f;
 
     float lastY = 0;
     void Update()
