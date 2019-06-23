@@ -57,9 +57,6 @@ public class BoxCheck : MonoBehaviour
         Transform t = other.transform;
 
         var dis = (new Vector2(t.position.x, t.position.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude;
-        Debug.Log(dis);
-
-
 
         if (boxType == Box_Pos_Type.Big)
         {

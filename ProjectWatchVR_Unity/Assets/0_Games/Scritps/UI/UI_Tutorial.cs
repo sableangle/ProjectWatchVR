@@ -48,6 +48,15 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
         hintImage.color = new Color(1, 1, 1, 0);
     }
 
+    void OnDestroy()
+    {
+        VRInputReciver.OnWatchButtonDown -= OnWatchButtonDown;
+        VRInputReciver.OnWatchButtonUp -= OnWatchButtonUp;
+        WearController.Instance.OnResetFinish -= ResetSensor;
+        WearController.Instance.OnObjectChangeFunction -= OnObjectChangeFunction;
+        UI_MainMenu.Instance.OnMenuOpen -= MenuTutorial;
+    }
+
 
 
     private void OnWatchButtonUp(VRInputReciver.Buttons btn)
@@ -116,7 +125,7 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
         "物體拿起時可以前後滑動控制器表面前後移動物體",
         "指向物體時，可以按右邊按鈕改變物體模式",
         "「綠色」外框線的物體，在提起時有不同的效果",
-        "按下右側按鈕可以開啟選單",
+        "按下左側按鈕可以開啟選單",
         "教學到此結束，接下來請自由探索吧",
     };
     string[] hint = new[]{
@@ -183,7 +192,6 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
 
         //教學結束
         yield return typeWriter.StartShow(text[i]);
-        yield return ShowHintImage(3);
         nextHint.GetComponent<Text>().text = hint[0];
         yield return new WaitUntil(() => next);
 

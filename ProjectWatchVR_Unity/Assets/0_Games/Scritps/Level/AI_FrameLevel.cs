@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Linq;
 using UniRx;
+using System;
 
 public class AI_FrameLevel : MonoBehaviour, ITrigger
 {
@@ -81,7 +82,26 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             {
                 PickEnd();
             });
+
+        VRInputReciver.OnWatchButtonDown += OnWatchButtonDown;
+        VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
     }
+
+    private void OnWatchButtonUp(VRInputReciver.Buttons btn)
+    {
+        if (btn == VRInputReciver.Buttons.Center)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(PickEnd);
+        }
+    }
+    private void OnWatchButtonDown(VRInputReciver.Buttons btn)
+    {
+        if (btn == VRInputReciver.Buttons.Center)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(PickStart);
+        }
+    }
+
     void PickStart()
     {
         if (hitTransform == null) { return; }
@@ -173,7 +193,6 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         oldRoomCamera.localPosition = Vector3.Lerp(oldRoomCamera.localPosition, localOffect, 8 * Time.deltaTime);
         oldRoomCamera.rotation = Quaternion.Lerp(oldRoomCamera.rotation, mainCameraTransform.rotation, 8 * Time.deltaTime);
 
-
     }
     void OnTriggerEnter(Collider other)
     {
@@ -213,7 +232,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             return;
         }
 
-        length += Input.GetAxis("Mouse ScrollWheel") * 0.5f;
+        length += WearController.Instance.getScreenMoven() * (WearController.Instance.editorSimlator ? 0.5f : 3);
         length = Mathf.Clamp(length, 0, length);
 
 

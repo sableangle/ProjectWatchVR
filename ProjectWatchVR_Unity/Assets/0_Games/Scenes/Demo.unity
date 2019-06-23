@@ -737,7 +737,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 126, guid: 8c754d55399184465ac67361320ee714, type: 3}
       propertyPath: editorSimlator
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 126, guid: 8c754d55399184465ac67361320ee714, type: 3}
       propertyPath: watchLaserPointer
@@ -6277,6 +6277,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3583966792627059314, guid: 6e43faca04f6544f78eecb72a84f6efd,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e43faca04f6544f78eecb72a84f6efd, type: 3}

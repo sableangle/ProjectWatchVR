@@ -26,6 +26,7 @@ public class PrespectiveObjectController : MonoBehaviour
 
         VRInputReciver.OnWatchButtonDown += delegate (VRInputReciver.Buttons btn)
         {
+            if (btn != VRInputReciver.Buttons.Center) return;
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
                 StartPick();

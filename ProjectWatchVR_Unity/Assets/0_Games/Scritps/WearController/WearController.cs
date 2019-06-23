@@ -206,7 +206,7 @@ public class WearController : MonoBehaviour
 
 
     float lastScreenPosY;
-    float getScreenMoven()
+    public float getScreenMoven()
     {
         if (editorSimlator)
         {
