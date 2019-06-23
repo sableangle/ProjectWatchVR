@@ -59,6 +59,11 @@ public class WearController : MonoBehaviour
             {
                 PickEnd();
             });
+            Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.U)).Subscribe(_ =>
+            {
+                ChangeMutilFunction();
+            });
         }
         else
         {
@@ -66,11 +71,12 @@ public class WearController : MonoBehaviour
             VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
         }
     }
+    
     private void OnWatchButtonUp(VRInputReciver.Buttons btn)
     {
         //Debug.Log("OnWatchButtonUp " + btn);
         if (btn == VRInputReciver.Buttons.Center) UnityMainThreadDispatcher.Instance().Enqueue(PickEnd);
-        if (btn == VRInputReciver.Buttons.Right) _flishlight = false;
+        //if (btn == VRInputReciver.Buttons.Right) _flishlight = false;
         if (btn == VRInputReciver.Buttons.Down)
         {
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
@@ -93,12 +99,18 @@ public class WearController : MonoBehaviour
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
                 UI_MainMenu.Instance.Swtich();
+                
             });
         }
     }
 
+    public delegate void _OnObjectChangeFunction();
+    public _OnObjectChangeFunction OnObjectChangeFunction;
+
     private void OnWatchButtonDown(VRInputReciver.Buttons btn)
     {
+        lastScreenPosY = VRInputReciver.screenPosition.y;
+
         //Debug.Log("OnWatchButtonDown " + btn);
         if (btn == VRInputReciver.Buttons.Center)
         {
@@ -106,8 +118,10 @@ public class WearController : MonoBehaviour
         }
         if (btn == VRInputReciver.Buttons.Right)
         {
-            lastScreenPosY = VRInputReciver.screenPosition.y;
-            _flishlight = true;
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                ChangeMutilFunction();
+            });
         }
         if (btn == VRInputReciver.Buttons.Down)
         {
@@ -124,6 +138,23 @@ public class WearController : MonoBehaviour
                 UI_ScreenSpace.Instance.ShowHint_Setting();
             });
             _settingHintSwitch = true;
+        }
+    }
+
+    void ChangeMutilFunction()
+    {
+        if (lastPickable == null)
+        {
+            return;
+        }
+        if (!(lastPickable is MutilFunctionObject))
+        {
+            return;
+        }
+                ((MutilFunctionObject)lastPickable).ChangeFunction();
+        if (OnObjectChangeFunction != null)
+        {
+            OnObjectChangeFunction();
         }
     }
     //Triggers
@@ -185,7 +216,7 @@ public class WearController : MonoBehaviour
         {
             float result = lastScreenPosY - VRInputReciver.screenPosition.y;
             lastScreenPosY = VRInputReciver.screenPosition.y;
-            return result * 10;
+            return result * 5;
         }
     }
 

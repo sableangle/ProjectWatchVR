@@ -46,7 +46,8 @@ public class MutilFunctionObject : MonoBehaviour, IPickable
 
     bool isHover = false;
     bool isPick = false;
-    void Update()
+    
+    public void ChangeFunction()
     {
         if (isHover)
         {
@@ -54,10 +55,7 @@ public class MutilFunctionObject : MonoBehaviour, IPickable
             {
                 return;
             }
-            if (Input.GetKeyDown(KeyCode.U))
-            {
-                currentType = (CurrentType)((int)currentType * -1);
-            }
+            currentType = (CurrentType)((int)currentType * -1);
         }
     }
     public void OnPickStart(Transform pickPointer)

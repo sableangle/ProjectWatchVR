@@ -56,4 +56,15 @@ public class UI_MainMenu : UI_WorldItem
             }
         );
     }
+
+    public delegate void _OnMenuOpen();
+    public _OnMenuOpen OnMenuOpen;
+    public new void Swtich()
+    {
+        base.Swtich();
+        if (OnMenuOpen != null)
+        {
+            OnMenuOpen();
+        }
+    }
 }

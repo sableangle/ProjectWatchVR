@@ -87,7 +87,6 @@ public class UI_WorldItem : MonoBehaviour, IPickable
             }
         );
     }
-
     public void Swtich()
     {
         if (isItemOpen)

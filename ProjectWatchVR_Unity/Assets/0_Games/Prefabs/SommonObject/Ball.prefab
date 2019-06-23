@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1576015641689586590}
   - component: {fileID: 1576015641689586588}
   - component: {fileID: 1576015641689586561}
-  - component: {fileID: 1576015641689586560}
   - component: {fileID: 136406614889526759}
+  - component: {fileID: 549613029662356590}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Pickable
@@ -96,20 +96,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1576015641689586560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1576015641689586587}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60889da6bddf5436da7aec9e7f1b2310, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  LerpFactor: 10
 --- !u!135 &136406614889526759
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -123,3 +109,16 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &549613029662356590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576015641689586587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aafc8ede1b5fa4905ad17b23a431a362, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentType: -1

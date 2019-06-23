@@ -18,25 +18,26 @@ public class GameController : MonoBehaviour
     }
 
     public GameObject[] SommonPrefabs;
-    public void SommonBox()
+    public GameObject SommonBox()
     {
-        SommonGameObject((int)SommonObject.Box);
+        return SommonGameObject((int)SommonObject.Box);
     }
-    public void SommonBall()
+    public GameObject SommonBall()
     {
-        SommonGameObject((int)SommonObject.Ball);
+        return SommonGameObject((int)SommonObject.Ball);
     }
-    public void SommonFood()
+    public GameObject SommonFood()
     {
-        SommonGameObject((int)SommonObject.Food);
+        return SommonGameObject((int)SommonObject.Food);
     }
 
-    public void SommonGameObject(int i)
+    public GameObject SommonGameObject(int i)
     {
         var pos = Utilitys.GetCameraFrontPosition(5, 3);
         var go = Instantiate<GameObject>(SommonPrefabs[i],
         pos,
         Quaternion.identity);
+        return go;
     }
     #endregion
 
