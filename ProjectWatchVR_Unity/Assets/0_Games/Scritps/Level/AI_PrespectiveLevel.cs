@@ -67,6 +67,9 @@ public class AI_PrespectiveLevel : MonoBehaviour
             item.SetActive(false);
         }
     }
+
+    [SerializeField]
+    UI_WorldItem hintUI;
     public void StartPrespectiveLevel()
     {
         var table_Renderer = Table.GetComponent<Renderer>();
@@ -110,6 +113,9 @@ public class AI_PrespectiveLevel : MonoBehaviour
                 }
             }
         );
+        hintUI.Show();
+        hintUI.transform.localPosition = new Vector3(0, 2.031f, 2.807f);
+
     }
 
     public void ExitPrespectiveLevel()

@@ -71,7 +71,7 @@ public class WearController : MonoBehaviour
             VRInputReciver.OnWatchButtonUp += OnWatchButtonUp;
         }
     }
-    
+
     private void OnWatchButtonUp(VRInputReciver.Buttons btn)
     {
         //Debug.Log("OnWatchButtonUp " + btn);
@@ -99,7 +99,7 @@ public class WearController : MonoBehaviour
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
                 UI_MainMenu.Instance.Swtich();
-                
+
             });
         }
     }
@@ -228,18 +228,23 @@ public class WearController : MonoBehaviour
     public Quaternion WearRotation { get; private set; }
     [SerializeField, Range(0.01f, 1f)]
     float lerpParam = 0.5f;
+
+    float lastY = 0;
     void Update()
     {
 
         if (!editorSimlator)
         {
+            
+            lastY = Mathf.Lerp(lastY, -VRInputReciver.accelerometer.y * 9.8f, lerpSpeedForRotation * Time.deltaTime);
+            var targetRotation = initRot * Quaternion.Euler(lastY,
+                                    VRInputReciver.rotation.eulerAngles.y,
+                                    0);
             transformCache.rotation = Quaternion.Slerp(
                 transformCache.rotation,
-                initRot * Quaternion.Euler(-VRInputReciver.accelerometer.y * 9.8f,
-                VRInputReciver.rotation.eulerAngles.y,
-                0),
-                // lerpSpeedForRotation * Time.deltaTime);
+                targetRotation,
                 1 - Mathf.Pow(lerpParam, Time.deltaTime * 60));
+
 
             SetTouchPosition(VRInputReciver.screenPosition);
         }

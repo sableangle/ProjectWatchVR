@@ -181,6 +181,7 @@ MonoBehaviour:
   durationTime: 1
   boxCheckBig: {fileID: 704920938877878535}
   boxCheckSmall: {fileID: 704920937894918727}
+  hintUI: {fileID: 0}
 --- !u!1 &704920938877878538
 GameObject:
   m_ObjectHideFlags: 0

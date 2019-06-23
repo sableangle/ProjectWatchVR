@@ -126,6 +126,9 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     Transform frameRoot;
 
     float durationTime = 1;
+
+    [SerializeField]
+    UI_WorldItem hintUI;
     public void StartFrameLevel()
     {
         Sequence inSeq = DOTween.Sequence();
@@ -149,6 +152,8 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
                 trigger.enabled = true;
             }
         );
+        hintUI.Show();
+        hintUI.transform.localPosition = new Vector3(12.94f, 7.09f, 0);
     }
 
     public void EndFrameLevel()

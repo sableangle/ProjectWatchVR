@@ -18,12 +18,12 @@ public class UI_WorldItem : MonoBehaviour, IPickable
     Transform transfromCache;
     protected float generateHeight = 2.8f;
     bool isItemOpen = false;
+
     protected virtual void Awake()
     {
         canvasGroup = GetComponentInChildren<CanvasGroup>();
         isItemOpen = false;
         transfromCache = transform;
-        canvasGroup.alpha = 0;
         gameObject.SetActive(false);
     }
 
