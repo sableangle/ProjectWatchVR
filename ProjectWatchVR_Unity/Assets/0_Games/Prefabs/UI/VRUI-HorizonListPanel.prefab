@@ -401,11 +401,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4219965168867045267}
     m_Modifications:
-    - target: {fileID: 1627693874266599764, guid: 328d0e953424e47a387f58fda079ccc4,
-        type: 3}
-      propertyPath: m_Name
-      value: FunctionButtons
-      objectReference: {fileID: 0}
     - target: {fileID: 8326000348043640158, guid: 328d0e953424e47a387f58fda079ccc4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -510,6 +505,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1627693874266599764, guid: 328d0e953424e47a387f58fda079ccc4,
+        type: 3}
+      propertyPath: m_Name
+      value: FunctionButtons
       objectReference: {fileID: 0}
     - target: {fileID: 7725066660860361028, guid: 328d0e953424e47a387f58fda079ccc4,
         type: 3}

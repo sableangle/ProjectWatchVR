@@ -13,17 +13,28 @@ public class UI_WorldItem : MonoBehaviour, IPickable
     Button closeButton;
     [SerializeField]
     Button moveButton;
-
-    CanvasGroup canvasGroup;
-    Transform transfromCache;
+    CanvasGroup _canvasGroup;
+    CanvasGroup canvasGroup
+    {
+        get
+        {
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponentInChildren<CanvasGroup>();
+            }
+            return _canvasGroup;
+        }
+    }
+    Transform transfromCache
+    {
+        get { return transform; }
+    }
     protected float generateHeight = 2.8f;
     bool isItemOpen = false;
 
     protected virtual void Awake()
     {
-        canvasGroup = GetComponentInChildren<CanvasGroup>();
         isItemOpen = false;
-        transfromCache = transform;
         gameObject.SetActive(false);
     }
 
@@ -62,7 +73,6 @@ public class UI_WorldItem : MonoBehaviour, IPickable
             }
         );
     }
-
 
     public void Show()
     {

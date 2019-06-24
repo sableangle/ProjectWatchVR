@@ -52,6 +52,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     {
         Instance = this;
         gameObject.SetActive(false);
+        RememberResetData();
     }
 
     [SerializeField]
@@ -131,6 +132,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     UI_WorldItem hintUI;
     public void StartFrameLevel()
     {
+        ResetPosition();
         Sequence inSeq = DOTween.Sequence();
         frameRoot.localPosition = new Vector3(0, -3, 0);
         frameRoot.DOLocalMoveY(2, durationTime);
@@ -388,6 +390,36 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
         }
 
 
+    }
+
+    [SerializeField]
+    Transform[] interactiveObejct;
+    void RememberResetData()
+    {
+        for (int i = 0; i < interactiveObejct.Length; i++)
+        {
+            var temp = new ResetData();
+            temp.pos = interactiveObejct[i].position;
+            temp.scale = interactiveObejct[i].localScale;
+            temp.rot = interactiveObejct[i].eulerAngles;
+            resetData.Add(temp);
+        }
+    }
+    void ResetPosition()
+    {
+        for (int i = 0; i < interactiveObejct.Length; i++)
+        {
+            interactiveObejct[i].position = resetData[i].pos;
+            interactiveObejct[i].localScale = resetData[i].scale;
+            interactiveObejct[i].eulerAngles = resetData[i].rot;
+        }
+    }
+    List<ResetData> resetData = new List<ResetData>();
+    class ResetData
+    {
+        public Vector3 pos;
+        public Vector3 rot;
+        public Vector3 scale;
     }
 
     MeshFilter mf;

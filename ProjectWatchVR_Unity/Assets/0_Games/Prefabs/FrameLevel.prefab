@@ -6915,6 +6915,7 @@ MonoBehaviour:
   frameOriTransform: {fileID: 8299138960752767858}
   hitTransform: {fileID: 0}
   perfixScale: 0.5
+  interactiveObejct: []
 --- !u!54 &7231182895892267937
 Rigidbody:
   m_ObjectHideFlags: 0

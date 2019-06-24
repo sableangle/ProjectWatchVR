@@ -182,6 +182,7 @@ MonoBehaviour:
   boxCheckBig: {fileID: 704920938877878535}
   boxCheckSmall: {fileID: 704920937894918727}
   hintUI: {fileID: 0}
+  interactiveObejct: []
 --- !u!1 &704920938877878538
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,11 +394,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 704920938022245743}
     m_Modifications:
-    - target: {fileID: 7719697894077490312, guid: c606f24fa55054bf682c263ed43c0e3e,
-        type: 3}
-      propertyPath: m_Name
-      value: Table
-      objectReference: {fileID: 0}
     - target: {fileID: 607623910334529029, guid: c606f24fa55054bf682c263ed43c0e3e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -467,6 +463,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.2000005
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719697894077490312, guid: c606f24fa55054bf682c263ed43c0e3e,
+        type: 3}
+      propertyPath: m_Name
+      value: Table
       objectReference: {fileID: 0}
     - target: {fileID: 5756553842030135575, guid: c606f24fa55054bf682c263ed43c0e3e,
         type: 3}

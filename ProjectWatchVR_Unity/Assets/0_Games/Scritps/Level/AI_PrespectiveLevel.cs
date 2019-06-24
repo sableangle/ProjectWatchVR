@@ -40,7 +40,7 @@ public class AI_PrespectiveLevel : MonoBehaviour
     {
         Instance = this;
         gameObject.SetActive(false);
-
+        RememberResetData();
     }
     bool finishHint = false;
     void Update()
@@ -72,6 +72,7 @@ public class AI_PrespectiveLevel : MonoBehaviour
     UI_WorldItem hintUI;
     public void StartPrespectiveLevel()
     {
+        ResetPosition();
         var table_Renderer = Table.GetComponent<Renderer>();
 
         Sequence tableIn = DOTween.Sequence();
@@ -155,6 +156,35 @@ public class AI_PrespectiveLevel : MonoBehaviour
                 gameObject.SetActive(false);
             }
         );
+    }
+    [SerializeField]
+    Transform[] interactiveObejct;
+    void RememberResetData()
+    {
+        for (int i = 0; i < interactiveObejct.Length; i++)
+        {
+            var temp = new ResetData();
+            temp.pos = interactiveObejct[i].position;
+            temp.scale = interactiveObejct[i].localScale;
+            temp.rot = interactiveObejct[i].eulerAngles;
+            resetData.Add(temp);
+        }
+    }
+    void ResetPosition()
+    {
+        for (int i = 0; i < interactiveObejct.Length; i++)
+        {
+            interactiveObejct[i].position = resetData[i].pos;
+            interactiveObejct[i].localScale = resetData[i].scale;
+            interactiveObejct[i].eulerAngles = resetData[i].rot;
+        }
+    }
+    List<ResetData> resetData = new List<ResetData>();
+    class ResetData
+    {
+        public Vector3 pos;
+        public Vector3 rot;
+        public Vector3 scale;
     }
 
 
