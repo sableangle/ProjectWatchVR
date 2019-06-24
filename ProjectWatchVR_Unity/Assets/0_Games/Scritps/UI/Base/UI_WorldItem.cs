@@ -27,12 +27,15 @@ public class UI_WorldItem : MonoBehaviour, IPickable
         gameObject.SetActive(false);
     }
 
+
     protected virtual void Start()
     {
         closeButton.OnClickAsObservable().Subscribe(
             _ =>
             {
+
                 Hide();
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
 
@@ -45,6 +48,8 @@ public class UI_WorldItem : MonoBehaviour, IPickable
                 }
                 WearController.Instance.SetCurrentPickable(this);
                 WearController.Instance.PickStart();
+                AudioManager.PlaySFX(GlobalReferenceManager.PickStartSound);
+
             }
         );
 
@@ -52,6 +57,8 @@ public class UI_WorldItem : MonoBehaviour, IPickable
             _ =>
             {
                 WearController.Instance.PickEnd();
+                AudioManager.PlaySFX(GlobalReferenceManager.PickEndSound);
+
             }
         );
     }

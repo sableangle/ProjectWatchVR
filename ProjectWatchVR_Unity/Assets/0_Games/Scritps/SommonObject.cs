@@ -59,11 +59,16 @@ public class SommonObject : MonoBehaviour, IPickable
         }
     }
     private Transform picker;
+
+    
+
     public void OnPickStart(Transform pickPointer)
     {
         picker = pickPointer;
         rigibody.useGravity = false;
         rigibody.constraints = RigidbodyConstraints.FreezeRotation;
+
+        AudioManager.PlaySFX(GlobalReferenceManager.PickStartSound);
     }
     public void OnPickFinish()
     {
@@ -71,6 +76,7 @@ public class SommonObject : MonoBehaviour, IPickable
 
         picker = null;
         rigibody.constraints = RigidbodyConstraints.None;
+        AudioManager.PlaySFX(GlobalReferenceManager.PickEndSound);
     }
 
     [SerializeField]

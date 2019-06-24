@@ -5,7 +5,7 @@ using UniRx;
 using UnityEngine.UI;
 public class UI_SummonListPanel : UI_WorldItem
 {
-   
+
     public static UI_SummonListPanel Instance;
 
     [SerializeField]
@@ -22,25 +22,31 @@ public class UI_SummonListPanel : UI_WorldItem
         generateHeight = 2.4f;
 
     }
-    protected override void  Start()
+    protected override void Start()
     {
-       base.Start();
+        base.Start();
         summonBoxButton.OnClickAsObservable().Subscribe(
            _ =>
            {
                GameController.Instance.SommonBox();
+               AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
+
            }
        );
         summonBallButton.OnClickAsObservable().Subscribe(
            _ =>
            {
                GameController.Instance.SommonBall();
+               AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
+
            }
        );
         summonFoodButton.OnClickAsObservable().Subscribe(
            _ =>
            {
                GameController.Instance.SommonFood();
+               AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
+
            }
        );
     }

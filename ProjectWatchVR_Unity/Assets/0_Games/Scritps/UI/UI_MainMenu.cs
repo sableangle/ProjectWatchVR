@@ -32,6 +32,7 @@ public class UI_MainMenu : UI_WorldItem
             _ =>
             {
                 Hide(UI_SummonListPanel.Instance.Show);
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
 
@@ -39,6 +40,7 @@ public class UI_MainMenu : UI_WorldItem
             _ =>
             {
                 Hide(UI_GroundObjectListPanel.Instance.Show);
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
 
@@ -46,6 +48,7 @@ public class UI_MainMenu : UI_WorldItem
             _ =>
             {
                 Hide(UI_LevelListPanel.Instance.Show);
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
 
@@ -53,6 +56,7 @@ public class UI_MainMenu : UI_WorldItem
             _ =>
             {
                 Hide(UI_SettingListPanel.Instance.Show);
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
     }

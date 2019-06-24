@@ -20,6 +20,10 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
 
     [SerializeField]
     Transform TutorialUI;
+    [SerializeField]
+    AudioSource completeSound;
+    [SerializeField]
+    AudioSource centerSound;
 
     void Start()
     {
@@ -76,7 +80,10 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
             return;
         }
         if (i == 9)
+        {
             next = true;
+            centerSound.Play();
+        }
     }
     void GoNext()
     {
@@ -85,8 +92,10 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
             return;
         }
         if (i == 1 || i == 3 || i == 4 || i == 8 || i == 10)
+        {
             next = true;
-
+            centerSound.Play();
+        }
     }
     void ResetSensor()
     {
@@ -98,6 +107,7 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
         {
             next = true;
             UI_Toast.Instance.ShowToast("很棒！");
+            completeSound.Play();
             Debug.Log("ResetSensor");
         }
 
@@ -112,6 +122,7 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
         if (i == 7)
         {
             UI_Toast.Instance.ShowToast("很棒！");
+            completeSound.Play();
             next = true;
         }
     }
@@ -124,7 +135,7 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
         "指向物品時，若物體出現「黃色」外框線時可以中央按鈕將其拿起",
         "物體拿起時可以前後滑動控制器表面前後移動物體",
         "指向物體時，可以按右邊按鈕改變物體模式",
-        "「綠色」外框線的物體，在提起時有不同的效果",
+        "「綠色」外框線的物體，在提起時有不同的效果，請嘗試發覺其差異",
         "按下左側按鈕可以開啟選單",
         "教學到此結束，接下來請自由探索吧",
     };
@@ -252,6 +263,7 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
             return;
         }
         UI_Toast.Instance.ShowToast("很棒！");
+        completeSound.Play();
         next = true;
         tutorialTrigger.enabled = false;
     }
@@ -267,6 +279,7 @@ public class UI_Tutorial : MonoBehaviour, ITrigger
             return;
         }
         UI_Toast.Instance.ShowToast("很棒！");
+        completeSound.Play();
         next = true;
         tutorialMoveTrigger.enabled = false;
     }

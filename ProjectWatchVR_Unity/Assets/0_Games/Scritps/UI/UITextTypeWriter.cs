@@ -11,6 +11,10 @@ public class UITextTypeWriter : MonoBehaviour
     string story;
 
     public float durationPerText = 0.125f;
+
+    [SerializeField]
+    AudioSource typeSound;
+
     [SerializeField]
     UnityEvent OnStart;
 
@@ -39,6 +43,7 @@ public class UITextTypeWriter : MonoBehaviour
         foreach (char c in story)
         {
             txt.text += c;
+            typeSound.Play();
             yield return new WaitForSeconds(durationPerText);
         }
 

@@ -30,12 +30,14 @@ public class UI_GroundObjectListPanel : UI_WorldItem
             _ =>
             {
                 GameController.Instance.CreateFlower();
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
         grassButton.OnClickAsObservable().Subscribe(
             _ =>
             {
                 GameController.Instance.CreateGrass();
+                AudioManager.PlaySFX(GlobalReferenceManager.ClickSound);
             }
         );
     }
