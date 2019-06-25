@@ -64,6 +64,12 @@ public class WearController : MonoBehaviour
             {
                 ChangeMutilFunction();
             });
+
+            Observable.EveryUpdate()
+            .Where(_ => Input.GetKey(KeyCode.G)).Subscribe(_ =>
+            {
+                _resetTimerSwitch = Input.GetKey(KeyCode.G);
+            });
         }
         else
         {

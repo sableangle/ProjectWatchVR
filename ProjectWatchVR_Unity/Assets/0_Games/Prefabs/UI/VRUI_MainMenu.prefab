@@ -1516,6 +1516,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1864538865}
     m_Modifications:
+    - target: {fileID: 1627693874266599764, guid: 328d0e953424e47a387f58fda079ccc4,
+        type: 3}
+      propertyPath: m_Name
+      value: FunctionButtons
+      objectReference: {fileID: 0}
     - target: {fileID: 8326000348043640158, guid: 328d0e953424e47a387f58fda079ccc4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1621,21 +1626,16 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1627693874266599764, guid: 328d0e953424e47a387f58fda079ccc4,
-        type: 3}
-      propertyPath: m_Name
-      value: FunctionButtons
-      objectReference: {fileID: 0}
-    - target: {fileID: 3883479757517956342, guid: 328d0e953424e47a387f58fda079ccc4,
-        type: 3}
-      propertyPath: m_TargetGraphic
-      value: 
-      objectReference: {fileID: 2899063143362641871}
     - target: {fileID: 6201624948090940900, guid: 328d0e953424e47a387f58fda079ccc4,
         type: 3}
       propertyPath: m_TargetGraphic
       value: 
       objectReference: {fileID: 5462857390776956637}
+    - target: {fileID: 3883479757517956342, guid: 328d0e953424e47a387f58fda079ccc4,
+        type: 3}
+      propertyPath: m_TargetGraphic
+      value: 
+      objectReference: {fileID: 2899063143362641871}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328d0e953424e47a387f58fda079ccc4, type: 3}
 --- !u!224 &1387064009626650134 stripped

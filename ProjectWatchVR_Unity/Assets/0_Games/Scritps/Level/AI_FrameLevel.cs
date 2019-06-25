@@ -362,7 +362,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
             go.tag = "Pickable";
             go.GetComponent<Rigidbody>().isKinematic = false;
             var mutil = go.AddComponent<MutilFunctionObject>();
-            Destroy(hitTransform.gameObject);
+            hitTransform.gameObject.SetActive(false);
 
             PickEnd();
 
@@ -409,6 +409,7 @@ public class AI_FrameLevel : MonoBehaviour, ITrigger
     {
         for (int i = 0; i < interactiveObejct.Length; i++)
         {
+            interactiveObejct[i].gameObject.SetActive(true);
             interactiveObejct[i].position = resetData[i].pos;
             interactiveObejct[i].localScale = resetData[i].scale;
             interactiveObejct[i].eulerAngles = resetData[i].rot;
