@@ -64,6 +64,8 @@ public class SensorActivity extends WearableActivity  implements ButtonListener 
     @Override
     public void onResume(){
         super.onResume();
+        setContentView(new ButtonView(this, this, ViewType.PadButtonView, true));
+
         ipAddress = Utils.getPString(this,GlobalDefine.ipAddressKey);
     try{
         DestoryWebSocket();

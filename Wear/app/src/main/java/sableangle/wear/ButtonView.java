@@ -84,10 +84,11 @@ public class ButtonView extends View
         MidScreenWidth =mWidth/2.0f;
         MidScreenHeight =mHeight/2.0f;
 
-        MidButtonWidth =mWidth/3.0f;
-        MidButtonHeight =mHeight/3.0f;
+        MidButtonWidth = mWidth/3.0f;
+        MidButtonHeight = mHeight/3.0f;
 
-        centerButtonRadius = MidScreenHeight*0.75f;
+        //改中央按鈕
+        centerButtonRadius = MidScreenHeight * Utils.getPFloat(getContext(),GlobalDefine.centerButtonRadius,0.75f);
 
         initializePaths();
     }

@@ -20,7 +20,18 @@ public class Utils {
         SharedPreferences settings = mContext.getSharedPreferences("WearController", 0);
         settings.edit().putString(key, value).apply();
     }
+    public static float getPFloat(Context mContext, String key,float defaultValue){
+        SharedPreferences settings = mContext.getSharedPreferences("WearController", 0);
+        if (settings == null) {
+            return defaultValue;
+        }
+        return settings.getFloat(key, defaultValue);
+    }
 
+    public static void setPFloat(Context mContext, String key, float value){
+        SharedPreferences settings = mContext.getSharedPreferences("WearController", 0);
+        settings.edit().putFloat(key, value).apply();
+    }
     public static String timestamp()
     {
         TimeZone tz = TimeZone.getTimeZone("GMT+8");
