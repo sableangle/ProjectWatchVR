@@ -50,3 +50,4 @@ This project is based on those great project, without them the job will not poss
 
 - [juanpomares/Mobile-projects](https://github.com/juanpomares/Mobile-projects/)
 - [sensor-fusion-demo](https://github.com/apacha/sensor-fusion-demo)
+- [cakeslice/Outline-Effect](https://github.com/cakeslice/Outline-Effect)
