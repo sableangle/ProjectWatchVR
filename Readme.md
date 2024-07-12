@@ -9,6 +9,18 @@ The project source of the master papers - [Smartwatch-based 3DOF Motion Controll
 - Gesture tracking and controller implementation
 - Virtual Cusor implementation 
 
+# Project structure
+
+- ~~ProjectWatchHoloKit~~ 
+    A HoloKit project, Deprecated
+- ~~ProjectWatchVR~~
+    Not in use anymore, Deprecated
+- ProjectWatchVR_Unity
+    iOS app sample project
+- ProjectWatchVR_UnityWear
+    A sample prject to make a Unity Project run on a Android Wear, deprecate due to the Unity App is too heavy to an Android Wear device
+- Wear
+    The hand tracking controller android project, default is a Android Wear
 
 # Usage
 
@@ -16,7 +28,7 @@ The project source of the master papers - [Smartwatch-based 3DOF Motion Controll
 
 Download the pre-built apk and install in your android device, recommand using a android wear
 
-- [Android Wear]()
+- [Android Wear](./apk/android-wear.apk)
 - [Android Phone](./apk/android-phone.apk)
 
 ## Build the iOS sample from source
@@ -35,6 +47,11 @@ The data controller data is sent via WebSocket
 
 - In the android app, long-press the top button, the setting menu will show
 - Setup the iOS device IP on the setting view, the iOS device and Android device should in the same network
+
+## How to...
+
+- Make the `Wear` project to a normal android project?
+    Just delete all android wear relative feature in `AndroidManifes.xml` and turn all `WearableActivity` into `Activity`, (you may reqire to fix some small compile error yourself)
 
 
 ## Screenshots
