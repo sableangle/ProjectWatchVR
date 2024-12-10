@@ -1,6 +1,6 @@
 A 3DOF Google VR implementation on iOS with Android device controller.
 ---
-The project source of the master papers - [Smartwatch-based 3DOF Motion Controller and Its Effect - Take“Spatial Puzzle VR Game”as an Example](https://ndltd.ncl.edu.tw/cgi-bin/gs32/gsweb.cgi?o=dnclcdr&s=id=%22107TIT0064A011%22.&searchmode=basic)
+The project source of the master thesis - [Smartwatch-based 3DOF Motion Controller and Its Effect - Take“Spatial Puzzle VR Game”as an Example](https://ndltd.ncl.edu.tw/cgi-bin/gs32/gsweb.cgi?o=dnclcdr&s=id=%22107TIT0064A011%22.&searchmode=basic)
 
 
 # Feature
